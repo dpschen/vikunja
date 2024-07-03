@@ -9,13 +9,15 @@
 		:model-value="modelValue"
 		@update:modelValue="value => emit('update:modelValue', value)"
 	>
-		<CheckboxIcon class="fancy-checkbox__icon" />
-		<span
-			v-if="$slots.default"
-			class="fancy-checkbox__content"
-		>
-			<slot />
-		</span>
+		<template #icon>
+			<CheckboxIcon class="fancy-checkbox__icon" />
+		</template>
+
+		<template v-if="$slots.default" #default>
+			<span class="fancy-checkbox__content">
+				<slot />
+			</span>
+		</template>
 	</BaseCheckbox>
 </template>
 

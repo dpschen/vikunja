@@ -4,20 +4,25 @@
 		class="base-checkbox"
 	>
 		<input
-			:id="checkboxId"
+			:id="id || internalId"
+			:name="name"
 			type="checkbox"
 			class="is-sr-only"
-			:checked="modelValue"
 			:disabled="disabled || undefined"
+			:required="required || undefined"
+			:checked="modelValue"
 			@change="(event) => emit('update:modelValue', (event.target as HTMLInputElement).checked)"
 		>
 
+		<slot name="icon" />
+
 		<slot
+			v-if="$slots.default"
 			name="label"
-			:checkbox-id="checkboxId"
+			:checkbox-id="id || internalId"
 		>
 			<label
-				:for="checkboxId"
+				:for="internalId"
 				class="base-checkbox__label"
 			>
 				<slot />
@@ -32,16 +37,21 @@ import {createRandomID} from '@/helpers/randomId'
 
 withDefaults(defineProps<{
 	modelValue?: boolean,
-	disabled: boolean,
+	disabled?: boolean,
+	required?: boolean,
+	id?: string
+	name?: string
 }>(), {
 	modelValue: false,
+	disabled: false,
+	required: false,
 })
 
 const emit = defineEmits<{
   (event: 'update:modelValue', value: boolean): void
 }>()
 
-const checkboxId = ref(`checkbox_${createRandomID()}`)
+const internalId = ref(`checkbox_${createRandomID()}`)
 </script>
 
 <style lang="scss" scoped>

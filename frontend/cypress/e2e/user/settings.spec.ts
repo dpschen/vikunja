@@ -28,8 +28,7 @@ describe('User Settings', () => {
 	it('Updates the name', () => {
 		cy.visit('/user/settings/general')
 
-		cy.get('.general-settings .control input.input')
-			.first()
+		cy.get('[data-cy="username-input"]')
 			.type('Lorem Ipsum')
 		cy.get('[data-cy="saveGeneralSettings"]')
 			.contains('Save')
