@@ -485,15 +485,15 @@ async function updateTaskPosition(e) {
 
 	const task = newBucket.tasks[newTaskIndex]
 	const oldBucket = buckets.value.find(b => b.id === task.bucketId)
-	const taskBefore = newBucket.tasks[newTaskIndex - 1] ?? null
-	const taskAfter = newBucket.tasks[newTaskIndex + 1] ?? null
+	const taskBefore = newBucket.tasks[newTaskIndex - 1]
+	const taskAfter = newBucket.tasks[newTaskIndex + 1]
 	taskUpdating.value[task.id] = true
 
 	const newTask = klona(task) // cloning the task to avoid pinia store manipulation
 	newTask.bucketId = newBucket.id
 	const position = calculateItemPosition(
-		taskBefore !== null ? taskBefore.position : null,
-		taskAfter !== null ? taskAfter.position : null,
+		taskBefore?.position,
+		taskAfter?.position,
 	)
 	
 	let bucketHasChanged = false

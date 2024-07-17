@@ -79,19 +79,22 @@ async function saveProjectPosition(e: SortableEvent) {
 	// If the project was dragged to the last position, Safari will report e.newIndex as the size of the projectsActive
 	// array instead of using the position. Because the index is wrong in that case, dragging the project will fail.
 	// To work around that we're explicitly checking that case here and decrease the index.
-	const newIndex = e.newIndex === projectsActive.length ? e.newIndex - 1 : e.newIndex
+	const newIndex = e.newIndex === projectsActive.length
+		? e.newIndex - 1
+		: e.newIndex
 
 	const projectId = parseInt(e.item.dataset.projectId)
 	const project = projectStore.projects[projectId]
 
-	const parentProjectId = e.to.parentNode.dataset.projectId ? parseInt(e.to.parentNode.dataset.projectId) : 0
-	const projectBefore = projectsActive[newIndex - 1] ?? null
-	const projectAfter = projectsActive[newIndex + 1] ?? null
 	projectUpdating.value[project.id] = true
 
+	const parentProjectId = e.to.parentNode.dataset.projectId ? parseInt(e.to.parentNode.dataset.projectId, 10) : 0
+	const projectBefore = projectsActive[newIndex - 1]
+	const projectAfter = projectsActive[newIndex + 1]
+
 	const position = calculateItemPosition(
-		projectBefore !== null ? projectBefore.position : null,
-		projectAfter !== null ? projectAfter.position : null,
+		projectBefore?.position,
+		projectAfter?.position,
 	)
 
 	try {

@@ -248,10 +248,13 @@ async function saveTaskPosition(e) {
 	drag.value = false
 
 	const task = tasks.value[e.newIndex]
-	const taskBefore = tasks.value[e.newIndex - 1] ?? null
-	const taskAfter = tasks.value[e.newIndex + 1] ?? null
+	const taskBefore = tasks.value[e.newIndex - 1]
+	const taskAfter = tasks.value[e.newIndex + 1]
 
-	const position = calculateItemPosition(taskBefore !== null ? taskBefore.position : null, taskAfter !== null ? taskAfter.position : null)
+	const position = calculateItemPosition(
+		taskBefore?.position,
+		taskAfter?.position,
+	)
 
 	await taskPositionService.value.update(new TaskPositionModel({
 		position,
