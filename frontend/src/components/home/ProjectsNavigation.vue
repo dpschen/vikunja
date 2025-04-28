@@ -3,7 +3,11 @@
 		v-model="availableProjects"
 		animation="100"
 		ghost-class="ghost"
-		group="projects"
+		:group="{
+			name: 'projects',
+			pull: false,
+			put: ['tasks']
+		}"
 		handle=".handle"
 		tag="menu"
 		item-key="id"
@@ -19,6 +23,7 @@
 		}"
 		@start="() => drag = true"
 		@end="saveProjectPosition"
+		@add=""
 	>
 		<template #item="{element: project}">
 			<ProjectsNavigationItem
@@ -105,5 +110,21 @@ async function saveProjectPosition(e: SortableEvent) {
 	} finally {
 		projectUpdating.value[project.id] = false
 	}
+}
+
+async function moveTodoToProject(evt) {
+    const todoEl   = evt.item // todo DOM node
+    const todoId   = todoEl?.dataset?.todoId
+    // figure out *which* project <li> we’re over
+    const x        = evt.originalEvent.clientX
+    const y        = evt.originalEvent.clientY
+    const projEl   = document?.elementFromPoint(x, y)
+                           ?.closest('.project-item')
+    const projectId = projEl?.dataset?.projectId
+
+    // remove the todo from the sidebar list (we’ll re-render it inside the project)
+    todoEl.parentNode.removeChild(todoEl)
+
+    assignTodoToProject(todoId, projectId)
 }
 </script>
