@@ -31,7 +31,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version-file: frontend/.nvmrc
+          node-version-file: .nvmrc
       - name: Ensure file permissions
         run: |
           find pkg/i18n/lang frontend/src/i18n/lang -type f -name "*.json" -exec sudo chmod 666 {} \;

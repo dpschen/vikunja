@@ -1,0 +1,49 @@
+name: configure-node-pnpm
+description: |
+  Common setup using pnpm.
+
+  • Installs pnpm (without immediately running `pnpm install`)
+  • Sets up Node (with caching of pnpm-lock)  
+  • Optionally runs `pnpm install` in the specified subdirectory
+
+inputs:
+  working-directory:
+    description: |
+      The relative path to the folder where the project lives (e.g. `frontend` or `desktop`).
+      Defaults to `frontend`.
+    required: false
+    default: frontend
+
+  run-install:
+    description: |
+      If true, this action will run `pnpm install --frozen-lockfile --prefer-offline` 
+      in the working-directory. If false, it will skip installation.
+    required: false
+    default: 'true'
+
+runs:
+  using: composite
+  steps:
+    # 1. Use pnpm/action-setup to install pnpm (v4) but don't run install
+    - name: Install pnpm (without installing packages)
+      uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda
+      with:
+        run_install: false
+        # point at the package.json in the chosen directory
+        package_json_file: ${{ inputs.working-directory }}/package.json
+
+    # 2. Set up Node and cache pnpm lockfile
+    - name: Setup Node (with pnpm cache)
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      with:
+        # Read desired Node version from .nvmrc at the root (or adjust as needed)
+        node-version-file: .nvmrc
+        cache: pnpm
+        cache-dependency-path: ${{ inputs.working-directory }}/pnpm-lock.yaml
+
+    # 3. Optionally run pnpm install in the working-directory
+    - name: Install dependencies
+      if: ${{ inputs.run-install == 'true' }}
+      working-directory: ${{ inputs.working-directory }}
+      run: pnpm install --frozen-lockfile --prefer-offline --fetch-timeout 100000
+      shell: bash
