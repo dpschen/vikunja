@@ -1,5 +1,5 @@
 import {createRandomID} from '@/helpers/randomId'
-import tippy from 'tippy.js'
+import {createFloatingPopup} from '@/helpers/floatingPopup'
 import {nextTick} from 'vue'
 import {eventToHotkeyString} from '@github/hotkey'
 
@@ -7,18 +7,14 @@ export default function inputPrompt(pos: ClientRect, oldValue: string = ''): Pro
 	return new Promise((resolve) => {
 		const id = 'link-input-' + createRandomID()
 
-		const linkPopup = tippy('body', {
-			getReferenceClientRect: () => pos,
-			appendTo: () => document.body,
-			content: `<div><input class="input" placeholder="URL" id="${id}" value="${oldValue}"/></div>`,
-			showOnCreate: true,
-			interactive: true,
-			trigger: 'manual',
-			placement: 'top-start',
-			allowHTML: true,
-		})
+               const linkPopup = createFloatingPopup({
+                       getReferenceClientRect: () => pos,
+                       appendTo: () => document.body,
+                       content: `<div><input class="input" placeholder="URL" id="${id}" value="${oldValue}"/></div>`,
+                       placement: 'top-start',
+               })
 
-		linkPopup[0].show()
+               linkPopup.show()
 
 		nextTick(() => document.getElementById(id)?.focus())
 
@@ -32,7 +28,7 @@ export default function inputPrompt(pos: ClientRect, oldValue: string = ''): Pro
 
 			resolve(url)
 
-			linkPopup[0].hide()
+                       linkPopup.hide()
 		})
 
 	})
