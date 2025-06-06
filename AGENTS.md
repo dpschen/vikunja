@@ -4,6 +4,8 @@ These instructions summarize the development guidelines from the official Vikunj
 
 ## Development Environment
 - Use [devenv](https://devenv.sh/) to get a shell with all required tools.
+- Respect the formatting rules from `.editorconfig` in the repository root and
+  all subfolders.
 
 ## Building From Source
 1. Clone the repo and check out the desired version.
