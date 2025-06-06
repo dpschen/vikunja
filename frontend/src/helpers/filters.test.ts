@@ -178,15 +178,25 @@ describe('Filter Transformation', () => {
 			expect(transformed).toBe('labels = 1')
 		})
 
-		it('should correctly resolve project when the project is called project', () => {
-			const transformed = transformFilterStringForApi(
-				'project = project',
-				nullTitleToIdResolver,
-				(title: string) => 1,
-			)
+                it('should correctly resolve project when the project is called project', () => {
+                        const transformed = transformFilterStringForApi(
+                                'project = project',
+                                nullTitleToIdResolver,
+                                (title: string) => 1,
+                        )
 
-			expect(transformed).toBe('project = 1')
-		})
+                        expect(transformed).toBe('project = 1')
+                })
+
+                it('should resolve projects with single quotes in the title', () => {
+                        const transformed = transformFilterStringForApi(
+                                "project = Todo's",
+                                nullTitleToIdResolver,
+                                (title: string) => title === "Todo's" ? 1 : null,
+                        )
+
+                        expect(transformed).toBe('project = 1')
+                })
 	})
 
 	describe('To API', () => {
@@ -279,15 +289,25 @@ describe('Filter Transformation', () => {
 			expect(transformed).toBe('labels = one')
 		})
 
-		it('should correctly resolve projects', () => {
-			const transformed = transformFilterStringFromApi(
-				'project = 1',
-				nullIdToTitleResolver,
-				(id: number) => 'lorem',
-			)
+                it('should correctly resolve projects', () => {
+                        const transformed = transformFilterStringFromApi(
+                                'project = 1',
+                                nullIdToTitleResolver,
+                                (id: number) => 'lorem',
+                        )
 
-			expect(transformed).toBe('project = lorem')
-		})
+                        expect(transformed).toBe('project = lorem')
+                })
+
+                it('should resolve projects with single quotes in the title from API', () => {
+                        const transformed = transformFilterStringFromApi(
+                                'project = 1',
+                                nullIdToTitleResolver,
+                                (id: number) => id === 1 ? "Todo's" : null,
+                        )
+
+                        expect(transformed).toBe("project = Todo's")
+                })
 
 		it('should correctly resolve multiple projects', () => {
 			const transformed = transformFilterStringFromApi(
