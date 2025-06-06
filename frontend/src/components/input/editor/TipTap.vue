@@ -295,6 +295,12 @@ const CustomImage = Image.extend({
 	},
 })
 
+const NonInclusiveLink = Link.extend({
+       inclusive() {
+               return false
+       },
+})
+
 type Mode = 'edit' | 'preview'
 
 const internalMode = ref<Mode>('preview')
@@ -417,14 +423,14 @@ const extensions : Extensions = [
 	}),
 	Typography,
 	Underline,
-	Link.configure({
-		openOnClick: false,
-		validate: (href: string) => (new RegExp(
-			`^(https?|${additionalLinkProtocols.join('|')}):\\/\\/`,
-			'i',
-		)).test(href),
-		protocols: additionalLinkProtocols,
-	}),
+       NonInclusiveLink.configure({
+               openOnClick: false,
+               validate: (href: string) => (new RegExp(
+                       `^(https?|${additionalLinkProtocols.join('|')}):\\/\\/`,
+                       'i',
+               )).test(href),
+               protocols: additionalLinkProtocols,
+       }),
 	Table.configure({
 		resizable: true,
 	}),
