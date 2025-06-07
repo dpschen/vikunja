@@ -125,7 +125,7 @@ import {formatDateLong, formatDateSince, formatISO} from '@/helpers/time/formatD
 import {colorIsDark} from '@/helpers/color/colorIsDark'
 import {useTaskStore} from '@/stores/tasks'
 import AssigneeList from '@/components/tasks/partials/AssigneeList.vue'
-import {playPopSound} from '@/helpers/playPop'
+import {usePopSound} from '@/helpers/playPop'
 import {isEditorContentEmpty} from '@/helpers/editorContentEmpty'
 import {useProjectStore} from '@/stores/projects'
 
@@ -138,6 +138,7 @@ const props = withDefaults(defineProps<{
 })
 
 const router = useRouter()
+const playPopSound = usePopSound()
 
 const loadingInternal = ref(false)
 

@@ -1,17 +1,23 @@
+import {computed} from 'vue'
 import {useAuthStore} from '@/stores/auth'
+import {useSound} from '@vueuse/sound'
 
 import popSoundFile from '@/assets/audio/pop.mp3'
 
-export function playPopSound() {
-	const playSoundWhenDone = useAuthStore().settings.frontendSettings.playSoundWhenDone
+export function usePopSound() {
+       const authStore = useAuthStore()
+       const playSoundWhenDone = computed(() => authStore.settings.frontendSettings.playSoundWhenDone)
 
-	if (!playSoundWhenDone)
-		return
+       const {play} = useSound(popSoundFile)
 
-	try {
-		const popSound = new Audio(popSoundFile)
-		popSound.play()
-	} catch (e) {
-		console.error('Could not play pop sound:', e)
-	}
+       return () => {
+               if (!playSoundWhenDone.value)
+                       return
+
+               try {
+                       play()
+               } catch (e) {
+                       console.error('Could not play pop sound:', e)
+               }
+       }
 }

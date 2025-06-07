@@ -208,7 +208,7 @@ import {useBaseStore} from '@/stores/base'
 import {useTaskStore} from '@/stores/tasks'
 import AssigneeList from '@/components/tasks/partials/AssigneeList.vue'
 import {useIntervalFn} from '@vueuse/core'
-import {playPopSound} from '@/helpers/playPop'
+import {usePopSound} from '@/helpers/playPop'
 import {isEditorContentEmpty} from '@/helpers/editorContentEmpty'
 import {TASK_REPEAT_MODES} from '@/types/IRepeatMode'
 
@@ -240,6 +240,7 @@ function getTaskById(taskId: number): ITask | undefined {
 }
 
 const {t} = useI18n({useScope: 'global'})
+const playPopSound = usePopSound()
 
 const taskService = shallowReactive(new TaskService())
 const task = ref<ITask>(new TaskModel())
