@@ -49,3 +49,7 @@ pnpm run build
 ```shell
 pnpm run lint
 ```
+
+## License
+
+Sound assets used in the frontend are from the Little Robot Sound Factory on FreeSound and are licensed under CC0 1.0. See [../originalMedia/audio/LICENSE](../originalMedia/audio/LICENSE).

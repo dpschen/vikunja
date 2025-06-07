@@ -53,3 +53,4 @@ Please check out the contribuition guidelines on [the website](https://vikunja.i
 ## License
 
 This project is licensed under the AGPLv3 License. See the [LICENSE](LICENSE) file for the full license text.
+The sound files used for task completion notifications are from the Little Robot Sound Factory on FreeSound. See [frontend/originalMedia/audio/LICENSE](frontend/originalMedia/audio/LICENSE) for details.
