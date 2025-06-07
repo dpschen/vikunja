@@ -204,7 +204,7 @@ import FancyCheckbox from '@/components/input/FancyCheckbox.vue'
 import {error, success} from '@/message'
 import {useTaskStore} from '@/stores/tasks'
 import {useProjectStore} from '@/stores/projects'
-import {playPopSound} from '@/helpers/playPop'
+import {usePopSound} from '@/helpers/playPop'
 
 const props = withDefaults(defineProps<{
 	taskId: number,
@@ -220,6 +220,7 @@ const props = withDefaults(defineProps<{
 const taskStore = useTaskStore()
 const projectStore = useProjectStore()
 const route = useRoute()
+const playPopSound = usePopSound()
 const {t} = useI18n({useScope: 'global'})
 
 type TaskRelation = {kind: IRelationKind, task: ITask}

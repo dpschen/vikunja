@@ -631,7 +631,7 @@ import {uploadFile} from '@/helpers/attachments'
 import {getProjectTitle} from '@/helpers/getProjectTitle'
 import {scrollIntoView} from '@/helpers/scrollIntoView'
 import {TASK_REPEAT_MODES} from '@/types/IRepeatMode'
-import {playPopSound} from '@/helpers/playPop'
+import {usePopSound} from '@/helpers/playPop'
 
 import {useAttachmentStore} from '@/stores/attachments'
 import {useTaskStore} from '@/stores/tasks'
@@ -655,6 +655,7 @@ defineEmits<{
 }>()
 
 const router = useRouter()
+const playPopSound = usePopSound()
 const {t} = useI18n({useScope: 'global'})
 
 const projectStore = useProjectStore()
