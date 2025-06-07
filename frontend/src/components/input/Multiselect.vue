@@ -124,10 +124,10 @@
 </template>
 
 <script setup lang="ts" generic="T extends { [id: string]: any }">
-import {computed, onBeforeUnmount, onMounted, ref, toRefs, watch, type ComponentPublicInstance} from 'vue'
+import {computed, ref, toRefs, watch, type ComponentPublicInstance} from 'vue'
+import {onClickOutside} from '@vueuse/core'
 import {useI18n} from 'vue-i18n'
 
-import {closeWhenClickedOutside} from '@/helpers/closeWhenClickedOutside'
 
 import BaseButton from '@/components/base/BaseButton.vue'
 import CustomTransition from '@/components/misc/CustomTransition.vue'
@@ -223,9 +223,6 @@ const showSearchResults = ref(false)
 
 const internalValue = ref<string | T | T[] | null>(null)
 
-onMounted(() => document.addEventListener('click', hideSearchResultsHandler))
-onBeforeUnmount(() => document.removeEventListener('click', hideSearchResultsHandler))
-
 const {modelValue, searchResults} = toRefs(props)
 
 watch(
@@ -303,17 +300,16 @@ function search() {
 }
 
 const multiselectRoot = ref<HTMLElement | null>(null)
-
-function hideSearchResultsHandler(e: MouseEvent) {
-	closeWhenClickedOutside(e, multiselectRoot.value, closeSearchResults)
-}
+onClickOutside(multiselectRoot, () => {
+        closeSearchResults()
+})
 
 function closeSearchResults() {
 	showSearchResults.value = false
 }
 
 function handleFocus() {
-	// We need the timeout to avoid the hideSearchResultsHandler hiding the search results right after the input
+        // We need the timeout to avoid the onClickOutside handler hiding the search results right after the input
 	// is focused. That would lead to flickering pre-loaded search results and hiding them right after showing.
 	setTimeout(() => {
 		showSearchResults.value = true

@@ -7,9 +7,9 @@ import BaseButton from '@/components/base/BaseButton.vue'
 import type {IUser} from '@/modelTypes/IUser'
 import {getDisplayName} from '@/models/user'
 import {useI18n} from 'vue-i18n'
-import {nextTick, onBeforeUnmount, onMounted, ref} from 'vue'
+import {nextTick, ref} from 'vue'
+import {onClickOutside} from '@vueuse/core'
 import CustomTransition from '@/components/misc/CustomTransition.vue'
-import {closeWhenClickedOutside} from '@/helpers/closeWhenClickedOutside'
 import {useAuthStore} from '@/stores/auth'
 import {useColorScheme} from '@/composables/useColorScheme'
 
@@ -90,15 +90,11 @@ function getReactionTooltip(users: IUser[], value: string) {
 
 const showEmojiPicker = ref(false)
 const emojiPickerRef = ref<HTMLElement | null>(null)
-
-function hideEmojiPicker(e: MouseEvent) {
-	if (showEmojiPicker.value) {
-		closeWhenClickedOutside(e, emojiPickerRef.value.$el, () => showEmojiPicker.value = false)
-	}
-}
-
-onMounted(() => document.addEventListener('click', hideEmojiPicker))
-onBeforeUnmount(() => document.removeEventListener('click', hideEmojiPicker))
+onClickOutside(emojiPickerRef, () => {
+        if (showEmojiPicker.value) {
+                showEmojiPicker.value = false
+        }
+})
 
 const emojiPickerButtonRef = ref<HTMLElement | null>(null)
 const reactionContainerRef = ref<HTMLElement | null>(null)
