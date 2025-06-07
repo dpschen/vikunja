@@ -87,6 +87,7 @@
 
 <script lang="ts" setup>
 import {computed, onMounted, onUnmounted, ref} from 'vue'
+import {onClickOutside} from '@vueuse/core'
 import {useRouter} from 'vue-router'
 
 import NotificationService from '@/services/notification'
@@ -94,7 +95,6 @@ import BaseButton from '@/components/base/BaseButton.vue'
 import CustomTransition from '@/components/misc/CustomTransition.vue'
 import User from '@/components/misc/User.vue'
 import { NOTIFICATION_NAMES as names, type INotification} from '@/modelTypes/INotification'
-import {closeWhenClickedOutside} from '@/helpers/closeWhenClickedOutside'
 import {formatDateLong, formatDateSince} from '@/helpers/time/formatDate'
 import {getDisplayName} from '@/models/user'
 import {useAuthStore} from '@/stores/auth'
@@ -111,6 +111,11 @@ const {t} = useI18n()
 const allNotifications = ref<INotification[]>([])
 const showNotifications = ref(false)
 const popup = ref(null)
+onClickOutside(popup, () => {
+        if (showNotifications.value) {
+                showNotifications.value = false
+        }
+})
 
 const unreadNotifications = computed(() => {
 	return notifications.value.filter(n => n.readAt === null).length
@@ -123,16 +128,14 @@ const userInfo = computed(() => authStore.info)
 let interval: ReturnType<typeof setInterval>
 
 onMounted(() => {
-	loadNotifications()
-	document.addEventListener('click', hidePopup)
-	document.addEventListener('visibilitychange', loadNotifications)
-	interval = setInterval(loadNotifications, LOAD_NOTIFICATIONS_INTERVAL)
+        loadNotifications()
+        document.addEventListener('visibilitychange', loadNotifications)
+        interval = setInterval(loadNotifications, LOAD_NOTIFICATIONS_INTERVAL)
 })
 
 onUnmounted(() => {
-	document.removeEventListener('click', hidePopup)
-	document.removeEventListener('visibilitychange', loadNotifications)
-	clearInterval(interval)
+        document.removeEventListener('visibilitychange', loadNotifications)
+        clearInterval(interval)
 })
 
 async function loadNotifications() {
@@ -144,11 +147,6 @@ async function loadNotifications() {
 	allNotifications.value = await notificationService.getAll()
 }
 
-function hidePopup(e) {
-	if (showNotifications.value) {
-		closeWhenClickedOutside(e, popup.value, () => showNotifications.value = false)
-	}
-}
 
 function to(n, index) {
 	const to = {
