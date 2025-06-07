@@ -49,3 +49,10 @@ pnpm run build
 ```shell
 pnpm run lint
 ```
+
+## Font licenses
+
+The original OpenSans and Quicksand font files are provided in
+[`originalMedia/fonts/`](./originalMedia/fonts/). Both fonts are licensed
+under the SIL Open Font License 1.1. See
+[`OFL.txt`](./originalMedia/fonts/OFL.txt) for the full license text.
