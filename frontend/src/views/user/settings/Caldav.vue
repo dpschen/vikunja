@@ -104,7 +104,7 @@ import {useI18n} from 'vue-i18n'
 
 import {CALDAV_DOCS} from '@/urls'
 import {useTitle} from '@/composables/useTitle'
-import {useCopyToClipboard} from '@/composables/useCopyToClipboard'
+import { useClipboard } from '@vueuse/core'
 import {success} from '@/message'
 import BaseButton from '@/components/base/BaseButton.vue'
 import Message from '@/components/misc/Message.vue'
@@ -114,7 +114,7 @@ import type {ICaldavToken} from '@/modelTypes/ICaldavToken'
 import {useConfigStore} from '@/stores/config'
 import {useAuthStore} from '@/stores/auth'
 
-const copy = useCopyToClipboard()
+const { copy } = useClipboard()
 
 const {t} = useI18n({useScope: 'global'})
 useTitle(() => `${t('user.settings.caldav.title')} - ${t('user.settings.title')}`)

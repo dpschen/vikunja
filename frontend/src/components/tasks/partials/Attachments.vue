@@ -188,7 +188,7 @@ import {useAttachmentStore} from '@/stores/attachments'
 import {formatDateSince, formatDateLong} from '@/helpers/time/formatDate'
 import {uploadFiles, generateAttachmentUrl} from '@/helpers/attachments'
 import {getHumanSize} from '@/helpers/getHumanSize'
-import {useCopyToClipboard} from '@/composables/useCopyToClipboard'
+import { useClipboard } from '@vueuse/core'
 import {error, success} from '@/message'
 import {useTaskStore} from '@/stores/tasks'
 import {useI18n} from 'vue-i18n'
@@ -274,7 +274,7 @@ async function viewOrDownload(attachment: IAttachment) {
 	}
 }
 
-const copy = useCopyToClipboard()
+const { copy } = useClipboard()
 
 function copyUrl(attachment: IAttachment) {
 	copy(generateAttachmentUrl(props.task.id, attachment.id))
