@@ -52,4 +52,8 @@ Please check out the contribuition guidelines on [the website](https://vikunja.i
 
 ## License
 
-This project is licensed under the AGPLv3 License. See the [LICENSE](LICENSE) file for the full license text.
+Most of the repository is licensed under the AGPL‑3.0‑or‑later. The code in
+`desktop/` is licensed under the GPL‑3.0‑or‑later.
+
+See the [LICENSE](LICENSE) file and the
+[desktop/LICENSE](desktop/LICENSE) file for the full license texts.
