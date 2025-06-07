@@ -54,7 +54,7 @@
 					:spellcheck="autocompleteEnabled ? undefined : 'false'"
 					@keyup="search"
 					@keyup.enter.exact.prevent="() => createOrSelectOnEnter()"
-					@keydown.down.exact.prevent="() => preSelect(0)"
+					@keydown.down.exact.prevent="() => focusItem(0)"
 					@focus="handleFocus"
 				>
 				<BaseButton 
@@ -78,8 +78,9 @@
 					:key="index"
 					:ref="(el) => setResult(el, index)"
 					class="search-result-button is-fullwidth"
-					@keydown.up.prevent="() => preSelect(index - 1)"
-					@keydown.down.prevent="() => preSelect(index + 1)"
+					@focus="() => focusItem(index)"
+					@keydown.up.prevent="() => moveSelection(-1)"
+					@keydown.down.prevent="() => moveSelection(1)"
 					@click.prevent.stop="() => select(data)"
 				>
 					<span>
@@ -99,8 +100,9 @@
 					v-if="creatableAvailable"
 					:ref="(el) => setResult(el, filteredSearchResults.length)"
 					class="search-result-button is-fullwidth"
-					@keydown.up.prevent="() => preSelect(filteredSearchResults.length - 1)"
-					@keydown.down.prevent="() => preSelect(filteredSearchResults.length + 1)"
+					@focus="() => focusItem(filteredSearchResults.length)"
+					@keydown.up.prevent="() => moveSelection(-1)"
+					@keydown.down.prevent="() => moveSelection(1)"
 					@keyup.enter.prevent="create"
 					@click.prevent.stop="create"
 				>
@@ -125,6 +127,7 @@
 
 <script setup lang="ts" generic="T extends { [id: string]: any }">
 import {computed, onBeforeUnmount, onMounted, ref, toRefs, watch, type ComponentPublicInstance} from 'vue'
+import {useDropdownNavigation} from '@/composables/useDropdownNavigation'
 import {useI18n} from 'vue-i18n'
 
 import {closeWhenClickedOutside} from '@/helpers/closeWhenClickedOutside'
@@ -361,34 +364,11 @@ function setSelectedObject(object: string | T | null, resetOnly = false) {
 	query.value = props.label !== '' ? object[props.label] : object
 }
 
-const results = ref<(Element | ComponentPublicInstance)[]>([])
-
-function setResult(el: Element | ComponentPublicInstance | null, index: number) {
-	if (el === null) {
-		delete results.value[index]
-	} else {
-		results.value[index] = el
-	}
-}
-
-function preSelect(index: number) {
-	if (index < 0) {
-		searchInput.value?.focus()
-		return
-	}
-
-	const elems = results.value[index]
-	if (typeof elems === 'undefined' || elems.length === 0) {
-		return
-	}
-
-	if (Array.isArray(elems)) {
-		elems[0].focus()
-		return
-	}
-
-	elems.focus()
-}
+const {
+        setResultRef: setResult,
+        focusItem,
+        moveSelection,
+} = useDropdownNavigation<Element | ComponentPublicInstance>()
 
 function create() {
 	if (query.value === '') {
