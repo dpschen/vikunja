@@ -52,6 +52,11 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             RELEASE_VERSION=${{ steps.ghd.outputs.describe }}
+      - name: Generate Docker SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: vikunja/vikunja:${{ github.ref_type == 'tag' && github.ref_name || 'unstable' }}
+          artifact-name: docker-image.sbom.spdx.json
 
   binaries:
     runs-on: blacksmith-8vcpu-ubuntu-2204
@@ -105,6 +110,15 @@ jobs:
           for file in dist/zip/*; do
             gpg -v --default-key 7D061A4AA61436B40713D42EFF054DACD908493A -b --batch --yes --passphrase "${{ secrets.RELEASE_GPG_PASSPHRASE }}" --pinentry-mode loopback --sign "$file"
           done
+      - name: Generate SBOM
+        run: cyclonedx-gomod mod -licenses -output sbom.xml
+      - name: Compute artifact hashes
+        id: hashes
+        run: echo "hashes=$(sha256sum dist/zip/* | base64 -w0)" >> "$GITHUB_OUTPUT"
+      - name: Generate provenance
+        uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.7.0
+        with:
+          base64-subjects: "${{ steps.hashes.outputs.hashes }}"
       - name: Upload
         uses: kolaente/s3-action@41963184b524ccac734ea4d8c964ac74b5b1af89 # v1.2.1
         with:
@@ -116,6 +130,18 @@ jobs:
           target-path: /vikunja/${{ github.ref_type == 'tag' && steps.ghd.outputs.describe || 'unstable' }}
           files: 'dist/zip/*'
           strip-path-prefix: dist/zip/
+      - name: Upload SBOM and provenance
+        uses: kolaente/s3-action@41963184b524ccac734ea4d8c964ac74b5b1af89 # v1.2.1
+        with:
+          s3-access-key-id: ${{ secrets.HETZNER_S3_ACCESS_KEY }}
+          s3-secret-access-key: ${{ secrets.HETZNER_S3_SECRET_KEY }}
+          s3-endpoint: 'https://fsn1.your-objectstorage.com'
+          s3-bucket: 'vikunja'
+          s3-region: 'fsn1'
+          target-path: /vikunja/${{ github.ref_type == 'tag' && steps.ghd.outputs.describe || 'unstable' }}
+          files: |
+            sbom.xml
+            multiple.intoto.jsonl
       - name: Store Binaries
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
