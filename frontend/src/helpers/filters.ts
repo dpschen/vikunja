@@ -65,7 +65,7 @@ export function hasFilterQuery(filter: string): boolean {
 }
 
 export function getFilterFieldRegexPattern(field: string): RegExp {
-	return new RegExp('(' + field + '\\s*' + FILTER_OPERATORS_REGEX + '\\s*)([\'"]?)([^\'"&|()<]+\\1?)?', 'ig')
+        return new RegExp('(' + field + '\\s*' + FILTER_OPERATORS_REGEX + '\\s*)([^&|()]+)', 'ig')
 }
 
 export function transformFilterStringForApi(
@@ -96,12 +96,12 @@ export function transformFilterStringForApi(
 			let match: RegExpExecArray | null
 			const replacements: { start: number, length: number, replacement: string }[] = []
 
-			while ((match = pattern.exec(filter)) !== null) {
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				const [matched, prefix, operator, space, keyword] = match
-				if (!keyword) {
-					continue
-				}
+                        while ((match = pattern.exec(filter)) !== null) {
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                const [matched, prefix, operator, keyword] = match
+                                if (!keyword) {
+                                        continue
+                                }
 
 				let keywords = [keyword.trim()]
 				if (operator === 'in' || operator === '?=' || operator === 'not in' || operator === '?!=') {
@@ -176,10 +176,10 @@ export function transformFilterStringFromApi(
 			const pattern = getFilterFieldRegexPattern(field)
 
 			let match: RegExpExecArray | null
-			while ((match = pattern.exec(filter)) !== null) {
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-				const [matched, prefix, operator, space, keyword] = match
-				if (keyword) {
+                        while ((match = pattern.exec(filter)) !== null) {
+                                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                                const [matched, prefix, operator, keyword] = match
+                                if (keyword) {
 					let keywords = [keyword.trim()]
 					if (operator === 'in' || operator === '?=' || operator === 'not in' || operator === '?!=') {
 						keywords = keyword.trim().split(',').map(k => k.trim())
