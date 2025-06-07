@@ -53,3 +53,7 @@ Please check out the contribution guidelines on [the website](https://vikunja.io
 ## License
 
 This project is licensed under the AGPLv3 License. See the [LICENSE](LICENSE) file for the full license text.
+
+### Unsplash Images
+
+Background images from Unsplash are distributed under the [Unsplash License](https://unsplash.com/license). The license requires giving credit to the photographer and Unsplash. See [Unsplash’s terms](https://unsplash.com/terms) for more information.
