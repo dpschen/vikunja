@@ -226,7 +226,7 @@ import {getAvatarUrl, getDisplayName} from '@/models/user'
 import {useConfigStore} from '@/stores/config'
 import {useAuthStore} from '@/stores/auth'
 import Reactions from '@/components/input/Reactions.vue'
-import { useCopyToClipboard } from '@/composables/useCopyToClipboard'
+import { useClipboard } from '@vueuse/core'
 
 const props = withDefaults(defineProps<{
 	taskId: number,
@@ -236,7 +236,7 @@ const props = withDefaults(defineProps<{
 	canWrite: true,
 })
 
-const copy = useCopyToClipboard()
+const { copy } = useClipboard()
 
 const {t} = useI18n({useScope: 'global'})
 const configStore = useConfigStore()

@@ -229,7 +229,7 @@ import type {IProject} from '@/modelTypes/IProject'
 
 import LinkShareService from '@/services/linkShare'
 
-import {useCopyToClipboard} from '@/composables/useCopyToClipboard'
+import { useClipboard } from '@vueuse/core'
 import {success} from '@/message'
 import {getDisplayName} from '@/models/user'
 import {useConfigStore} from '@/stores/config'
@@ -256,7 +256,7 @@ const showNewForm = ref(false)
 const projectStore = useProjectStore()
 
 const availableViews = computed<IProjectView[]>(() => projectStore.projects[props.projectId]?.views || [])
-const copy = useCopyToClipboard()
+const { copy } = useClipboard()
 watch(
 	() => props.projectId,
 	load,

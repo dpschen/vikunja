@@ -72,7 +72,7 @@ import CustomTransition from '@/components/misc/CustomTransition.vue'
 import ColorBubble from '@/components/misc/ColorBubble.vue'
 import Done from '@/components/misc/Done.vue'
 
-import {useCopyToClipboard} from '@/composables/useCopyToClipboard'
+import { useClipboard } from '@vueuse/core'
 import {useTaskStore} from '@/stores/tasks'
 
 import type {ITask} from '@/modelTypes/ITask'
@@ -90,7 +90,7 @@ const emit = defineEmits<{
 }>()
 
 const router = useRouter()
-const copy = useCopyToClipboard()
+const { copy } = useClipboard()
 
 async function copyUrl() {
 	const route = router.resolve({name: 'task.detail', query: {taskId: props.task.id}})
