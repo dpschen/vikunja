@@ -49,3 +49,14 @@ pnpm run build
 ```shell
 pnpm run lint
 ```
+
+### Updating fonts
+
+To regenerate the bundled fonts run the following from the `frontend/` directory:
+
+```bash
+pnpm fonts:update
+```
+
+Run this whenever you change `src/styles/fonts.scss` or update the fonts in
+`originalMedia/fonts`. The subsetting script uses fonttools and requires **Bash**.
