@@ -18,6 +18,7 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -29,6 +30,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 )
+
+const cacheControlMax = `max-age=315360000, public, max-age=31536000, s-maxage=31536000, immutable`
 
 // UploadTaskAttachment handles everything needed for the upload of a task attachment
 // @Summary Upload a task attachment
@@ -116,7 +119,7 @@ func UploadTaskAttachment(c echo.Context) error {
 
 // GetTaskAttachment returns a task attachment to download for the user
 // @Summary Get one attachment.
-// @Description Get one attachment for download. **Returns json on error.**
+// @Description Get one attachment for download. Sets `Cache-Control` and `Etag` headers. **Returns json on error.**
 // @tags task
 // @Produce octet-stream
 // @Param id path int true "Task ID"
@@ -190,6 +193,11 @@ func GetTaskAttachment(c echo.Context) error {
 			return c.Blob(http.StatusOK, "image/png", previewFileBytes)
 		}
 	}
+
+	// Set caching headers
+	c.Response().Header().Set("Cache-Control", cacheControlMax)
+	etag := fmt.Sprintf("\"%d-%d\"", taskAttachment.File.ID, taskAttachment.File.Created.Unix())
+	c.Response().Header().Set("Etag", etag)
 
 	http.ServeContent(c.Response(), c.Request(), taskAttachment.File.Name, taskAttachment.File.Created, taskAttachment.File.File)
 	return nil
