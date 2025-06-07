@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteLocation } from 'vue-router'
-import {saveLastVisited} from '@/helpers/saveLastVisited'
+import {lastVisited} from '@/helpers/saveLastVisited'
 
 import {getProjectViewId} from '@/helpers/projectView'
 import {parseDateOrString} from '@/helpers/time/parseDateOrString'
@@ -417,9 +417,9 @@ export async function getAuthForRoute(to: RouteLocation, authStore) {
 		].includes(to.name as string) &&
 		localStorage.getItem('emailConfirmToken') === null
 	
-	if (isValidUserAppRoute) {
-		saveLastVisited(to.name as string, to.params, to.query)
-	}
+       if (isValidUserAppRoute) {
+               lastVisited.value = {name: to.name as string, params: to.params, query: to.query}
+       }
 	
 	if (isValidUserAppRoute) {
 		return {name: 'user.login'}
@@ -437,14 +437,14 @@ router.beforeEach(async (to, from) => {
 		to.hash = from.hash
 	}
 
-	if (to.hash.startsWith(LINK_SHARE_HASH_PREFIX) && !authStore.authLinkShare) {
-		saveLastVisited(to.name as string, to.params, to.query)
-		return {
-			name: 'link-share.auth',
-			params: {
-				share: to.hash.replace(LINK_SHARE_HASH_PREFIX, ''),
-			},
-		}
+       if (to.hash.startsWith(LINK_SHARE_HASH_PREFIX) && !authStore.authLinkShare) {
+               lastVisited.value = {name: to.name as string, params: to.params, query: to.query}
+               return {
+                       name: 'link-share.auth',
+                       params: {
+                               share: to.hash.replace(LINK_SHARE_HASH_PREFIX, ''),
+                       },
+               }
 	}
 
 	const newRoute = await getAuthForRoute(to, authStore)

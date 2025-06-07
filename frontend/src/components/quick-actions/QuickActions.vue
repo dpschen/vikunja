@@ -118,7 +118,7 @@ import {useLabelStore} from '@/stores/labels'
 import {useTaskStore} from '@/stores/tasks'
 import {useAuthStore} from '@/stores/auth'
 
-import {getHistory} from '@/modules/projectHistory'
+import {projectHistory as projectHistoryRef} from '@/modules/projectHistory'
 import {parseTaskText, PREFIXES, PrefixMode} from '@/modules/parseTaskText'
 import {success} from '@/message'
 
@@ -193,11 +193,11 @@ const foundProjects = computed(() => {
 		return []
 	}
 
-	if (text === '') {
-		const history = getHistory()
-		return history.map((p) => projectStore.projects[p.id])
-			.filter(p => Boolean(p))
-	}
+       if (text === '') {
+               const history = projectHistoryRef.value
+               return history.map((p) => projectStore.projects[p.id])
+                       .filter(p => Boolean(p))
+       }
 
 	return projectStore.searchProjectAndFilter(project ?? text)
 		.filter(p => Boolean(p))
