@@ -90,14 +90,20 @@
 						<table class="table has-actions is-hoverable is-fullwidth mb-0">
 							<thead>
 								<tr>
-									<th v-if="activeColumns.index">
+									<th
+										v-if="activeColumns.index"
+										:class="{'is-active': isSorted('index')}"
+									>
 										#
 										<Sort
 											:order="sortBy.index"
 											@click="sort('index')"
 										/>
 									</th>
-									<th v-if="activeColumns.done">
+									<th
+										v-if="activeColumns.done"
+										:class="{'is-active': isSorted('done')}"
+									>
 										{{ $t('task.attributes.done') }}
 										<Sort
 											:order="sortBy.done"
@@ -105,6 +111,7 @@
 										/>
 									</th>
 									<th v-if="activeColumns.title">
+										:class="{'is-active': isSorted('title')}"
 										{{ $t('task.attributes.title') }}
 										<Sort
 											:order="sortBy.title"
@@ -112,6 +119,7 @@
 										/>
 									</th>
 									<th v-if="activeColumns.priority">
+										:class="{'is-active': isSorted('priority')}"
 										{{ $t('task.attributes.priority') }}
 										<Sort
 											:order="sortBy.priority"
@@ -125,6 +133,7 @@
 										{{ $t('task.attributes.assignees') }}
 									</th>
 									<th v-if="activeColumns.dueDate">
+										:class="{'is-active': isSorted('due_date')}"
 										{{ $t('task.attributes.dueDate') }}
 										<Sort
 											:order="sortBy.due_date"
@@ -132,6 +141,7 @@
 										/>
 									</th>
 									<th v-if="activeColumns.startDate">
+										:class="{'is-active': isSorted('start_date')}"
 										{{ $t('task.attributes.startDate') }}
 										<Sort
 											:order="sortBy.start_date"
@@ -139,6 +149,7 @@
 										/>
 									</th>
 									<th v-if="activeColumns.endDate">
+										:class="{'is-active': isSorted('end_date')}"
 										{{ $t('task.attributes.endDate') }}
 										<Sort
 											:order="sortBy.end_date"
@@ -146,6 +157,7 @@
 										/>
 									</th>
 									<th v-if="activeColumns.percentDone">
+										:class="{'is-active': isSorted('percentDone')}"
 										{{ $t('task.attributes.percentDone') }}
 										<Sort
 											:order="sortBy.percent_done"
@@ -153,6 +165,7 @@
 										/>
 									</th>
 									<th v-if="activeColumns.doneAt">
+										:class="{'is-active': isSorted('doneAt')}"
 										{{ $t('task.attributes.doneAt') }}
 										<Sort
 											:order="sortBy.done_at"
@@ -160,6 +173,7 @@
 										/>
 									</th>
 									<th v-if="activeColumns.created">
+										:class="{'is-active': isSorted('created')}"
 										{{ $t('task.attributes.created') }}
 										<Sort
 											:order="sortBy.created"
@@ -167,6 +181,7 @@
 										/>
 									</th>
 									<th v-if="activeColumns.updated">
+										:class="{'is-active': isSorted('updated')}"
 										{{ $t('task.attributes.updated') }}
 										<Sort
 											:order="sortBy.updated"
@@ -363,12 +378,17 @@ function sort(property: keyof SortBy) {
 }
 
 function setActiveColumnsSortParam() {
-	sortByParam.value = Object.keys(sortBy.value)
-		.filter(prop => activeColumns.value[camelCase(prop)])
-		.reduce((obj, key) => {
-			obj[key] = sortBy.value[key]
-			return obj
-		}, {})
+        sortByParam.value = Object.keys(sortBy.value)
+                .filter(prop => activeColumns.value[camelCase(prop)])
+                .reduce((obj, key) => {
+                        obj[key] = sortBy.value[key]
+                        return obj
+                }, {})
+}
+
+function isSorted(property: keyof SortBy) {
+       const order = sortBy.value[property]
+       return typeof order !== 'undefined' && order !== 'none'
 }
 
 // TODO: re-enable opening task detail in modal
@@ -391,9 +411,12 @@ const taskDetailRoutes = computed(() => Object.fromEntries(
 	overflow-x: auto;
 	overflow-y: hidden;
 
-	th {
-		white-space: nowrap;
-	}
+       th {
+               white-space: nowrap;
+               &.is-active {
+                       color: var(--primary);
+               }
+       }
 
 	.user {
 		margin: 0;
