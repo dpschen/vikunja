@@ -74,7 +74,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {useI18n} from 'vue-i18n'
 
 import {formatDate} from '@/helpers/time/formatDate'
-import {setTitle} from '@/helpers/setTitle'
+import {useTitle} from '@/composables/useTitle'
 
 import FancyCheckbox from '@/components/input/FancyCheckbox.vue'
 import SingleTaskInProject from '@/components/tasks/partials/SingleTaskInProject.vue'
@@ -232,7 +232,7 @@ function updateTasks(updatedTask: ITask) {
 }
 
 watchEffect(() => loadPendingTasks(props.dateFrom, props.dateTo))
-watchEffect(() => setTitle(pageTitle.value))
+useTitle(pageTitle)
 </script>
 
 <style lang="scss" scoped>
