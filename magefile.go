@@ -645,7 +645,10 @@ func (Build) Clean() error {
 // Builds a vikunja binary, ready to run
 func (Build) Build() {
 	mg.Deps(initVars)
-	runAndStreamOutput("go", "build", Goflags[0], "-tags", Tags, "-ldflags", "-s -w "+Ldflags, "-o", Executable)
+    runAndStreamOutput(
+        "go", "build", Goflags[0], "-trimpath", "-buildvcs=false",
+        "-tags", Tags, "-ldflags", "-s -w "+Ldflags, "-o", Executable,
+    )
 }
 
 func (Build) SaveVersionToFile() error {
