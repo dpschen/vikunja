@@ -171,6 +171,6 @@ replace github.com/samedi/caldav-go => github.com/kolaente/caldav-go v3.0.1-0.20
 
 replace github.com/labstack/echo/v4 => github.com/kolaente/echo/v4 v4.0.0-20250124112709-682dfde74c31 // https://github.com/labstack/echo/pull/2738
 
-go 1.23.0
+go 1.22.0
 
-toolchain go1.24.3
+toolchain go1.22
