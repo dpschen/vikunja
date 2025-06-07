@@ -10,7 +10,6 @@ import {LINK_SHARE_HASH_PREFIX} from '@/constants/linkShareHash'
 import {useAuthStore} from '@/stores/auth'
 
 import Login from '@/views/user/Login.vue'
-import Register from '@/views/user/Register.vue'
 import LinkSharingAuth from '@/views/sharing/LinkSharingAuth.vue'
 import OpenIdAuth from '@/views/user/OpenIdAuth.vue'
 import UpcomingTasks from '@/views/tasks/ShowTasks.vue'
@@ -74,16 +73,21 @@ const router = createRouter({
 				title: 'user.auth.resetPassword',
 			},
 		},
-		{
-			path: '/register',
-			name: 'user.register',
-			// FIXME: use dynamic imports
-			// component: () => import('@/views/user/Register.vue'),
-			component: Register,
-			meta: {
-				title: 'user.auth.createAccount',
-			},
-		},
+               {
+                       path: '/register',
+                       name: 'user.register',
+                       component: () => import('@/views/user/Register.vue'),
+                       meta: {
+                               title: 'user.auth.createAccount',
+                       },
+                       async beforeEnter() {
+                               const authStore = useAuthStore()
+                               await authStore.checkAuth()
+                               if (authStore.authenticated) {
+                                       return {name: 'home'}
+                               }
+                       },
+               },
 		{
 			path: '/user/settings',
 			name: 'user.settings',
