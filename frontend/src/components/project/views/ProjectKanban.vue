@@ -296,9 +296,8 @@ import Dropdown from '@/components/misc/Dropdown.vue'
 import DropdownItem from '@/components/misc/DropdownItem.vue'
 
 import {
-	type CollapsedBuckets,
-	getCollapsedBucketState,
-	saveCollapsedBucketState,
+       type CollapsedBuckets,
+       collapsedBucketState,
 } from '@/helpers/saveCollapsedBucketState'
 import {calculateItemPosition} from '@/helpers/calculateItemPosition'
 
@@ -415,8 +414,8 @@ watch(
 		if (projectId === undefined || Number(projectId) === 0) {
 			return
 		}
-		collapsedBuckets.value = getCollapsedBucketState(projectId)
-		kanbanStore.loadBucketsForProject(projectId, viewId, params)
+               collapsedBuckets.value = collapsedBucketState.value[projectId] ?? {}
+               kanbanStore.loadBucketsForProject(projectId, viewId, params)
 	},
 	{
 		immediate: true,
@@ -772,8 +771,8 @@ async function toggleDoneBucket(bucket: IBucket) {
 }
 
 function collapseBucket(bucket: IBucket) {
-	collapsedBuckets.value[bucket.id] = true
-	saveCollapsedBucketState(project.value.id, collapsedBuckets.value)
+        collapsedBuckets.value[bucket.id] = true
+       collapsedBucketState.value[project.value.id] = collapsedBuckets.value
 }
 
 function unCollapseBucket(bucket: IBucket) {
@@ -781,8 +780,8 @@ function unCollapseBucket(bucket: IBucket) {
 		return
 	}
 
-	collapsedBuckets.value[bucket.id] = false
-	saveCollapsedBucketState(project.value.id, collapsedBuckets.value)
+        collapsedBuckets.value[bucket.id] = false
+       collapsedBucketState.value[project.value.id] = collapsedBuckets.value
 }
 </script>
 
