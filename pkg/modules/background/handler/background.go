@@ -52,6 +52,8 @@ import (
 	"xorm.io/xorm"
 )
 
+const cacheControlMax = `max-age=315360000, public, max-age=31536000, s-maxage=31536000, immutable`
+
 // BackgroundProvider represents a thing which holds a background provider
 // Lets us get a new fresh provider every time we need one.
 type BackgroundProvider struct {
@@ -354,6 +356,8 @@ func GetProjectBackground(c echo.Context) error {
 	if stat != nil {
 		c.Response().Header().Set(echo.HeaderLastModified, stat.ModTime().UTC().Format(http.TimeFormat))
 	}
+
+	c.Response().Header().Set("Cache-Control", cacheControlMax)
 
 	// Serve the file
 	return c.Stream(http.StatusOK, "image/jpg", bgFile.File)
