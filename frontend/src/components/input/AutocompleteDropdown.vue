@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import {type ComponentPublicInstance, nextTick, ref, watch} from 'vue'
+import {useDropdownNavigation} from '@/composables/useDropdownNavigation'
 
-const props = withDefaults(defineProps<{
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	options: any[],
-	suggestion?: string,
-	maxHeight?: number,
+withDefaults(defineProps<{
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        options: any[],
+        suggestion?: string,
+        maxHeight?: number,
 }>(), {
-	maxHeight: 200,
-	suggestion: '',
+        maxHeight: 200,
+        suggestion: '',
 })
 
 const emit = defineEmits(['blur'])
@@ -19,7 +20,13 @@ const ESCAPE = 27,
 
 type StateType = 'unfocused' | 'focused'
 
-const selectedIndex = ref(-1)
+const {
+        selectedIndex,
+        setResultRef,
+        focusItem,
+        moveSelection,
+} = useDropdownNavigation<HTMLElement | ComponentPublicInstance>()
+
 const state = ref<StateType>('unfocused')
 const val = ref<string>('')
 const model = defineModel<string>()
@@ -29,11 +36,13 @@ const containerRef = ref<HTMLInputElement | null>(null)
 const editorRef = ref<HTMLInputElement | null>(null)
 
 watch(
-	() => model.value,
-	newValue => {
-		val.value = newValue
-	},
+        () => model.value,
+        newValue => {
+                val.value = newValue
+        },
 )
+
+watch(selectedIndex, updateSuggestionScroll)
 
 function updateSuggestionScroll() {
 	nextTick(() => {
@@ -60,61 +69,22 @@ function onKeydown(e) {
 			e.preventDefault()
 			setState('unfocused')
 			break
-		case ARROW_UP:
-			e.preventDefault()
-			select(-1)
-			break
-		case ARROW_DOWN:
-			e.preventDefault()
-			select(1)
-			break
-	}
+                case ARROW_UP:
+                        e.preventDefault()
+                        moveSelection(-1)
+                        break
+                case ARROW_DOWN:
+                        e.preventDefault()
+                        moveSelection(1)
+                        break
+        }
 }
 
-const resultRefs = ref<(HTMLElement | null)[]>([])
-
-function setResultRefs(el: Element | ComponentPublicInstance | null, index: number) {
-	resultRefs.value[index] = el as (HTMLElement | null)
-}
-
-function select(offset: number) {
-
-	let index = selectedIndex.value + offset
-
-	if (!isFinite(index)) {
-		index = 0
-	}
-
-	if (index >= props.options.length) {
-		// At the last index, now moving back to the top
-		index = 0
-	}
-
-	if (index < 0) {
-		// Arrow up but we're already at the top
-		index = props.options.length - 1
-	}
-	const elems = resultRefs.value[index]
-	if (
-		typeof elems === 'undefined'
-	) {
-		return
-	}
-
-	selectedIndex.value = index
-	updateSuggestionScroll()
-
-	if (Array.isArray(elems)) {
-		elems[0].focus()
-		return
-	}
-	elems?.focus()
-}
 
 function onSelectValue(value) {
-	model.value = value
-	selectedIndex.value = 0
-	setState('unfocused')
+        model.value = value
+        focusItem(0)
+        setState('unfocused')
 }
 
 function onUpdateField(e) {
@@ -162,9 +132,10 @@ function onUpdateField(e) {
 					<button
 						v-for="(item, index) in options"
 						:key="item"
-						:ref="(el: Element | ComponentPublicInstance | null) => setResultRefs(el, index)"
+                                               :ref="(el: Element | ComponentPublicInstance | null) => setResultRef(el, index)"
 						class="item"
 						:class="{ selected: index === selectedIndex }"
+						@focus="() => focusItem(index)"
 						@click="onSelectValue(item)"
 					>
 						<slot
