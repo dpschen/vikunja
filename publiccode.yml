@@ -44,7 +44,7 @@ screenshots:
 videos:
   - 'none'
 legal:
-  license: 'GNU AFFERO GENERAL PUBLIC LICENSE Version 3'
+  license: 'GNU Affero General Public License v3 or later.'
   mainCopyrightOwner: 'Konrad Langenberg Software'
   repoOwner: 'Konrad Langenberg Software'
   authorsFile: 'hello@vikunja.io'
