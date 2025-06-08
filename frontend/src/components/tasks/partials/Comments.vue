@@ -98,7 +98,7 @@
 						:is-edit-enabled="canWrite && c.author.id === currentUserId"
 						:upload-callback="attachmentUpload"
 						:upload-enabled="true"
-						:bottom-actions="actions[c.id]"
+						:bottom-actions="actions.get(c.id)"
 						:show-save="true"
 						:enable-discard-shortcut="true"
 						initial-mode="preview"
@@ -221,6 +221,7 @@ import type {ITask} from '@/modelTypes/ITask'
 
 import {uploadFile} from '@/helpers/attachments'
 import {success} from '@/message'
+import type {BottomAction} from '@/components/input/editor/types'
 import {formatDateLong, formatDateSince} from '@/helpers/time/formatDate'
 import {getAvatarUrl, getDisplayName} from '@/models/user'
 import {useConfigStore} from '@/stores/config'
@@ -258,19 +259,19 @@ const saving = ref<ITask['id'] | null>(null)
 const userAvatar = computed(() => getAvatarUrl(authStore.info, 48))
 const currentUserId = computed(() => authStore.info.id)
 const enabled = computed(() => configStore.taskCommentsEnabled)
-const actions = computed(() => {
-	if (!props.canWrite) {
-		return {}
-	}
-	return Object.fromEntries(comments.value.map((comment) => ([
-		comment.id,
-		comment.author.id === currentUserId.value
-			? [{
-				action: () => toggleDelete(comment.id),
-				title: t('misc.delete'),
-			}]
-			: [],
-	])))
+const actions = computed<Map<number, BottomAction[]>>(() => {
+        if (!props.canWrite) {
+                return new Map<number, BottomAction[]>()
+        }
+        return new Map<number, BottomAction[]>(comments.value.map((comment) => ([
+                comment.id,
+                comment.author.id === currentUserId.value
+                        ? [{
+                                action: () => toggleDelete(comment.id),
+                                title: t('misc.delete'),
+                        }]
+                        : [],
+        ])))
 })
 
 const frontendUrl = computed(() => configStore.frontendUrl)
