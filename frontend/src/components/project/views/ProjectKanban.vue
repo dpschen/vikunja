@@ -301,6 +301,11 @@ import {
 	saveCollapsedBucketState,
 } from '@/helpers/saveCollapsedBucketState'
 import {calculateItemPosition} from '@/helpers/calculateItemPosition'
+import type { SortableEvent } from 'sortablejs'
+
+interface KanbanSortableEvent extends SortableEvent {
+       newIndex: number
+}
 
 import {isSavedFilter} from '@/services/savedFilter'
 import {success} from '@/message'
@@ -663,8 +668,7 @@ function updateBuckets(value: IBucket[]) {
 	kanbanStore.setBuckets(value)
 }
 
-// TODO: fix type
-function updateBucketPosition(e: { newIndex: number }) {
+function updateBucketPosition(e: KanbanSortableEvent) {
 	// (2) bucket positon is changed
 	dragBucket.value = false
 
