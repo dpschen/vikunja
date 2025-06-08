@@ -18,7 +18,9 @@ package cmd
 
 import (
 	"context"
+	"errors"
 	"net"
+	"net/http"
 	"net/url"
 	"os"
 	"os/signal"
@@ -142,8 +144,15 @@ var webCmd = &cobra.Command{
 				}
 			}
 
-			err := e.Start(config.ServiceInterface.GetString())
-			if err != nil {
+			srv := &http.Server{
+				Addr:         config.ServiceInterface.GetString(),
+				Handler:      e,
+				ReadTimeout:  time.Duration(config.ServiceReadTimeoutSeconds.GetInt()) * time.Second,
+				WriteTimeout: time.Duration(config.ServiceWriteTimeoutSeconds.GetInt()) * time.Second,
+				IdleTimeout:  time.Duration(config.ServiceIdleTimeoutSeconds.GetInt()) * time.Second,
+			}
+			err := srv.ListenAndServe()
+			if err != nil && !errors.Is(err, http.ErrServerClosed) {
 				e.Logger.Info("shutting down...")
 			}
 		}()

@@ -34,6 +34,26 @@
                     "comment": "Permission bits for the Unix socket. Note that octal values must be prefixed by \"0o\", e.g. 0o660"
                 },
                 {
+                    "key": "readtimeoutseconds",
+                    "default_value": "30",
+                    "comment": "Maximum duration in seconds for reading the entire request, including the body"
+                },
+                {
+                    "key": "writetimeoutseconds",
+                    "default_value": "30",
+                    "comment": "Maximum duration in seconds before timing out writes of the response"
+                },
+                {
+                    "key": "idletimeoutseconds",
+                    "default_value": "120",
+                    "comment": "Maximum amount of time in seconds to wait for the next request when keep-alives are enabled"
+                },
+                {
+                    "key": "bodylimit",
+                    "default_value": "20MB",
+                    "comment": "Maximum allowed size of a request body"
+                },
+                {
                     "key": "publicurl",
                     "default_value": "",
                     "comment": "The public facing URL where your users can reach Vikunja. Used in emails and for the communication between api and frontend."

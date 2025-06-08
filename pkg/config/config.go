@@ -45,6 +45,10 @@ const (
 	ServiceInterface                      Key = `service.interface`
 	ServiceUnixSocket                     Key = `service.unixsocket`
 	ServiceUnixSocketMode                 Key = `service.unixsocketmode`
+	ServiceReadTimeoutSeconds             Key = `service.readtimeoutseconds`
+	ServiceWriteTimeoutSeconds            Key = `service.writetimeoutseconds`
+	ServiceIdleTimeoutSeconds             Key = `service.idletimeoutseconds`
+	ServiceBodyLimit                      Key = `service.bodylimit`
 	ServicePublicURL                      Key = `service.publicurl`
 	ServiceEnableCaldav                   Key = `service.enablecaldav`
 	ServiceRootpath                       Key = `service.rootpath`
@@ -319,6 +323,10 @@ func InitDefaultConfig() {
 	ServiceJWTTTLLong.setDefault(2592000) // 30 days
 	ServiceInterface.setDefault(":3456")
 	ServiceUnixSocket.setDefault("")
+	ServiceReadTimeoutSeconds.setDefault(30)
+	ServiceWriteTimeoutSeconds.setDefault(30)
+	ServiceIdleTimeoutSeconds.setDefault(120)
+	ServiceBodyLimit.setDefault("20MB")
 	ServicePublicURL.setDefault("")
 	ServiceEnableCaldav.setDefault(true)
 
