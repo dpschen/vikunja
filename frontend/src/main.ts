@@ -24,11 +24,8 @@ declare global {
 	}
 }
 
-// Check if we have an api url in local storage and use it if that's the case
-const apiUrlFromStorage = localStorage.getItem('API_URL')
-if (apiUrlFromStorage !== null) {
-	window.API_URL = apiUrlFromStorage
-}
+// Initialize the api url from local storage if available
+window.API_URL ??= localStorage.getItem('API_URL') ?? window.API_URL
 
 // Make sure the api url does not contain a / at the end
 if (window.API_URL.endsWith('/')) {
@@ -51,8 +48,8 @@ import Card from '@/components/misc/Card.vue'
 // We're loading the language before creating the app so that it won't fail to load when the user's 
 // language file is not yet loaded.
 const browserLanguage = getBrowserLanguage()
-setLanguage(browserLanguage).then(() => {
-	const app = createApp(App)
+await setLanguage(browserLanguage)
+const app = createApp(App)
 
 	app.use(Notifications)
 
@@ -99,17 +96,17 @@ setLanguage(browserLanguage).then(() => {
 		success,
 	}
 
-	if (window.SENTRY_ENABLED) {
-		try {
-			import('./sentry').then(sentry => sentry.default(app, router))
-		} catch (e) {
-			console.error('Could not enable Sentry tracking', e)
-		}
-	}
+if (window.SENTRY_ENABLED) {
+        try {
+                const sentry = await import('./sentry')
+                sentry.default(app, router)
+        } catch (e) {
+                console.error('Could not enable Sentry tracking', e)
+        }
+}
 
-	app.use(pinia)
-	app.use(router)
-	app.use(i18n)
+app.use(pinia)
+app.use(router)
+app.use(i18n)
 
-	app.mount('#app')
-})
+app.mount('#app')
