@@ -187,8 +187,11 @@ function onBlur(event: Event) {
 	emit('blur', nullify((event.target as HTMLInputElement).value))
 }
 
-watchEffect(() => fpInput.value?.addEventListener('blur', onBlur))
-onBeforeUnmount(() => fpInput.value?.removeEventListener('blur', onBlur))
+watchEffect(onInvalidate => {
+       const el = fpInput.value
+       el?.addEventListener('blur', onBlur)
+       onInvalidate(() => el?.removeEventListener('blur', onBlur))
+})
 
 /**
  * Watch for the disabled property and sets the value to the real input.
