@@ -33,14 +33,14 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onMounted, onBeforeUnmount, toRef, watch} from 'vue'
+import {ref, toRef, watch} from 'vue'
+import {onClickOutside} from '@vueuse/core'
 
 import CustomTransition from '@/components/misc/CustomTransition.vue'
 import DatepickerInline from '@/components/input/DatepickerInline.vue'
 import SimpleButton from '@/components/input/SimpleButton.vue'
 
 import {formatDateShort} from '@/helpers/time/formatDate'
-import {closeWhenClickedOutside} from '@/helpers/closeWhenClickedOutside'
 import {createDateFromString} from '@/helpers/time/createDateFromString'
 import {useI18n} from 'vue-i18n'
 
@@ -65,9 +65,6 @@ const emit = defineEmits<{
 const date = ref<Date | null>()
 const show = ref(false)
 const changed = ref(false)
-
-onMounted(() => document.addEventListener('click', hideDatePopup))
-onBeforeUnmount(() =>document.removeEventListener('click', hideDatePopup))
 
 const modelValue = toRef(props, 'modelValue')
 watch(
@@ -98,11 +95,11 @@ function toggleDatePopup() {
 }
 
 const datepickerPopup = ref<HTMLElement | null>(null)
-function hideDatePopup(e: MouseEvent) {
-	if (show.value) {
-		closeWhenClickedOutside(e, datepickerPopup.value, close)
-	}
-}
+onClickOutside(datepickerPopup, () => {
+        if (show.value) {
+                close()
+        }
+})
 
 function close() {
 	// Kind of dirty, but the timeout allows us to enter a time and click on "confirm" without
