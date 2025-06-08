@@ -443,6 +443,17 @@ func caldavTimeToTimestamp(ianaProperty ics.IANAProperty) time.Time {
 		return time.Time{}
 	}
 
+	// Try to parse RFC3339 timestamps first when the value contains a '-' or ':'
+	// as these are not part of the compact CalDAV date format.
+	if strings.ContainsAny(tstring, "-:") {
+		if t, err := time.Parse(time.RFC3339, tstring); err == nil {
+			return t.In(config.GetTimeZone())
+		}
+		if t, err := time.Parse(time.RFC3339Nano, tstring); err == nil {
+			return t.In(config.GetTimeZone())
+		}
+	}
+
 	format := DateFormat
 
 	if strings.HasSuffix(tstring, "Z") {
@@ -465,8 +476,7 @@ func caldavTimeToTimestamp(ianaProperty ics.IANAProperty) time.Time {
 			if err != nil {
 				log.Warningf("Error while parsing caldav time %s to TimeStamp: %s at location %s", tstring, loc, err)
 			} else {
-				t = t.In(config.GetTimeZone())
-				return t
+				return t.In(config.GetTimeZone())
 			}
 		}
 	}
@@ -475,5 +485,5 @@ func caldavTimeToTimestamp(ianaProperty ics.IANAProperty) time.Time {
 		log.Warningf("Error while parsing caldav time %s to TimeStamp: %s", tstring, err)
 		return time.Time{}
 	}
-	return t
+	return t.In(config.GetTimeZone())
 }
