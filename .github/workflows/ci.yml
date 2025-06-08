@@ -24,3 +24,11 @@ jobs:
     needs:
       - test
     secrets: inherit
+
+  preview:
+    name: Preview
+    if: ${{ github.event_name == 'pull_request' }}
+    uses: ./.github/workflows/preview.yml
+    needs:
+      - test
+    secrets: inherit
