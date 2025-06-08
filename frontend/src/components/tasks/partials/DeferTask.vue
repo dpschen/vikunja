@@ -38,7 +38,8 @@
 </template>
 
 <script setup lang="ts">
-import {ref, shallowReactive, computed, watch, onMounted, onBeforeUnmount} from 'vue'
+import {ref, shallowReactive, computed, watch, onBeforeUnmount} from 'vue'
+import {useIntervalFn} from '@vueuse/core'
 import {useI18n} from 'vue-i18n'
 import flatPickr from 'vue-flatpickr-component'
 
@@ -62,7 +63,6 @@ const task = ref<ITask>()
 // We're saving the due date seperately to prevent null errors in very short periods where the task is null.
 const dueDate = ref<Date | null>()
 const lastValue = ref<Date | null>()
-const changeInterval = ref<ReturnType<typeof setInterval>>()
 
 watch(
 	() => props.modelValue,
@@ -74,24 +74,11 @@ watch(
 	{immediate: true},
 )
 
-onMounted(() => {
-	// Because we don't really have other ways of handling change since if we let flatpickr
-	// change events trigger updates, it would trigger a flatpickr change event which would trigger
-	// an update which would trigger a change event and so on...
-	// This is either a bug in flatpickr or in the vue component of it.
-	// To work around that, we're only updating if something changed and check each second and when closing the popup.
-	if (changeInterval.value) {
-		clearInterval(changeInterval.value)
-	}
-
-	changeInterval.value = setInterval(updateDueDate, 1000)
-})
+const { pause: stopUpdateInterval } = useIntervalFn(updateDueDate, 1000)
 
 onBeforeUnmount(() => {
-	if (changeInterval.value) {
-		clearInterval(changeInterval.value)
-	}
-	updateDueDate()
+        stopUpdateInterval()
+        updateDueDate()
 })
 
 const flatPickerConfig = computed(() => ({

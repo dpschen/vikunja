@@ -86,7 +86,8 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, onUnmounted, ref} from 'vue'
+import {computed, onMounted, onUnmounted, ref, watch} from 'vue'
+import {useIntervalFn, useDocumentVisibility, useIdle} from '@vueuse/core'
 import {useRouter} from 'vue-router'
 
 import NotificationService from '@/services/notification'
@@ -103,6 +104,8 @@ import {success} from '@/message'
 import {useI18n} from 'vue-i18n'
 
 const LOAD_NOTIFICATIONS_INTERVAL = 10000
+const IDLE_TIMEOUT = 60000
+const LOAD_NOTIFICATIONS_IDLE_INTERVAL = 60000
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -111,6 +114,9 @@ const {t} = useI18n()
 const allNotifications = ref<INotification[]>([])
 const showNotifications = ref(false)
 const popup = ref(null)
+const documentVisibility = useDocumentVisibility()
+const isIdle = useIdle(IDLE_TIMEOUT)
+const pollInterval = computed(() => isIdle.value ? LOAD_NOTIFICATIONS_IDLE_INTERVAL : LOAD_NOTIFICATIONS_INTERVAL)
 
 const unreadNotifications = computed(() => {
 	return notifications.value.filter(n => n.readAt === null).length
@@ -120,25 +126,28 @@ const notifications = computed(() => {
 })
 const userInfo = computed(() => authStore.info)
 
-let interval: ReturnType<typeof setInterval>
+const { pause: stopPolling, resume: startPolling } = useIntervalFn(loadNotifications, pollInterval, { immediateCallback: true })
 
 onMounted(() => {
-	loadNotifications()
-	document.addEventListener('click', hidePopup)
-	document.addEventListener('visibilitychange', loadNotifications)
-	interval = setInterval(loadNotifications, LOAD_NOTIFICATIONS_INTERVAL)
+        loadNotifications()
+        document.addEventListener('click', hidePopup)
 })
 
 onUnmounted(() => {
-	document.removeEventListener('click', hidePopup)
-	document.removeEventListener('visibilitychange', loadNotifications)
-	clearInterval(interval)
+        document.removeEventListener('click', hidePopup)
 })
 
+watch(documentVisibility, (v) => {
+        if (v === 'visible')
+                startPolling()
+        else
+                stopPolling()
+}, { immediate: true })
+
 async function loadNotifications() {
-	if (document.visibilityState !== 'visible') {
-		return
-	}
+        if (documentVisibility.value !== 'visible') {
+                return
+        }
 	// We're recreating the notification service here to make sure it uses the latest api user token
 	const notificationService = new NotificationService()
 	allNotifications.value = await notificationService.getAll()
