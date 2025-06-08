@@ -25,6 +25,7 @@ These instructions summarize the development guidelines from the official Vikunj
 - Respect the formatting rules from `.editorconfig` in the repository root and all subfolders.
 - Adhere to the ESLint rules defined in `frontend/eslint.config.js`. Run `pnpm lint` (or `pnpm lint:fix`) to check and automatically fix issues.
 - Tabs should display as 4 spaces; both `.editorconfig` files set `tab_width = 4`.
+- Avoid barrel index files that only re-export modules.
 
 ## Testing
 - Set `VIKUNJA_SERVICE_ROOTPATH` to the repository root before running tests so fixtures load correctly.
