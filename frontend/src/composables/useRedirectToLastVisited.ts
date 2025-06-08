@@ -1,22 +1,22 @@
 import {useRouter} from 'vue-router'
-import {getLastVisited, clearLastVisited} from '@/helpers/saveLastVisited'
+import {lastVisited} from '@/helpers/saveLastVisited'
 
 export function useRedirectToLastVisited() {
 
-	const router = useRouter()
+       const router = useRouter()
 
-	function getLastVisitedRoute() {
-		const last = getLastVisited()
-		if (last === null) {
-			return null
-		}
+       function getLastVisitedRoute() {
+               const last = lastVisited.value
+               if (last === null) {
+                       return null
+               }
 
-		clearLastVisited()
-		return {
-			name: last.name,
-			params: last.params,
-			query: last.query,
-		}
+               lastVisited.value = null
+               return {
+                       name: last.name,
+                       params: last.params,
+                       query: last.query,
+               }
 	}
 
 	function redirectIfSaved() {

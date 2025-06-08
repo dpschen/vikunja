@@ -1,29 +1,15 @@
+import {useStorage} from '@vueuse/core'
+
 export interface ProjectHistory {
-	id: number;
+       id: number;
 }
 
-export function getHistory(): ProjectHistory[] {
-	const savedHistory = localStorage.getItem('projectHistory')
-	if (savedHistory === null) {
-		return []
-	}
-
-	return JSON.parse(savedHistory)
-}
-
-function saveHistory(history: ProjectHistory[]) {
-	if (history.length === 0) {
-		localStorage.removeItem('projectHistory')
-		return
-	}
-
-	localStorage.setItem('projectHistory', JSON.stringify(history))
-}
+export const projectHistory = useStorage<ProjectHistory[]>('projectHistory', [])
 
 const MAX_SAVED_PROJECTS = 6
 
 export function saveProjectToHistory(project: ProjectHistory) {
-	const history: ProjectHistory[] = getHistory()
+       const history: ProjectHistory[] = projectHistory.value
 
 	// Remove the element if it already exists in history, preventing duplicates and essentially moving it to the beginning
 	history.forEach((l, i) => {
@@ -38,16 +24,16 @@ export function saveProjectToHistory(project: ProjectHistory) {
 	if (history.length > MAX_SAVED_PROJECTS) {
 		history.pop()
 	}
-	saveHistory(history)
+       projectHistory.value = history
 }
 
 export function removeProjectFromHistory(project: ProjectHistory) {
-	const history: ProjectHistory[] = getHistory()
+       const history: ProjectHistory[] = projectHistory.value
 
 	history.forEach((l, i) => {
 		if (l.id === project.id) {
 			history.splice(i, 1)
 		}
 	})
-	saveHistory(history)
+       projectHistory.value = history
 }

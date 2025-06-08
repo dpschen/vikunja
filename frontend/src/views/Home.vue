@@ -53,7 +53,7 @@ import ProjectCardGrid from '@/components/project/partials/ProjectCardGrid.vue'
 import AddTask from '@/components/tasks/AddTask.vue'
 import ImportHint from '@/components/home/ImportHint.vue'
 
-import {getHistory} from '@/modules/projectHistory'
+import {projectHistory as projectHistoryRef} from '@/modules/projectHistory'
 import {parseDateOrNull} from '@/helpers/parseDateOrNull'
 import {formatDateShort, formatDateSince} from '@/helpers/time/formatDate'
 import {useDaytimeSalutation} from '@/composables/useDaytimeSalutation'
@@ -67,14 +67,14 @@ const authStore = useAuthStore()
 const projectStore = useProjectStore()
 
 const projectHistory = computed(() => {
-	// If we don't check this, it tries to load the project background right after logging out	
-	if(!authStore.authenticated) {
-		return []
-	}
-	
-	return getHistory()
-		.map(l => projectStore.projects[l.id])
-		.filter(l => Boolean(l))
+       // If we don't check this, it tries to load the project background right after logging out
+       if(!authStore.authenticated) {
+               return []
+       }
+
+       return projectHistoryRef.value
+               .map(l => projectStore.projects[l.id])
+               .filter(l => Boolean(l))
 })
 
 const tasksLoaded = ref(false)
