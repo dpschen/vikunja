@@ -390,6 +390,27 @@
 						</div>
 					</div>
 
+					<!-- Move Bucket -->
+					<div
+						v-if="activeFields.moveBucket"
+						class="content details"
+					>
+						<h3>
+							<span class="icon is-grey">
+								<Icon icon="columns" />
+							</span>
+							{{ $t('task.detail.moveBucket') }}
+						</h3>
+						<div class="field">
+							<Multiselect
+								:model-value="task.bucketId"
+								:search-results="kanbanStore.buckets"
+								label="title"
+								@update:modelValue="changeBucket"
+							/>
+						</div>
+					</div>
+
 					<!-- Comments -->
 					<Comments
 						:can-write="canWrite"
@@ -502,7 +523,14 @@
 						>
 							{{ $t('task.detail.actions.moveProject') }}
 						</XButton>
-						
+						<XButton
+							variant="secondary"
+							icon="columns"
+							@click="setFieldActive('moveBucket')"
+						>
+							{{ $t('task.detail.actions.moveBucket') }}
+						</XButton>
+
 						<span class="action-heading">{{ $t('task.detail.dateAndTime') }}</span>
 						
 						<XButton
@@ -626,6 +654,9 @@ import TaskSubscription from '@/components/misc/Subscription.vue'
 import CustomTransition from '@/components/misc/CustomTransition.vue'
 import AssigneeList from '@/components/tasks/partials/AssigneeList.vue'
 import Reactions from '@/components/input/Reactions.vue'
+import Multiselect from '@/components/input/Multiselect.vue'
+import TaskBucketService from '@/services/taskBucket'
+import TaskBucketModel from '@/models/taskBucket'
 
 import {uploadFile} from '@/helpers/attachments'
 import {getProjectTitle} from '@/helpers/getProjectTitle'
@@ -726,6 +757,7 @@ async function scrollToHeading() {
 }
 
 const taskService = shallowReactive(new TaskService())
+const taskBucketService = shallowReactive(new TaskBucketService())
 
 // load task
 watch(
@@ -754,9 +786,10 @@ type FieldType =
 	| 'color'
 	| 'dueDate'
 	| 'endDate'
-	| 'labels'
-	| 'moveProject'
-	| 'percentDone'
+        | 'labels'
+        | 'moveProject'
+       | 'moveBucket'
+        | 'percentDone'
 	| 'priority'
 	| 'relatedTasks'
 	| 'reminders'
@@ -769,9 +802,10 @@ const activeFields: { [type in FieldType]: boolean } = reactive({
 	color: false,
 	dueDate: false,
 	endDate: false,
-	labels: false,
-	moveProject: false,
-	percentDone: false,
+        labels: false,
+        moveProject: false,
+       moveBucket: false,
+        percentDone: false,
 	priority: false,
 	relatedTasks: false,
 	reminders: false,
@@ -794,8 +828,9 @@ function setActiveFields() {
 	activeFields.priority = task.value.priority !== PRIORITIES.UNSET
 	activeFields.relatedTasks = Object.keys(task.value.relatedTasks).length > 0
 	activeFields.reminders = task.value.reminders.length > 0
-	activeFields.repeatAfter = task.value.repeatAfter?.amount > 0 || task.value.repeatMode !== TASK_REPEAT_MODES.REPEAT_MODE_DEFAULT
-	activeFields.startDate = task.value.startDate !== null
+        activeFields.repeatAfter = task.value.repeatAfter?.amount > 0 || task.value.repeatMode !== TASK_REPEAT_MODES.REPEAT_MODE_DEFAULT
+        activeFields.startDate = task.value.startDate !== null
+       activeFields.moveBucket = false
 }
 
 const activeFieldElements: { [id in FieldType]: HTMLElement | null } = reactive({
@@ -805,8 +840,9 @@ const activeFieldElements: { [id in FieldType]: HTMLElement | null } = reactive(
 	dueDate: null,
 	endDate: null,
 	labels: null,
-	moveProject: null,
-	percentDone: null,
+        moveProject: null,
+       moveBucket: null,
+        percentDone: null,
 	priority: null,
 	relatedTasks: null,
 	reminders: null,
@@ -897,12 +933,30 @@ async function toggleTaskDone() {
 }
 
 async function changeProject(project: IProject) {
-	kanbanStore.removeTaskInBucket(task.value)
-	await saveTask({
-		...task.value,
-		projectId: project.id,
-	})
-	baseStore.setCurrentProject(project)
+        kanbanStore.removeTaskInBucket(task.value)
+        await saveTask({
+                ...task.value,
+                projectId: project.id,
+        })
+        baseStore.setCurrentProject(project)
+}
+
+async function changeBucket(bucketId: number) {
+       const updatedTaskBucket = await taskBucketService.update(new TaskBucketModel({
+               taskId: task.value.id,
+               bucketId,
+               projectViewId: baseStore.currentProjectViewId,
+               projectId: task.value.projectId,
+       }))
+
+       Object.assign(task.value, updatedTaskBucket.task)
+       task.value.bucketId = updatedTaskBucket.bucketId
+
+       if (updatedTaskBucket.bucket) {
+               kanbanStore.setBucketById(updatedTaskBucket.bucket, false)
+       }
+
+       kanbanStore.moveTaskToBucket(task.value, updatedTaskBucket.bucketId)
 }
 
 async function toggleFavorite() {
