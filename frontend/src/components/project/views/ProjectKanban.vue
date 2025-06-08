@@ -406,22 +406,18 @@ const loading = computed(() => kanbanStore.isLoading)
 const taskLoading = computed(() => taskStore.isLoading || taskPositionService.value.loading)
 
 watch(
-	() => ({
-		params: params.value,
-		projectId: props.projectId,
-		viewId: props.viewId,
-	}),
-	({params, projectId, viewId}) => {
-		if (projectId === undefined || Number(projectId) === 0) {
-			return
-		}
-		collapsedBuckets.value = getCollapsedBucketState(projectId)
-		kanbanStore.loadBucketsForProject(projectId, viewId, params)
-	},
-	{
-		immediate: true,
-		deep: true,
-	},
+       [params, () => props.projectId, () => props.viewId],
+       ([newParams, projectId, viewId]) => {
+               if (projectId === undefined || Number(projectId) === 0) {
+                       return
+               }
+               collapsedBuckets.value = getCollapsedBucketState(projectId)
+               kanbanStore.loadBucketsForProject(projectId, viewId, newParams)
+       },
+       {
+               immediate: true,
+               deep: true,
+       },
 )
 
 function setTaskContainerRef(id: IBucket['id'], el: HTMLElement) {
