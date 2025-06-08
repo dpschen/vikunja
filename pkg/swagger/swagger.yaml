@@ -4707,7 +4707,7 @@ paths:
       tags:
       - task
     get:
-      description: Get one attachment for download. **Returns json on error.**
+      description: Get one attachment for download. Sets `Cache-Control` and `Etag` headers. **Returns json on error.**
       parameters:
       - description: Task ID
         in: path
