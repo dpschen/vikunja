@@ -152,7 +152,7 @@
 							<div class="field has-addons no-input-mobile">
 								<div class="control">
 									<input
-										:value="shareLinks[s.id]"
+										:value="shareLinks.get(s.id)"
 										class="input"
 										readonly
 										type="text"
@@ -162,7 +162,7 @@
 									<XButton
 										v-tooltip="$t('misc.copy')"
 										:shadow="false"
-										@click="copy(shareLinks[s.id])"
+										@click="copy(shareLinks.get(s.id) as string)"
 									>
 										<span class="icon">
 											<Icon icon="paste" />
@@ -327,13 +327,14 @@ function getShareLink(hash: string, viewId: IProjectView['id']|null) {
 	return frontendUrl.value + 'share/' + hash + '/auth' + (viewId ? '?view=' + viewId : '')
 }
 
-const shareLinks = computed(() => {
-	return linkShares.value.reduce((links, linkShare) => {
-			links[linkShare.id] = getShareLink(linkShare.hash, selectedViews.value[linkShare.id] ?? null)
-			return links
-		}, {} as {[id: string]: string },
-	)
-})
+const shareLinks = computed(() =>
+       new Map(
+               linkShares.value.map(ls => [
+                       ls.id,
+                       getShareLink(ls.hash, selectedViews.value[ls.id] ?? null),
+               ]),
+       ),
+)
 </script>
 
 <style lang="scss" scoped>
