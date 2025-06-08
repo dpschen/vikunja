@@ -400,30 +400,39 @@ export const useAuthStore = defineStore('auth', () => {
 		}
 	}
 
-	/**
-	 * Renews the api token and saves it to local storage
-	 */
-		function renewToken() {
-		// FIXME: Timeout to avoid race conditions when authenticated as a user (=auth token in localStorage) and as a
-		// link share in another tab. Without the timeout both the token renew and link share auth are executed at
-		// the same time and one might win over the other.
-		setTimeout(async () => {
-			if (!authenticated.value) {
-				return
-			}
+       /**
+        * Renews the api token and saves it to local storage
+        * Only one renewal can run at a time.
+        */
+       let tokenRenewPromise: Promise<void> | null = null
 
-			try {
-				await refreshToken(!isLinkShareAuth.value)
-				await checkAuth()
-			} catch (e) {
-				// Don't logout on network errors as the user would then get logged out if they don't have
-				// internet for a short period of time - such as when the laptop is still reconnecting
-				if (e?.request?.status) {
-					await logout()
-				}
-			}
-		}, 5000)
-	}
+       function renewToken() {
+               if (tokenRenewPromise) {
+                       return tokenRenewPromise
+               }
+
+               tokenRenewPromise = (async () => {
+                       if (!authenticated.value) {
+                               tokenRenewPromise = null
+                               return
+                       }
+
+                       try {
+                               await refreshToken(!isLinkShareAuth.value)
+                               await checkAuth()
+                       } catch (e) {
+                               // Don't logout on network errors as the user would then get logged out if they don't have
+                               // internet for a short period of time - such as when the laptop is still reconnecting
+                               if (e?.request?.status) {
+                                       await logout()
+                               }
+                       } finally {
+                               tokenRenewPromise = null
+                       }
+               })()
+
+               return tokenRenewPromise
+       }
 
 	async function logout() {
 		removeToken()
