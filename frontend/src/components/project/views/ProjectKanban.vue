@@ -163,7 +163,7 @@
 											class="bucket-footer"
 										>
 											<div
-												v-if="showNewTaskInput[bucket.id]"
+												v-if="showNewTaskInput.get(bucket.id)"
 												class="field"
 											>
 												<div
@@ -184,7 +184,7 @@
 													>
 												</div>
 												<p
-													v-if="newTaskError[bucket.id] && newTaskText === ''"
+													v-if="newTaskError.get(bucket.id) && newTaskText === ''"
 													class="help is-danger"
 												>
 													{{ $t('project.create.addTitleRequired') }}
@@ -341,7 +341,7 @@ const projectStore = useProjectStore()
 const taskPositionService = ref(new TaskPositionService())
 const taskBucketService = ref(new TaskBucketService())
 
-const taskContainerRefs = ref<{ [id: IBucket['id']]: HTMLElement }>({})
+const taskContainerRefs = ref<Map<IBucket['id'], HTMLElement>>(new Map())
 const bucketLimitInputRef = ref<HTMLInputElement | null>(null)
 
 const drag = ref(false)
@@ -353,11 +353,11 @@ const bucketToDelete = ref(0)
 const bucketTitleEditable = ref(false)
 
 const newTaskText = ref('')
-const showNewTaskInput = ref<{ [id: IBucket['id']]: boolean }>({})
+const showNewTaskInput = ref<Map<IBucket['id'], boolean>>(new Map())
 
 const newBucketTitle = ref('')
 const showNewBucketInput = ref(false)
-const newTaskError = ref<{ [id: IBucket['id']]: boolean }>({})
+const newTaskError = ref<Map<IBucket['id'], boolean>>(new Map())
 const newTaskInputFocused = ref(false)
 
 const showSetLimitInput = ref(false)
@@ -425,8 +425,8 @@ watch(
 )
 
 function setTaskContainerRef(id: IBucket['id'], el: HTMLElement) {
-	if (!el) return
-	taskContainerRefs.value[id] = el
+        if (!el) return
+        taskContainerRefs.value.set(id, el)
 }
 
 function handleTaskContainerScroll(id: IBucket['id'], el: HTMLElement) {
@@ -558,19 +558,20 @@ async function updateTaskPosition(e) {
 }
 
 function toggleShowNewTaskInput(bucketId: IBucket['id']) {
-	if (loading.value || taskLoading.value) {
-		return
-	}
-	showNewTaskInput.value[bucketId] = !showNewTaskInput.value[bucketId]
-	newTaskInputFocused.value = false
+        if (loading.value || taskLoading.value) {
+                return
+        }
+        const current = showNewTaskInput.value.get(bucketId) ?? false
+        showNewTaskInput.value.set(bucketId, !current)
+        newTaskInputFocused.value = false
 }
 
 async function addTaskToBucket(bucketId: IBucket['id']) {
-	if (newTaskText.value === '') {
-		newTaskError.value[bucketId] = true
-		return
-	}
-	newTaskError.value[bucketId] = false
+        if (newTaskText.value === '') {
+                newTaskError.value.set(bucketId, true)
+                return
+        }
+        newTaskError.value.set(bucketId, false)
 
 	const task = await taskStore.createNewTask({
 		title: newTaskText.value,
@@ -588,11 +589,11 @@ async function addTaskToBucket(bucketId: IBucket['id']) {
 }
 
 function scrollTaskContainerToTop(bucketId: IBucket['id']) {
-	const bucketEl = taskContainerRefs.value[bucketId]
-	if (!bucketEl) {
-		return
-	}
-	bucketEl.scrollTop = 0
+        const bucketEl = taskContainerRefs.value.get(bucketId)
+        if (!bucketEl) {
+                return
+        }
+        bucketEl.scrollTop = 0
 }
 
 async function createNewBucket() {
