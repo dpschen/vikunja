@@ -2,6 +2,7 @@ import AbstractModel from './abstractModel'
 import UserModel from './user'
 
 import {RIGHTS, type Right} from '@/constants/rights'
+import {LINK_SHARE_TYPES, type LinkShareType} from '@/constants/linkShareTypes'
 import type {ILinkShare} from '@/modelTypes/ILinkShare'
 import type {IUser} from '@/modelTypes/IUser'
 
@@ -10,7 +11,7 @@ export default class LinkShareModel extends AbstractModel<ILinkShare> implements
 	hash = ''
 	right: Right = RIGHTS.READ
 	sharedBy: IUser = UserModel
-	sharingType = 0 // FIXME: use correct numbers
+       sharingType: LinkShareType = LINK_SHARE_TYPES.UNKNOWN
 	projectId = 0
 	name: ''
 	password: ''
