@@ -5,6 +5,9 @@ These instructions summarize the development guidelines from the official Vikunj
 ## Development Environment
 - Use [devenv](https://devenv.sh/) to get a shell with all required tools.
 
+## Dependencies
+- Keep all versions in `package.json` pinned without version ranges.
+
 ## Building From Source
 1. Clone the repo and check out the desired version.
 

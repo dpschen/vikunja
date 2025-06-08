@@ -7,7 +7,9 @@
     "env.config.d.ts",
     "vite.config.*",
     "vitest.config.*",
-    "cypress.config.*"
+    "cypress.config.*",
+    "vite/plugins/tailwind-merge/index.ts",
+    "vite/plugins/tailwind-merge/helper.ts"
   ],
   "compilerOptions": {
     "composite": true,

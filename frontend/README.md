@@ -49,3 +49,19 @@ pnpm run build
 ```shell
 pnpm run lint
 ```
+
+### Compile-time class merging
+
+`pnpm run build` runs a Vite plugin that merges Tailwind classes using the
+prefix configured in `tailwind.config.js`. Static class strings inside `.vue`
+templates are deduplicated so parent classes override child defaults.
+
+```vue
+<!-- Parent -->
+<BaseButton class="tw-bg-red-500" />
+
+<!-- Child template -->
+<button class="tw-bg-blue-500 base-button"></button>
+```
+
+After the build the button element contains `tw-bg-red-500` only.
