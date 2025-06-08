@@ -496,26 +496,28 @@ const editor = useEditor({
 	},
 })
 
+// We update the editor once the DOM settled to avoid race conditions
 watch(
-	() => isEditing.value,
-	() => {
-		editor.value?.setEditable(isEditing.value)
-	},
-	{immediate: true},
+        () => isEditing.value,
+        () => {
+                editor.value?.setEditable(isEditing.value)
+        },
+        {immediate: true, flush: 'post'},
 )
 
+// Set the initial content after DOM updates so the editor doesn't lose focus
 watch(
-	() => props.modelValue,
-	value => {
-		if (!editor?.value) return
+        () => props.modelValue,
+        value => {
+                if (!editor?.value) return
 
 		if (editor.value.getHTML() === value) {
 			return
 		}
 
 		setModeAndValue(value)
-	},
-	{immediate: true},
+        },
+        {immediate: true, flush: 'post'},
 )
 
 function bubbleNow() {
@@ -679,57 +681,72 @@ function focusIfEditing() {
 }
 
 function clickTasklistCheckbox(event) {
-	event.stopImmediatePropagation()
+        event.stopImmediatePropagation()
 
-	if (event.target.localName !== 'p') {
-		return
-	}
+        if (event.target.localName !== 'p') {
+                return
+        }
 
-	event.target.parentNode.parentNode.firstChild.click()
+        const li = event.target.closest('li[data-type="taskItem"]')
+        const label = li?.querySelector('label')
+        label?.click()
 }
 
+// Toggle label click listeners only after the DOM updated
 watch(
-	() => isEditing.value,
-	async editing => {
-		await nextTick()
+        () => isEditing.value,
+        editing => {
+                let checkboxes = tiptapInstanceRef.value?.querySelectorAll('[data-checked]')
+                if (typeof checkboxes === 'undefined' || checkboxes.length === 0) {
+                        // For some reason, this works when we check a second time.
+                        nextTick(() => {
+                                checkboxes = tiptapInstanceRef.value?.querySelectorAll('[data-checked]')
+                                if (typeof checkboxes === 'undefined' || checkboxes.length === 0) {
+                                        return
+                                }
 
-		let checkboxes = tiptapInstanceRef.value?.querySelectorAll('[data-checked]')
-		if (typeof checkboxes === 'undefined' || checkboxes.length === 0) {
-			// For some reason, this works when we check a second time.
-			await nextTick()
+                                if (editing) {
+                                        checkboxes.forEach(check => {
+                                                const textBlock = check.querySelector('div > p')
+                                                textBlock?.removeEventListener('click', clickTasklistCheckbox)
+                                        })
 
-			checkboxes = tiptapInstanceRef.value?.querySelectorAll('[data-checked]')
-			if (typeof checkboxes === 'undefined' || checkboxes.length === 0) {
-				return
-			}
-		}
+                                        return
+                                }
 
-		if (editing) {
-			checkboxes.forEach(check => {
-				if (check.children.length < 2) {
-					return
-				}
+                                checkboxes.forEach(check => {
+                                        const textBlock = check.querySelector('div > p')
+                                        if (!textBlock) {
+                                                return
+                                        }
 
-				// We assume the first child contains the label element with the checkbox and the second child the actual label
-				// When the actual label is clicked, we forward that click to the checkbox.
-				check.children[1].removeEventListener('click', clickTasklistCheckbox)
-			})
+                                        textBlock.removeEventListener('click', clickTasklistCheckbox)
+                                        textBlock.addEventListener('click', clickTasklistCheckbox)
+                                })
+                        })
+                        return
+                }
 
-			return
-		}
+                if (editing) {
+                        checkboxes.forEach(check => {
+                                const textBlock = check.querySelector('div > p')
+                                textBlock?.removeEventListener('click', clickTasklistCheckbox)
+                        })
 
-		checkboxes.forEach(check => {
-			if (check.children.length < 2) {
-				return
-			}
+                        return
+                }
 
-			// We assume the first child contains the label element with the checkbox and the second child the actual label
-			// When the actual label is clicked, we forward that click to the checkbox.
-			check.children[1].removeEventListener('click', clickTasklistCheckbox)
-			check.children[1].addEventListener('click', clickTasklistCheckbox)
-		})
-	},
-	{immediate: true},
+                checkboxes.forEach(check => {
+                        const textBlock = check.querySelector('div > p')
+                        if (!textBlock) {
+                                return
+                        }
+
+                        textBlock.removeEventListener('click', clickTasklistCheckbox)
+                        textBlock.addEventListener('click', clickTasklistCheckbox)
+                })
+        },
+        {immediate: true, flush: 'post'},
 )
 </script>
 
