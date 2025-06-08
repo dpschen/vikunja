@@ -25,6 +25,8 @@ import FancyCheckbox from '@/components/input/FancyCheckbox.vue'
 import {success} from '@/message'
 import {isValidHttpUrl} from '@/helpers/isValidHttpUrl'
 
+type WebhookEvent = string
+
 const {t} = useI18n({useScope: 'global'})
 
 const project = ref<IProject>()
@@ -71,7 +73,7 @@ async function deleteWebhook() {
 }
 
 const newWebhook = ref(new WebhookModel())
-const newWebhookEvents = ref({})
+const newWebhookEvents = ref(new Set<WebhookEvent>())
 
 async function create() {
 
@@ -104,9 +106,16 @@ function validateTargetUrl() {
 const selectedEventsValid = ref(true)
 
 function getSelectedEventsArray() {
-	return Object.entries(newWebhookEvents.value)
-		.filter(([_, use]) => use)
-		.map(([event]) => event)
+        return Array.from(newWebhookEvents.value)
+}
+
+function updateEventSelection(event: WebhookEvent, checked: boolean) {
+        if (checked) {
+                newWebhookEvents.value.add(event)
+        } else {
+                newWebhookEvents.value.delete(event)
+        }
+        validateSelectedEvents()
 }
 
 function validateSelectedEvents() {
@@ -195,9 +204,9 @@ function validateSelectedEvents() {
 					<FancyCheckbox
 						v-for="event in availableEvents"
 						:key="event"
-						v-model="newWebhookEvents[event]"
+						:model-value="newWebhookEvents.has(event)"
 						class="available-events-check"
-						@update:modelValue="validateSelectedEvents"
+						@update:modelValue="checked => updateEventSelection(event, checked)"
 					>
 						{{ event }}
 					</FancyCheckbox>
