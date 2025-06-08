@@ -74,11 +74,11 @@ function getReactionTooltip(users: IUser[], value: string) {
 	}
 
 	if (names.length > 1 && names.length < 10) {
-		return t('reaction.reactedWithAnd', {
-			users: names.slice(0, names.length - 1).join(', '),
-			lastUser: names[names.length - 1],
-			value,
-		})
+               return t('reaction.reactedWithAnd', {
+                       users: names.toSpliced(-1, 1).join(', '),
+                       lastUser: names.at(-1),
+                       value,
+               })
 	}
 
 	return t('reaction.reactedWithAndMany', {
