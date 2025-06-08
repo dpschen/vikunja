@@ -1,5 +1,7 @@
 # Vikunja desktop
 
+For detailed setup and usage instructions, see the [Vikunja documentation](https://vikunja.io/docs/).
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 
 The Vikunja frontend all repackaged as an electron app to run as a desktop app!
