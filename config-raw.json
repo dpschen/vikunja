@@ -459,7 +459,7 @@
                 },
                 {
                     "key": "store",
-                    "default_value": "keyvalue",
+                    "default_value": "memory",
                     "comment": "The store where the limit counter for each user is stored.\nPossible values are \"keyvalue\", \"memory\" or \"redis\".\nWhen choosing \"keyvalue\" this setting follows the one configured in the \"keyvalue\" section."
                 },
                 {
