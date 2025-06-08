@@ -4,12 +4,14 @@ import ProjectModel from '@/models/project'
 import type { IBackgroundImage } from '@/modelTypes/IBackgroundImage'
 
 export default class BackgroundUnsplashService extends AbstractService<IBackgroundImage> {
-	constructor() {
-		super({
-			getAll: '/backgrounds/unsplash/search',
-			update: '/projects/{projectId}/backgrounds/unsplash',
-		})
-	}
+        constructor() {
+                super({
+                        getAll: '/backgrounds/unsplash/search',
+                        update: '/projects/{projectId}/backgrounds/unsplash',
+                })
+        }
+
+       private lastThumbUrl: string | null = null
 
 	modelFactory(data: Partial<IBackgroundImage>) {
 		return new BackgroundImageModel(data)
@@ -19,12 +21,23 @@ export default class BackgroundUnsplashService extends AbstractService<IBackgrou
 		return new ProjectModel(data)
 	}
 
-	async thumb(model) {
-		const response = await this.http({
-			url: `/backgrounds/unsplash/images/${model.id}/thumb`,
-			method: 'GET',
-			responseType: 'blob',
-		})
-		return window.URL.createObjectURL(new Blob([response.data]))
-	}
+       async thumb(model) {
+               const response = await this.http({
+                       url: `/backgrounds/unsplash/images/${model.id}/thumb`,
+                       method: 'GET',
+                       responseType: 'blob',
+               })
+               if (this.lastThumbUrl) {
+                       URL.revokeObjectURL(this.lastThumbUrl)
+               }
+               this.lastThumbUrl = window.URL.createObjectURL(new Blob([response.data]))
+               return this.lastThumbUrl
+       }
+
+       revokeThumb() {
+               if (this.lastThumbUrl) {
+                       URL.revokeObjectURL(this.lastThumbUrl)
+                       this.lastThumbUrl = null
+               }
+       }
 }

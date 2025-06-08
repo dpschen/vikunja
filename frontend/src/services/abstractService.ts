@@ -58,7 +58,8 @@ export default abstract class AbstractService<Model extends IAbstract = IAbstrac
 	}
 	// This contains the total number of pages and the number of results for the current page
 	totalPages = 0
-	resultCount = 0
+        resultCount = 0
+       private lastBlobUrl: string | null = null
 
 	/////////////
 	// Service init
@@ -317,15 +318,26 @@ export default abstract class AbstractService<Model extends IAbstract = IAbstrac
 		}
 	}
 
-	async getBlobUrl(url : string, method : Method = 'GET', data = {}) {
-		const response = await this.http({
-			url,
-			method,
-			responseType: 'blob',
-			data,
-		})
-		return window.URL.createObjectURL(new Blob([response.data]))
-	}
+       async getBlobUrl(url : string, method : Method = 'GET', data = {}) {
+               const response = await this.http({
+                       url,
+                       method,
+                       responseType: 'blob',
+                       data,
+               })
+               if (this.lastBlobUrl) {
+                       URL.revokeObjectURL(this.lastBlobUrl)
+               }
+               this.lastBlobUrl = window.URL.createObjectURL(new Blob([response.data]))
+               return this.lastBlobUrl
+       }
+
+       revokeBlobUrl() {
+               if (this.lastBlobUrl) {
+                       URL.revokeObjectURL(this.lastBlobUrl)
+                       this.lastBlobUrl = null
+               }
+       }
 
 	/**
 	 * Performs a get request to the url specified before.
