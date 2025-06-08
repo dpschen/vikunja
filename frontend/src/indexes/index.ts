@@ -31,16 +31,15 @@ export const createNewIndexer = (name: string, fieldsToIndex: string[]) => {
 		return index.update(item.id, item)
 	}
 
-	function search(query: string | null) {
-		if (query === '' || query === null) {
-			return null
-		}
+        function search(query: string | null) {
+                if (query === '' || query === null) {
+                        return null
+                }
 
-		return index.search(query)
-				?.flatMap(r => r.result)
-				.filter((value, index, self) => self.indexOf(value) === index) as number[]
-			|| null
-	}
+                const results = index.search(query)?.flatMap(r => r.result) ?? null
+
+                return results ? Array.from(new Set(results)) as number[] : null
+        }
 
 	return {
 		add,
