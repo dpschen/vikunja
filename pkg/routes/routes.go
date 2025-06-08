@@ -111,6 +111,9 @@ func NewEcho() *echo.Echo {
 	// panic recover
 	e.Use(middleware.Recover())
 
+	// Limit request body size
+	e.Use(middleware.BodyLimit(config.ServiceBodyLimit.GetString()))
+
 	setupSentry(e)
 
 	// Validation
