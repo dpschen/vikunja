@@ -4,6 +4,7 @@
     "env.d.ts",
     "src/**/*.d.ts",
     "src/**/*",
+    "vite/plugins/tailwind-merge/**/*.ts",
     "src/**/*.vue",
     "src/**/*.json",
     "tailwind.config.js"

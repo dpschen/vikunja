@@ -16,6 +16,7 @@ import postcssPresetEnv from 'postcss-preset-env'
 import postcssEasingGradients from 'postcss-easing-gradients'
 import tailwindcss from 'tailwindcss'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import tailwindMergePlugin from './vite/plugins/tailwind-merge'
 
 const pathSrc = fileURLToPath(new URL('./src', import.meta.url)).replaceAll('\\', '/')
 
@@ -111,9 +112,10 @@ function getBuildConfig(env: Record<string, string>) {
 				],
 			},
 		},
-		plugins: [
-			vue(),
-			svgLoader({
+                plugins: [
+                        vue(),
+                        tailwindMergePlugin(),
+                        svgLoader({
 				// Since the svgs are already manually optimized via https://jakearchibald.github.io/svgomg/
 				// we don't need to optimize them again.
 				svgo: false,
