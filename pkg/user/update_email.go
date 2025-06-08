@@ -69,7 +69,7 @@ func UpdateEmail(s *xorm.Session, update *EmailUpdate) (err error) {
 	}
 	_, err = s.
 		Where("id = ?", update.User.ID).
-		Cols("email", "is_active"). // TODO: Status change
+		Cols("email", "is_active", "status").
 		Update(update.User)
 	if err != nil {
 		return
