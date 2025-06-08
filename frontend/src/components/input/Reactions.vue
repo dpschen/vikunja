@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type {IReactionPerEntity, ReactionKind} from '@/modelTypes/IReaction'
-import {VuemojiPicker} from 'vuemoji-picker'
+import {defineAsyncComponent, nextTick, onBeforeUnmount, onMounted, ref} from 'vue'
 import ReactionService from '@/services/reactions'
 import ReactionModel from '@/models/reaction'
 import BaseButton from '@/components/base/BaseButton.vue'
 import type {IUser} from '@/modelTypes/IUser'
 import {getDisplayName} from '@/models/user'
 import {useI18n} from 'vue-i18n'
-import {nextTick, onBeforeUnmount, onMounted, ref} from 'vue'
 import CustomTransition from '@/components/misc/CustomTransition.vue'
 import {closeWhenClickedOutside} from '@/helpers/closeWhenClickedOutside'
 import {useAuthStore} from '@/stores/auth'
@@ -27,6 +26,7 @@ const authStore = useAuthStore()
 const {t} = useI18n()
 const reactionService = new ReactionService()
 const {isDark} = useColorScheme()
+const VuemojiPicker = defineAsyncComponent(() => import('vuemoji-picker').then(m => m.VuemojiPicker))
 
 async function addReaction(value: string) {
 	const reaction = new ReactionModel({
