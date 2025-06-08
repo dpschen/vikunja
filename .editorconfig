@@ -21,3 +21,16 @@ indent_size = 2
 [*.json]
 indent_style = space
 indent_size = 4
+
+# Frontend specific overrides
+[frontend/**/*.json]
+indent_style = space
+indent_size = 2
+
+[frontend/**/*.{scss,css}]
+indent_style = space
+indent_size = 2
+
+[frontend/.nvmrc]
+insert_final_newline = false
+
