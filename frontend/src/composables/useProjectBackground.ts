@@ -1,12 +1,14 @@
-import {ref, toValue, watch, type MaybeRefOrGetter} from 'vue'
+import {ref, toValue, watch, onUnmounted, type MaybeRefOrGetter} from 'vue'
 import ProjectService from '@/services/project'
 import type {IProject} from '@/modelTypes/IProject'
 import {getBlobFromBlurHash} from '@/helpers/getBlobFromBlurHash'
 
 export function useProjectBackground(project: MaybeRefOrGetter<IProject>) {
-	const background = ref<string | null>(null)
-	const backgroundLoading = ref(false)
-	const blurHashUrl = ref('')
+        const background = ref<string | null>(null)
+        const backgroundLoading = ref(false)
+        const blurHashUrl = ref('')
+       let previousBackgroundUrl: string | null = null
+       let previousBlurHashUrl: string | null = null
 
 	watch(
 		() => [toValue(project).id, toValue(project)?.backgroundBlurHash] as [IProject['id'], IProject['backgroundBlurHash']],
@@ -31,22 +33,40 @@ export function useProjectBackground(project: MaybeRefOrGetter<IProject>) {
 
 			backgroundLoading.value = true
 
-			try {
-				const blurHashPromise = getBlobFromBlurHash(blurHash).then((blurHash) => {
-					blurHashUrl.value = blurHash ? window.URL.createObjectURL(blurHash) : ''
-				})
+                       try {
+                               const blurHashPromise = getBlobFromBlurHash(blurHash).then((blurHash) => {
+                                       if (previousBlurHashUrl) {
+                                               URL.revokeObjectURL(previousBlurHashUrl)
+                                       }
+                                       const url = blurHash ? window.URL.createObjectURL(blurHash) : ''
+                                       previousBlurHashUrl = url
+                                       blurHashUrl.value = url
+                               })
 
-				const projectService = new ProjectService()
-				const backgroundPromise = projectService.background(projectValue).then((result) => {
-					background.value = result
-				})
-				await Promise.all([blurHashPromise, backgroundPromise])
-			} finally {
-				backgroundLoading.value = false
-			}
-		},
-		{immediate: true},
-	)
+                               const projectService = new ProjectService()
+                               const backgroundPromise = projectService.background(projectValue).then((result) => {
+                                       if (previousBackgroundUrl) {
+                                               URL.revokeObjectURL(previousBackgroundUrl)
+                                       }
+                                       previousBackgroundUrl = result
+                                       background.value = result
+                               })
+                               await Promise.all([blurHashPromise, backgroundPromise])
+                       } finally {
+                               backgroundLoading.value = false
+                       }
+               },
+               {immediate: true},
+       )
+
+       onUnmounted(() => {
+               if (previousBlurHashUrl) {
+                       URL.revokeObjectURL(previousBlurHashUrl)
+               }
+               if (previousBackgroundUrl) {
+                       URL.revokeObjectURL(previousBackgroundUrl)
+               }
+       })
 
 	return {
 		background,
