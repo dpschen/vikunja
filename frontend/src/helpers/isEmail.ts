@@ -1,6 +1,4 @@
 export function isEmail(email: string): boolean {
-	const format = /^.+@.+$/
-	const match = email.match(format)
-
-	return match === null ? false : match.length > 0
+        const format = /^.+@.+$/
+        return format.test(email)
 }
