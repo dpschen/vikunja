@@ -344,7 +344,7 @@ export const useTaskStore = defineStore('task', () => {
 	async function ensureLabelsExist(labels: string[]): Promise<LabelModel[]> {
 		const all = [...new Set(labels)]
 		const mustCreateLabel = all.map(async labelTitle => {
-			let label = validateLabel(Object.values(labelStore.labels), labelTitle)
+                       let label = validateLabel(Array.from(labelStore.labels.values()), labelTitle)
 			if (typeof label === 'undefined') {
 				// label not found, create it
 				const labelModel = new LabelModel({

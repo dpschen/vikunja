@@ -22,10 +22,10 @@ async function getAllLabels(page = 1): Promise<ILabel[]> {
 }
 
 export const useLabelStore = defineStore('label', () => {
-	const labels = ref<{ [id: ILabel['id']]: ILabel }>({})
+       const labels = ref<Map<ILabel['id'], ILabel>>(new Map())
 
 	// Alphabetically sort the labels
-	const labelsArray = computed(() => Object.values(labels.value)
+       const labelsArray = computed(() => Array.from(labels.value.values())
 		.sort((a, b) => a.title.localeCompare(
 			b.title, i18n.global.locale.value,
 			{ ignorePunctuation: true },
@@ -35,11 +35,11 @@ export const useLabelStore = defineStore('label', () => {
 	const isLoading = ref(false)
 	
 	const getLabelById = computed(() => {
-		return (labelId: ILabel['id']) => labels.value[labelId]
+               return (labelId: ILabel['id']) => labels.value.get(labelId)
 	})
 
-	const getLabelsByIds = computed(() => (ids: ILabel['id'][]) =>
-		ids.map(id => labels.value[id]).filter(Boolean),
+       const getLabelsByIds = computed(() => (ids: ILabel['id'][]) =>
+               ids.map(id => labels.value.get(id)).filter(Boolean),
 	)
 
 
@@ -50,10 +50,10 @@ export const useLabelStore = defineStore('label', () => {
 		return (labelsToHide: ILabel[], query: string) => {
 			const labelIdsToHide: number[] = labelsToHide.map(({id}) => id)
 
-			return search(query)
-					?.filter(value => !labelIdsToHide.includes(value))
-					.map(id => labels.value[id])
-				|| []
+                       return search(query)
+                                       ?.filter(value => !labelIdsToHide.includes(value))
+                                       .map(id => labels.value.get(id))
+                               || []
 		}
 	})
 
@@ -72,22 +72,22 @@ export const useLabelStore = defineStore('label', () => {
 		isLoading.value = newIsLoading
 	}
 
-	function setLabels(newLabels: ILabel[]) {
-		newLabels.forEach(l => {
-			labels.value[l.id] = l
-			add(l)
-		})
-	}
+       function setLabels(newLabels: ILabel[]) {
+               newLabels.forEach(l => {
+                       labels.value.set(l.id, l)
+                       add(l)
+               })
+       }
 
-	function setLabel(label: ILabel) {
-		labels.value[label.id] = {...label}
-		update(label)
-	}
+       function setLabel(label: ILabel) {
+               labels.value.set(label.id, {...label})
+               update(label)
+       }
 
-	function removeLabelById(label: ILabel) {
-		remove(label)
-		delete labels.value[label.id]
-	}
+       function removeLabelById(label: ILabel) {
+               remove(label)
+               labels.value.delete(label.id)
+       }
 
 	async function loadAllLabels({forceLoad} : {forceLoad?: boolean} = {}) {
 		if (isLoading.value && !forceLoad) {
