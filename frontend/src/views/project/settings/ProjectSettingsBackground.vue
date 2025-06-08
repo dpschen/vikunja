@@ -49,17 +49,17 @@
 					v-for="im in backgroundSearchResult"
 					:key="im.id"
 					class="image-search__result-item"
-					:style="{'background-image': `url(${backgroundBlurHashes[im.id]})`}"
+					:style="{'background-image': `url(${backgroundBlurHashes.get(im.id)})`}"
 				>
 					<CustomTransition name="fade">
 						<BaseButton
-							v-if="backgroundThumbs[im.id]"
+							v-if="backgroundThumbs.get(im.id)"
 							class="image-search__image-button"
 							@click="setBackground(im.id)"
 						>
 							<img
 								class="image-search__image"
-								:src="backgroundThumbs[im.id]"
+								:src="backgroundThumbs.get(im.id)"
 								alt=""
 							>
 						</BaseButton>
@@ -145,8 +145,8 @@ useTitle(() => t('project.background.title'))
 const backgroundService = shallowReactive(new BackgroundUnsplashService())
 const backgroundSearchTerm = ref('')
 const backgroundSearchResult = ref([])
-const backgroundThumbs = ref<Record<string, string>>({})
-const backgroundBlurHashes = ref<Record<string, string>>({})
+const backgroundThumbs = ref<Map<string, string>>(new Map())
+const backgroundBlurHashes = ref<Map<string, string>>(new Map())
 const currentPage = ref(1)
 
 // We're using debounce to not search on every keypress but with a delay.
@@ -171,7 +171,7 @@ function newBackgroundSearch() {
 	}
 	// This is an extra method to reset a few things when searching to not break loading more photos.
 	backgroundSearchResult.value = []
-	backgroundThumbs.value = {}
+    backgroundThumbs.value = new Map()
 	searchBackgrounds()
 }
 
@@ -180,14 +180,14 @@ async function searchBackgrounds(page = 1) {
 	const result = await backgroundService.getAll({}, {s: backgroundSearchTerm.value, p: page})
 	backgroundSearchResult.value = backgroundSearchResult.value.concat(result)
 	result.forEach((background: BackgroundImageModel) => {
-		getBlobFromBlurHash(background.blurHash)
-			.then((b) => {
-				backgroundBlurHashes.value[background.id] = window.URL.createObjectURL(b)
-			})
+                getBlobFromBlurHash(background.blurHash)
+                        .then((b) => {
+                                backgroundBlurHashes.value.set(background.id, window.URL.createObjectURL(b))
+                        })
 
-		backgroundService.thumb(background).then(b => {
-			backgroundThumbs.value[background.id] = b
-		})
+                backgroundService.thumb(background).then(b => {
+                        backgroundThumbs.value.set(background.id, b)
+                })
 	})
 }
 
