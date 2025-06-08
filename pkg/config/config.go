@@ -38,7 +38,6 @@ type Key string
 
 // These constants hold all config value keys
 const (
-	// #nosec
 	ServiceJWTSecret                      Key = `service.JWTSecret`
 	ServiceJWTTTL                         Key = `service.jwtttl`
 	ServiceJWTTTLLong                     Key = `service.jwtttllong`
@@ -422,7 +421,7 @@ func InitDefaultConfig() {
 	FilesMaxSize.setDefault("20MB")
 	// Cors
 	CorsEnable.setDefault(false)
-	CorsOrigins.setDefault([]string{"*"})
+	CorsOrigins.setDefault([]string{})
 	CorsMaxAge.setDefault(0)
 	// Migration
 	MigrationTodoistEnable.setDefault(false)
