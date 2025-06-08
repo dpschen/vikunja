@@ -52,9 +52,9 @@ pnpm run lint
 
 ### Compile-time class merging
 
-`pnpm run build` runs a Vite plugin which uses `tailwind-merge` with the
-project's `tw-` prefix. It deduplicates static Tailwind classes inside `.vue`
-templates so parent classes override child defaults.
+`pnpm run build` runs a Vite plugin that merges Tailwind classes using the
+prefix configured in `tailwind.config.js`. Static class strings inside `.vue`
+templates are deduplicated so parent classes override child defaults.
 
 ```vue
 <!-- Parent -->
