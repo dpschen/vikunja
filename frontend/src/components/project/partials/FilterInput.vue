@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, nextTick, ref, watch} from 'vue'
+import {computed, ref, watch} from 'vue'
 import {useAutoHeightTextarea} from '@/composables/useAutoHeightTextarea'
 import DatepickerWithValues from '@/components/date/DatepickerWithValues.vue'
 import UserService from '@/services/user'
@@ -169,25 +169,25 @@ const currentDatepickerValue = ref('')
 const currentDatepickerPos = ref()
 const datePickerPopupOpen = ref(false)
 
+// Attach date value events after elements are rendered
 watch(
-	() => highlightedFilterQuery.value,
-	async () => {
-		await nextTick()
-		document.querySelectorAll('button.filter-query__date_value')
-			.forEach(b => {
-				b.addEventListener('click', event => {
-					event.preventDefault()
-					event.stopPropagation()
+        () => highlightedFilterQuery.value,
+        () => {
+                document.querySelectorAll('button.filter-query__date_value')
+                        .forEach(b => {
+                                b.addEventListener('click', event => {
+                                        event.preventDefault()
+                                        event.stopPropagation()
 
-					const button = event.target
-					currentOldDatepickerValue.value = button?.innerText
-					currentDatepickerValue.value = button?.innerText
-					currentDatepickerPos.value = parseInt(button?.dataset.position)
-					datePickerPopupOpen.value = true
-				})
-			})
-	},
-	{immediate: true},
+                                        const button = event.target
+                                        currentOldDatepickerValue.value = button?.innerText
+                                        currentDatepickerValue.value = button?.innerText
+                                        currentDatepickerPos.value = parseInt(button?.dataset.position)
+                                        datePickerPopupOpen.value = true
+                                })
+                        })
+        },
+        {immediate: true, flush: 'post'},
 )
 
 function updateDateInQuery(newDate: string) {
