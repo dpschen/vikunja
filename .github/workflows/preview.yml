@@ -1,0 +1,88 @@
+name: Branch Preview
+
+on:
+  workflow_call:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+env:
+  PREVIEW_PREFIX: pr
+
+jobs:
+  pages-preview:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-frontend
+      - name: Compute preview alias
+        id: alias
+        run: |
+          node <<'SCRIPT' >alias.txt
+          function slug(str){
+            return String(str).trim().normalize('NFKD').toLowerCase()
+              .replace(/[.\s\/]/g, '-')
+              .replace(/[^A-Za-z\d-]/g, '')
+          }
+          const pr = process.env.PR_NUMBER
+          const branch = process.env.HEAD_REF
+          const alias = `${pr}-${slug(branch)}`.substring(0,37)
+          console.log(alias)
+          SCRIPT
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REF: ${{ github.head_ref }}
+      - run: echo "alias=$(cat alias.txt)" >> "$GITHUB_OUTPUT"
+        id: alias-out
+      - name: Build frontend
+        run: pnpm build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: frontend/dist
+          destination_dir: ${{ env.PREVIEW_PREFIX }}/${{ steps.alias-out.outputs.alias }}
+          keep_files: true
+          enable_jekyll: false
+      - name: Comment preview URL
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Preview for `${{ github.head_ref }}`: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ env.PREVIEW_PREFIX }}/${{ steps.alias-out.outputs.alias }}/
+
+  cleanup:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+      - name: Compute preview alias
+        id: alias
+        run: |
+          node <<'SCRIPT' >alias.txt
+          function slug(str){
+            return String(str).trim().normalize('NFKD').toLowerCase()
+              .replace(/[.\s\/]/g, '-')
+              .replace(/[^A-Za-z\d-]/g, '')
+          }
+          const pr = process.env.PR_NUMBER
+          const branch = process.env.HEAD_REF
+          const alias = `${pr}-${slug(branch)}`.substring(0,37)
+          console.log(alias)
+          SCRIPT
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REF: ${{ github.head_ref }}
+      - run: echo "alias=$(cat alias.txt)" >> "$GITHUB_OUTPUT"
+        id: alias-out
+      - name: Remove preview files
+        run: |
+          git rm -r --ignore-unmatch "$PREVIEW_PREFIX/${{ steps.alias-out.outputs.alias }}"
+          git commit -am "Cleanup preview for ${{ steps.alias-out.outputs.alias }}" || echo "Nothing to remove"
+      - name: Push cleanup
+        run: git push origin HEAD:gh-pages
