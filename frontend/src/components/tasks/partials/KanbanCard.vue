@@ -293,10 +293,6 @@ $task-background: var(--white);
 			}
 		}
 
-		// FIXME: should be in Labels.vue
-		:deep(.tag) {
-			margin-left: 0;
-		}
 
 		.priority-label {
 			font-size: .75rem;
