@@ -15,17 +15,18 @@
 				>
 					{{ selectedCmd.title }}
 				</div>
-				<input
-					ref="searchInput"
-					v-model="query"
-					v-focus
-					class="input"
-					:class="{'is-loading': loading}"
-					:placeholder="placeholder"
-					@keyup="search"
-					@keydown.down.prevent="select(0, 0)"
-					@keyup.prevent.delete="unselectCmd"
-					@keyup.prevent.enter="doCmd"
+<input
+ref="searchInput"
+v-model="query"
+v-focus
+class="input"
+:class="{'is-loading': loading}"
+:placeholder="placeholder"
+:aria-label="$t('quickActions.searchAriaLabel')"
+@keyup="search"
+@keydown.down.prevent="select(0, 0)"
+@keyup.prevent.delete="unselectCmd"
+@keyup.prevent.enter="doCmd"
 					@keyup.prevent.esc="closeQuickActions"
 				>
 				<BaseButton
