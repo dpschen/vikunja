@@ -96,12 +96,15 @@ async function main() {
 		await replaceTextInFile(indexFilePath, /\/api\/v1/g, '')
 
 		console.log('Step 3: Updating version in package.json...')
-		await replaceTextInFile(packageJsonPath, /\${version}/g, versionPlaceholder)
-		await replaceTextInFile(
-			packageJsonPath,
-			/"version": ".*"/,
-			`"version": "${versionPlaceholder}"`,
-		)
+		const pkgRaw = await fs.promises.readFile(packageJsonPath, 'utf8')
+		const pkg = JSON.parse(pkgRaw)
+		pkg.version = versionPlaceholder
+		pkg.build = pkg.build || {}
+		pkg.build.nsis = pkg.build.nsis || {}
+		pkg.build.nsis.oneClick = true
+		pkg.build.nsis.perMachine = true
+		pkg.build.nsis.allowToChangeInstallationDirectory = false
+		await fs.promises.writeFile(packageJsonPath, JSON.stringify(pkg, null, 4))
 
 		console.log('Step 4: Installing dependencies and building...')
 		execSync('pnpm dist', {stdio: 'inherit'})
