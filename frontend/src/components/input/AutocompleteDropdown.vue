@@ -217,11 +217,19 @@ function onUpdateField(e) {
 			border: none;
 			cursor: pointer;
 
-			&:focus,
-			&:hover {
-				background: var(--grey-100);
-				box-shadow: none !important;
-			}
+                       &:focus-visible,
+                       &:hover {
+                               background: var(--grey-100);
+                               box-shadow: none !important;
+                       }
+
+                       @supports not selector(:focus-visible) {
+                               &:focus,
+                               &:hover {
+                                       background: var(--grey-100);
+                                       box-shadow: none !important;
+                               }
+                       }
 
 			&:active {
 				background: var(--grey-100);

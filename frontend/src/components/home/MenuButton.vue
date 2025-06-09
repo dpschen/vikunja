@@ -55,16 +55,34 @@ $size: $lineWidth + 1rem;
 		transform: $transformX translateY(0.4rem)
 	}
 
-	&:hover,
-	&:focus {
-		&::before,
-		&::after {
-			background-color: var(--grey-600);
-		}
+       &:hover,
+       &:focus-visible {
+               &::before,
+               &::after {
+                       background-color: var(--grey-600);
+               }
 
 		&::before {
 			transform: $transformX translateY(-0.5rem);
-		}
+       }
+
+       @supports not selector(:focus-visible) {
+               &:hover,
+               &:focus {
+                       &::before,
+                       &::after {
+                               background-color: var(--grey-600);
+                       }
+
+                       &::before {
+                               transform: $transformX translateY(-0.5rem);
+                       }
+
+                       &::after {
+                               transform: $transformX translateY(0.5rem)
+                       }
+               }
+       }
 
 		&::after {
 			transform: $transformX translateY(0.5rem)

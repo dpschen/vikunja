@@ -94,13 +94,23 @@ const variantClass = computed(() => VARIANT_CLASS_MAP[props.variant])
 		height: 100%;
 	}
 
-	&.is-active,
-	&.is-focused,
-	&:active,
-	&:focus,
-	&:focus:not(:active) {
-		box-shadow: var(--shadow-xs) !important;
-	}
+       &.is-active,
+       &.is-focused,
+       &:active,
+       &:focus-visible,
+       &:focus-visible:not(:active) {
+               box-shadow: var(--shadow-xs) !important;
+       }
+
+       @supports not selector(:focus-visible) {
+               &.is-active,
+               &.is-focused,
+               &:active,
+               &:focus,
+               &:focus:not(:active) {
+                       box-shadow: var(--shadow-xs) !important;
+               }
+       }
 
 	&.is-primary.is-outlined:hover {
 		color: var(--white);
