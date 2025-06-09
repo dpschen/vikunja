@@ -38,3 +38,13 @@ pnpm start
 2. Change the version in `package.json` (That's the one that will be used by electron-builder`
 3. `pnpm install`
 4. `pnpm run dist --linux --windows`
+
+## Installation
+
+Download the installer for your platform from the `dist/` directory. On Windows
+run the `.exe` file and follow the prompts. The installer will replace any
+existing version.
+
+To uninstall on Windows, open **Add or Remove Programs**, select **Vikunja
+Desktop** and click **Uninstall**. On Linux or macOS, remove the application
+bundle from your system.
