@@ -149,10 +149,17 @@ projectStore.loadAllProjects()
 		display: none;
 	}
 
-	&:hover,
-	&:focus {
-		color: var(--grey-600);
-	}
+       &:hover,
+       &:focus-visible {
+               color: var(--grey-600);
+       }
+
+       @supports not selector(:focus-visible) {
+               &:hover,
+               &:focus {
+                       color: var(--grey-600);
+               }
+       }
 }
 
 .app-container {

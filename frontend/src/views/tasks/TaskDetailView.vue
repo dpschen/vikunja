@@ -1090,13 +1090,23 @@ h3 .button {
 		}
 
 		&:not(:disabled) {
-			&:hover,
-			&:active,
-			&:focus {
-				background: var(--scheme-main);
-				border-color: var(--border);
-				cursor: text;
-			}
+                       &:hover,
+                       &:active,
+                       &:focus-visible {
+                               background: var(--scheme-main);
+                               border-color: var(--border);
+                               cursor: text;
+                       }
+
+                       @supports not selector(:focus-visible) {
+                               &:hover,
+                               &:active,
+                               &:focus {
+                                       background: var(--scheme-main);
+                                       border-color: var(--border);
+                                       cursor: text;
+                               }
+                       }
 
 			&:hover,
 			&:active {

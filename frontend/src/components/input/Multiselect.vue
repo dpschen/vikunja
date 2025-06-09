@@ -550,14 +550,26 @@ function focus() {
 	align-items: center;
 	overflow: hidden;
 
-	&:focus,
-	&:hover {
-		background: var(--grey-100);
-		box-shadow: none !important;
+       &:focus-visible,
+       &:hover {
+               background: var(--grey-100);
+               box-shadow: none !important;
 
 		.hint-text {
 			color: var(--text);
-		}
+       }
+
+       @supports not selector(:focus-visible) {
+               &:focus,
+               &:hover {
+                       background: var(--grey-100);
+                       box-shadow: none !important;
+
+                       .hint-text {
+                               color: var(--text);
+                       }
+               }
+       }
 	}
 
 	&:active {

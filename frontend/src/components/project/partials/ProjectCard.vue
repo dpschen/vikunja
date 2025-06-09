@@ -94,10 +94,17 @@ const textOnlyDescription = computed(() => {
 		box-shadow: var(--shadow-md);
 	}
 
-	&:active,
-	&:focus {
-		box-shadow: var(--shadow-xs) !important;
-	}
+       &:active,
+       &:focus-visible {
+               box-shadow: var(--shadow-xs) !important;
+       }
+
+       @supports not selector(:focus-visible) {
+               &:active,
+               &:focus {
+                       box-shadow: var(--shadow-xs) !important;
+               }
+       }
 
 	> * {
 		// so the elements are on top of the background
