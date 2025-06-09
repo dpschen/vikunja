@@ -20,7 +20,7 @@ import WebhookService from '@/services/webhook'
 import {formatDateShort} from '@/helpers/time/formatDate'
 import User from '@/components/misc/User.vue'
 import WebhookModel from '@/models/webhook'
-import BaseButton from '@/components/base/BaseButton.vue'
+import LearnMore from '@/components/misc/LearnMore.vue'
 import FancyCheckbox from '@/components/input/FancyCheckbox.vue'
 import {success} from '@/message'
 import {isValidHttpUrl} from '@/helpers/isValidHttpUrl'
@@ -176,9 +176,7 @@ function validateSelectedEvents() {
 				</div>
 				<p class="help">
 					{{ $t('project.webhooks.secretHint') }}
-					<BaseButton href="https://vikunja.io/docs/webhooks/">
-						{{ $t('project.webhooks.secretDocs') }}
-					</BaseButton>
+					<LearnMore path="webhooks/#secrets" />
 				</p>
 			</div>
 			<div class="field">
