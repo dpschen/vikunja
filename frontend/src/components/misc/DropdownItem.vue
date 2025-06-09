@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts" setup>
-import BaseButton, {type BaseButtonProps} from '@/components/base//BaseButton.vue'
+import BaseButton, {type BaseButtonProps} from '@/components/base/BaseButton.vue'
 import Icon from '@/components/misc/Icon'
 import type {IconProp} from '@fortawesome/fontawesome-svg-core'
 
