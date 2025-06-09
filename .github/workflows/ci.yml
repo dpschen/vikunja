@@ -24,3 +24,11 @@ jobs:
     needs:
       - test
     secrets: inherit
+
+  visualizer:
+    name: Publish Visualizer Stats
+    if: ${{ github.ref_name == 'main' || github.event_name == 'pull_request' }}
+    uses: ./.github/workflows/visualizer.yml
+    needs:
+      - test
+    secrets: inherit
