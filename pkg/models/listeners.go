@@ -30,6 +30,7 @@ import (
 	"code.vikunja.io/api/pkg/modules/keyvalue"
 	"code.vikunja.io/api/pkg/notifications"
 	"code.vikunja.io/api/pkg/user"
+	"code.vikunja.io/api/pkg/utils"
 
 	"github.com/ThreeDotsLabs/watermill/message"
 	"xorm.io/builder"
@@ -989,7 +990,7 @@ func (wl *WebhookListener) Handle(msg *message.Message) (err error) {
 
 		err = webhook.sendWebhookPayload(&WebhookPayload{
 			EventName: wl.EventName,
-			Time:      time.Now(),
+			Time:      utils.Now(),
 			Data:      event,
 		})
 		if err != nil {

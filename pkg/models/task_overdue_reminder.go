@@ -123,7 +123,7 @@ func RegisterOverdueReminderCron() {
 		s := db.NewSession()
 		defer s.Close()
 
-		now := time.Now()
+		now := utils.Now()
 		uts, err := getUndoneOverdueTasks(s, now)
 		if err != nil {
 			log.Errorf("[Undone Overdue Tasks Reminder] Could not get undone overdue tasks in the next minute: %s", err)

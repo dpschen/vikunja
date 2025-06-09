@@ -34,6 +34,7 @@ import (
 	"code.vikunja.io/api/pkg/models"
 	"code.vikunja.io/api/pkg/modules/background"
 	"code.vikunja.io/api/pkg/modules/keyvalue"
+	"code.vikunja.io/api/pkg/utils"
 	"code.vikunja.io/api/pkg/web"
 )
 
@@ -200,7 +201,7 @@ func (p *Provider) Search(_ *xorm.Session, search string, page int64) (result []
 			}
 		}
 
-		emptySearchResult.lastCached = time.Now()
+		emptySearchResult.lastCached = utils.Now()
 		emptySearchResult.images[page] = result
 
 		return

@@ -154,8 +154,8 @@ var FavoritesPseudoProject = Project{
 		},
 	},
 
-	Created: time.Now(),
-	Updated: time.Now(),
+	Created: utils.Now(),
+	Updated: utils.Now(),
 }
 
 // ReadAll gets all projects a user has access to
