@@ -18,6 +18,7 @@ package trello
 
 import (
 	"bytes"
+	"fmt"
 
 	"code.vikunja.io/api/pkg/config"
 	"code.vikunja.io/api/pkg/files"
@@ -99,7 +100,7 @@ func (m *Migration) Name() string {
 func (m *Migration) AuthURL() string {
 	return "https://trello.com/1/authorize" +
 		"?expiration=never" +
-		"&scope=read" +
+		"&scope=read,account" +
 		"&callback_method=fragment" +
 		"&response_type=token" +
 		"&name=Vikunja%20Migration" +
@@ -110,8 +111,14 @@ func (m *Migration) AuthURL() string {
 func getTrelloBoards(client *trello.Client) (trelloData []*trello.Board, err error) {
 	log.Debugf("[Trello Migration] Getting boards...")
 
-	trelloData, err = client.GetMyBoards(trello.Defaults())
+	trelloData, err = client.GetMyBoards(trello.Arguments{
+		"fields":        "all",
+		"organizations": "all",
+	})
 	if err != nil {
+		if trello.IsPermissionDenied(err) {
+			return nil, fmt.Errorf("not authorized to access trello boards: ensure token includes organization scope: %w", err)
+		}
 		return nil, err
 	}
 
@@ -488,6 +495,9 @@ func (m *Migration) Migrate(u *user.User) (err error) {
 		if organizationID != "Personal" {
 			organization, err := client.GetOrganization(organizationID, trello.Defaults())
 			if err != nil {
+				if trello.IsPermissionDenied(err) {
+					return fmt.Errorf("not authorized to access organization %s: ensure token includes organization scope: %w", organizationID, err)
+				}
 				return err
 			}
 			orgName = organization.DisplayName
