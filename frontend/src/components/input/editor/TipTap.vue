@@ -179,7 +179,7 @@ import AttachmentService from '@/services/attachment'
 import BaseButton from '@/components/base/BaseButton.vue'
 import XButton from '@/components/input/Button.vue'
 
-import {isEditorContentEmpty} from '@/helpers/editorContentEmpty'
+import {isEditorContentEmpty, normalizeEditorContent} from '@/helpers/editorContentEmpty'
 import inputPrompt from '@/helpers/inputPrompt'
 import {setLinkInEditor} from '@/components/input/editor/setLinkInEditor'
 
@@ -519,13 +519,15 @@ watch(
 )
 
 function bubbleNow() {
-	if (editor.value?.getHTML() === props.modelValue ||
-		(editor.value?.getHTML() === '<p></p>') && props.modelValue === '') {
-		return
-	}
+       const html = editor.value?.getHTML() || ''
+       const normalized = normalizeEditorContent(html)
 
-	contentHasChanged.value = true
-	emit('update:modelValue', editor.value?.getHTML())
+       if (normalized === props.modelValue) {
+               return
+       }
+
+       contentHasChanged.value = true
+       emit('update:modelValue', normalized)
 }
 
 function bubbleSave() {
@@ -643,8 +645,9 @@ onBeforeUnmount(() => {
 })
 
 function setModeAndValue(value: string) {
-	internalMode.value = isEditorContentEmpty(value) ? 'edit' : 'preview'
-	editor.value?.commands.setContent(value, false)
+       const normalized = normalizeEditorContent(value)
+       internalMode.value = isEditorContentEmpty(normalized) ? 'edit' : 'preview'
+       editor.value?.commands.setContent(normalized, false)
 }
 
 
