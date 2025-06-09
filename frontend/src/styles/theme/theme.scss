@@ -20,6 +20,7 @@ a, button {
 :root {
   // Bulma sets this to "scroll" which gives us a scrollbar even if there's no content to scroll
   --body-overflow-y: auto;
+  color-scheme: light dark;
 }
 
 // The LanguageTool browser plugin creates a custom element with shadow root for textareas.
