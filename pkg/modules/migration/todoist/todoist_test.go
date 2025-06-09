@@ -637,3 +637,37 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 		t.Errorf("converted todoist data = %v, want %v, diff: %v", hierachie, expectedHierachie, diff)
 	}
 }
+
+func TestTodoistSectionsMappedToBuckets(t *testing.T) {
+	config.InitConfig()
+
+	now := time.Now().In(config.GetTimeZone())
+
+	testSync := &sync{
+		Projects: []*project{{ID: "1", Name: "P1"}},
+		Items: []*item{
+			{ID: "1", ProjectID: "1", Content: "Task1", DateAdded: now, SectionID: "s1"},
+			{ID: "2", ProjectID: "1", Content: "Task2", DateAdded: now, SectionID: "s2"},
+		},
+		Sections: []*section{
+			{ID: "s1", Name: "Section A", ProjectID: "1"},
+			{ID: "s2", Name: "Section B", ProjectID: "1", SectionOrder: 1},
+		},
+	}
+
+	hierarchy, err := convertTodoistToVikunja(testSync, map[string]*doneItem{})
+	require.NoError(t, err)
+	require.Len(t, hierarchy, 2)
+
+	project := hierarchy[1]
+	require.Len(t, project.Buckets, 2)
+	require.Len(t, project.Tasks, 2)
+
+	bucketMap := map[int64]string{}
+	for _, b := range project.Buckets {
+		bucketMap[b.ID] = b.Title
+	}
+
+	assert.Equal(t, "Section A", bucketMap[project.Tasks[0].BucketID])
+	assert.Equal(t, "Section B", bucketMap[project.Tasks[1].BucketID])
+}
