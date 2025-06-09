@@ -22,6 +22,7 @@ import (
 
 	"code.vikunja.io/api/pkg/config"
 	"code.vikunja.io/api/pkg/db"
+	"code.vikunja.io/api/pkg/models"
 	"code.vikunja.io/api/pkg/user"
 
 	"github.com/stretchr/testify/require"
@@ -73,6 +74,47 @@ func TestVikunjaFileMigrator_Migrate(t *testing.T) {
 		db.AssertExists(t, "buckets", map[string]interface{}{
 			"title":         "Test Bucket",
 			"created_by_id": u.ID,
+		}, false)
+	})
+	t.Run("import creates kanban view", func(t *testing.T) {
+		db.LoadAndAssertFixtures(t)
+
+		m := &FileMigrator{}
+		u := &user.User{ID: 1}
+
+		f, err := os.Open(config.ServiceRootpath.GetString() + "/pkg/modules/migration/vikunja-file/export.zip")
+		require.NoError(t, err)
+		defer f.Close()
+
+		s, err := f.Stat()
+		require.NoError(t, err)
+
+		err = m.Migrate(u, f, s.Size())
+		require.NoError(t, err)
+
+		sess := db.NewSession()
+		defer sess.Close()
+
+		// Find the imported inbox project
+		project := &models.Project{}
+		has, err := sess.Where("title = ? AND owner_id = ?", "Inbox", u.ID).Get(project)
+		require.NoError(t, err)
+		require.True(t, has)
+
+		kanbanView := &models.ProjectView{}
+		has, err = sess.Where("project_id = ? AND view_kind = ?", project.ID, models.ProjectViewKindKanban).Get(kanbanView)
+		require.NoError(t, err)
+		require.True(t, has)
+
+		var bucketCount int64
+		bucketCount, err = sess.Where("project_view_id = ?", kanbanView.ID).Count(&models.Bucket{})
+		require.NoError(t, err)
+		require.GreaterOrEqual(t, bucketCount, int64(3))
+
+		db.AssertExists(t, "buckets", map[string]interface{}{
+			"title":           "Test Bucket",
+			"project_view_id": kanbanView.ID,
+			"created_by_id":   u.ID,
 		}, false)
 	})
 	t.Run("should not accept an old import", func(t *testing.T) {
