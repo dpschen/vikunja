@@ -1,22 +1,25 @@
 import {useAuthStore} from '@/stores/auth'
-// TODO: only import needed languages
-import FlatpickrLanguages from 'flatpickr/dist/l10n'
-import type { key } from 'flatpickr/dist/types/locale'
-import { computed } from 'vue'
+import type {SupportedLocale} from '@/i18n'
+import english from 'flatpickr/dist/l10n/default.js'
+import type {CustomLocale} from 'flatpickr/dist/types/locale'
+import {computed, ref, watch} from 'vue'
+import {loadFlatpickrLocale} from '@/i18n/localeMappings'
 
 export function useFlatpickrLanguage() {
-	const authStore = useAuthStore()
+const authStore = useAuthStore()
+const locale = ref<CustomLocale>(english.default)
 
-	return computed(() => {
-		const userLanguage = authStore.settings.language
-		if (!userLanguage) {
-			return FlatpickrLanguages.en
-		}
+watch(
+() => [authStore.settings.language, authStore.settings.weekStart] as const,
+async ([userLanguage, weekStart]) => {
+locale.value = await loadFlatpickrLocale(userLanguage?.toLowerCase() as SupportedLocale)
 
-		const langPair = userLanguage.split('-')
-		const code = userLanguage === 'vi-VN' ? 'vn' : 'en'
-		const language = FlatpickrLanguages?.[langPair?.[0] as key] || FlatpickrLanguages[code]
-		language.firstDayOfWeek = authStore.settings.weekStart ?? language.firstDayOfWeek
-		return language
-	})
+if (typeof weekStart !== 'undefined' && weekStart !== null) {
+locale.value.firstDayOfWeek = weekStart
+}
+},
+{immediate: true},
+)
+
+return computed(() => locale.value)
 }
