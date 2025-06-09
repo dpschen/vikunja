@@ -49,7 +49,7 @@ export default abstract class AbstractService<Model extends IAbstract = IAbstrac
 	http
         loading = false
         uploadProgress = 0
-        downloadProgress = 0
+        downloadProgress: number = 0
 	paths: Paths = {
 		create: '',
 		get: '',
