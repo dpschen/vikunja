@@ -1,4 +1,4 @@
-<img src="https://vikunja.io/images/vikunja-logo.svg" alt="" style="display: block;width: 50%;margin: 0 auto;" width="50%"/>
+<img src="https://vikunja.io/images/vikunja-logo.svg" alt="Vikunja logo" style="display: block;width: 50%;margin: 0 auto;" width="50%"/>
 
 [![Build Status](https://drone.kolaente.de/api/badges/vikunja/vikunjaa/status.svg)](https://drone.kolaente.de/vikunja/vikunja)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](LICENSE)
