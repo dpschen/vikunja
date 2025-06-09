@@ -25,6 +25,7 @@ import (
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/models"
 	"code.vikunja.io/api/pkg/user"
+	"code.vikunja.io/api/pkg/utils"
 	"code.vikunja.io/api/pkg/web"
 
 	petname "github.com/dustinkirkland/golang-petname"
@@ -63,7 +64,7 @@ func NewUserJWTAuthtoken(u *user.User, long bool) (token string, err error) {
 	if long {
 		ttl = time.Duration(config.ServiceJWTTTLLong.GetInt64())
 	}
-	var exp = time.Now().Add(time.Second * ttl).Unix()
+	var exp = utils.Now().Add(time.Second * ttl).Unix()
 
 	// Set claims
 	claims := t.Claims.(jwt.MapClaims)
@@ -86,7 +87,7 @@ func NewLinkShareJWTAuthtoken(share *models.LinkSharing) (token string, err erro
 	t := jwt.New(jwt.SigningMethodHS256)
 
 	var ttl = time.Duration(config.ServiceJWTTTL.GetInt64())
-	var exp = time.Now().Add(time.Second * ttl).Unix()
+	var exp = utils.Now().Add(time.Second * ttl).Unix()
 
 	// Set claims
 	claims := t.Claims.(jwt.MapClaims)

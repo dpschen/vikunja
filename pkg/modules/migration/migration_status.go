@@ -21,6 +21,7 @@ import (
 
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/user"
+	"code.vikunja.io/api/pkg/utils"
 )
 
 // Status represents this migration status
@@ -45,7 +46,7 @@ func StartMigration(m MigratorName, u *user.User) (status *Status, err error) {
 	status = &Status{
 		UserID:       u.ID,
 		MigratorName: m.Name(),
-		StartedAt:    time.Now(),
+		StartedAt:    utils.Now(),
 	}
 	_, err = s.Insert(status)
 	return
@@ -56,7 +57,7 @@ func FinishMigration(status *Status) (err error) {
 	s := db.NewSession()
 	defer s.Close()
 
-	status.FinishedAt = time.Now()
+	status.FinishedAt = utils.Now()
 
 	_, err = s.Where("id = ?", status.ID).Update(status)
 	return

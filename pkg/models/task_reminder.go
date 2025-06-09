@@ -277,7 +277,7 @@ func RegisterReminderCron() {
 		s := db.NewSession()
 		defer s.Close()
 
-		now := time.Now()
+		now := utils.Now()
 		reminders, err := getTasksWithRemindersDueAndTheirUsers(s, now)
 		if err != nil {
 			log.Errorf("[Task Reminder Cron] Could not get tasks with reminders in the next minute: %s", err)

@@ -17,13 +17,12 @@
 package models
 
 import (
-	"time"
-
 	"code.vikunja.io/api/pkg/cron"
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/log"
 	"code.vikunja.io/api/pkg/notifications"
 	"code.vikunja.io/api/pkg/user"
+	"code.vikunja.io/api/pkg/utils"
 
 	"xorm.io/builder"
 	"xorm.io/xorm"
@@ -43,7 +42,7 @@ func RegisterUserDeletionCron() {
 func deleteUsers() {
 	s := db.NewSession()
 	users := []*user.User{}
-	err := s.Where(builder.Lt{"deletion_scheduled_at": time.Now()}).
+	err := s.Where(builder.Lt{"deletion_scheduled_at": utils.Now()}).
 		Find(&users)
 	if err != nil {
 		log.Errorf("Could not get users scheduled for deletion: %s", err)
@@ -56,7 +55,7 @@ func deleteUsers() {
 
 	log.Debugf("Found %d users scheduled for deletion", len(users))
 
-	now := time.Now()
+	now := utils.Now()
 
 	for _, u := range users {
 		if !u.DeletionScheduledAt.Before(now) {

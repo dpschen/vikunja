@@ -19,12 +19,12 @@ package routes
 import (
 	"net/http"
 	"strings"
-	"time"
 
 	"code.vikunja.io/api/pkg/config"
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/log"
 	"code.vikunja.io/api/pkg/models"
+	"code.vikunja.io/api/pkg/utils"
 
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -77,7 +77,7 @@ func checkAPITokenAndPutItInContext(tokenHeaderValue string, c echo.Context) err
 		return echo.NewHTTPError(http.StatusInternalServerError).SetInternal(err)
 	}
 
-	if time.Now().After(token.ExpiresAt) {
+	if utils.Now().After(token.ExpiresAt) {
 		log.Debugf("[auth] Tried authenticating with token %d but it expired on %s", token.ID, token.ExpiresAt.String())
 		return echo.NewHTTPError(http.StatusUnauthorized)
 	}
