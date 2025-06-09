@@ -44,6 +44,12 @@ type SubTableFilter struct {
 type SubTableFilters map[string]SubTableFilter
 
 var subTableFilters = SubTableFilters{
+	"label": {
+		Table:           "label_tasks",
+		BaseFilter:      "tasks.id = task_id",
+		FilterableField: "label_id",
+		AllowNullCheck:  true,
+	},
 	"labels": {
 		Table:           "label_tasks",
 		BaseFilter:      "tasks.id = task_id",
@@ -498,7 +504,7 @@ func convertParsedFilterToTypesense(rawFilters []*taskFilter) (filterBy string, 
 			f.field = "assignees.username"
 		}
 
-		if f.field == "labels" || f.field == "label_id" {
+		if f.field == "labels" || f.field == "label_id" || f.field == "label" {
 			f.field = "labels.id"
 		}
 

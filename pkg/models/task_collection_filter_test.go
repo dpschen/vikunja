@@ -284,4 +284,14 @@ func TestParseFilter(t *testing.T) {
 			assert.Equal(t, 0, date.Year())
 		}
 	})
+
+	t.Run("label filter equals", func(t *testing.T) {
+		result, err := getTaskFiltersFromFilterString("label = 1", "UTC")
+
+		require.NoError(t, err)
+		require.Len(t, result, 1)
+		assert.Equal(t, "label", result[0].field)
+		assert.Equal(t, taskFilterComparatorEquals, result[0].comparator)
+		assert.Equal(t, int64(1), result[0].value)
+	})
 }
