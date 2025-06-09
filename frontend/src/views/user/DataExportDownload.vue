@@ -39,11 +39,17 @@
 		>
 			{{ $t('misc.download') }}
 		</XButton>
+		<ProgressBar
+			v-if="dataExportService.downloadProgress > 0"
+			:value="dataExportService.downloadProgress"
+			class="mt-4"
+		/>
 	</div>
 </template>
 
 <script setup lang="ts">
 import {ref, computed, reactive} from 'vue'
+import ProgressBar from '@/components/misc/ProgressBar.vue'
 import DataExportService from '@/services/dataExport'
 import {useAuthStore} from '@/stores/auth'
 

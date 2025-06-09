@@ -47,8 +47,9 @@ export default abstract class AbstractService<Model extends IAbstract = IAbstrac
 	///////////////////////////
 
 	http
-	loading = false
-	uploadProgress = 0
+        loading = false
+        uploadProgress = 0
+        downloadProgress: number = 0
 	paths: Paths = {
 		create: '',
 		get: '',
@@ -317,15 +318,19 @@ export default abstract class AbstractService<Model extends IAbstract = IAbstrac
 		}
 	}
 
-	async getBlobUrl(url : string, method : Method = 'GET', data = {}) {
-		const response = await this.http({
-			url,
-			method,
-			responseType: 'blob',
-			data,
-		})
-		return window.URL.createObjectURL(new Blob([response.data]))
-	}
+        async getBlobUrl(url : string, method : Method = 'GET', data = {}) {
+                const response = await this.http({
+                        url,
+                        method,
+                        responseType: 'blob',
+                        data,
+                        onDownloadProgress: ({progress}) => {
+                                this.downloadProgress = progress ? Math.round(progress * 100) : 0
+                        },
+                })
+                this.downloadProgress = 0
+                return window.URL.createObjectURL(new Blob([response.data]))
+        }
 
 	/**
 	 * Performs a get request to the url specified before.
