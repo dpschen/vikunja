@@ -14,6 +14,9 @@
 					variant,
 				]"
 				v-bind="attrs"
+				role="dialog"
+				aria-modal="true"
+				:aria-labelledby="hasHeader ? HEADER_ID : undefined"
 			>
 				<div
 					v-shortcut="'Escape'"
@@ -34,7 +37,10 @@
 						}"
 					>
 						<slot>
-							<div class="modal-header">
+							<div
+								:id="hasHeader ? HEADER_ID : undefined"
+								class="modal-header"
+							>
 								<slot name="header" />
 							</div>
 							<div class="content">
@@ -68,7 +74,7 @@
 <script lang="ts" setup>
 import CustomTransition from '@/components/misc/CustomTransition.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
-import {ref, useAttrs, watchEffect} from 'vue'
+import {ref, useAttrs, useSlots, watchEffect} from 'vue'
 import {useScrollLock} from '@vueuse/core'
 
 const props = withDefaults(defineProps<{
@@ -91,7 +97,11 @@ defineOptions({
 	inheritAttrs: false,
 })
 
+const HEADER_ID = 'modal-header'
+
 const attrs = useAttrs()
+const slots = useSlots()
+const hasHeader = Boolean(slots.header)
 
 const modal = ref<HTMLElement | null>(null)
 const scrollLock = useScrollLock(modal)
