@@ -6,6 +6,8 @@
 			tabindex="-1"
 			@click="openTaskDetail"
 			@keyup.enter="openTaskDetail"
+			@dragover.prevent
+			@drop="onDrop"
 		>
 			<FancyCheckbox
 				v-model="task.done"
@@ -199,6 +201,10 @@ import ColorBubble from '@/components/misc/ColorBubble.vue'
 import Popup from '@/components/misc/Popup.vue'
 
 import TaskService from '@/services/task'
+import TaskRelationService from '@/services/taskRelation'
+import TaskRelationModel from '@/models/taskRelation'
+import {RELATION_KIND} from '@/types/IRelationKind'
+import {useDragTaskStore} from '@/stores/dragTask'
 
 import {formatDateSince, formatISO, formatDateLong} from '@/helpers/time/formatDate'
 import {success} from '@/message'
@@ -260,6 +266,8 @@ watch(
 const baseStore = useBaseStore()
 const projectStore = useProjectStore()
 const taskStore = useTaskStore()
+const dragTaskStore = useDragTaskStore()
+const relationService = shallowReactive(new TaskRelationService())
 
 const project = computed(() => projectStore.projects[task.value.projectId])
 const projectColor = computed(() => project.value ? project.value?.hexColor : '')
@@ -362,7 +370,36 @@ function openTaskDetail(event: MouseEvent | KeyboardEvent) {
 		}
 	}
 
-	taskLinkRef.value?.$el.click()
+        taskLinkRef.value?.$el.click()
+}
+
+
+async function onDrop() {
+        const draggedId = dragTaskStore.draggedTaskId
+        if (draggedId === null || draggedId === task.value.id) {
+                return
+        }
+        try {
+                await relationService.create(new TaskRelationModel({
+                        taskId: draggedId,
+                        otherTaskId: task.value.id,
+                        relationKind: RELATION_KIND.PARENTTASK,
+                }))
+
+                const droppedTask = getTaskById(draggedId)
+                if (droppedTask) {
+                        if (typeof task.value.relatedTasks[RELATION_KIND.SUBTASK] === 'undefined') {
+                                task.value.relatedTasks[RELATION_KIND.SUBTASK] = []
+                        }
+                        task.value.relatedTasks[RELATION_KIND.SUBTASK].push({
+                                ...droppedTask,
+                                relatedTasks: {},
+                        })
+                        emit('taskUpdated', task.value)
+                }
+        } finally {
+                dragTaskStore.setDraggedTask(null)
+        }
 }
 </script>
 

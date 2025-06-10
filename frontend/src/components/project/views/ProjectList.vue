@@ -62,8 +62,8 @@
 						}"
 						:animation="100"
 						ghost-class="task-ghost"
-						@start="() => drag = true"
-						@end="saveTaskPosition"
+						@start="dragStart"
+						@end="dragEnd"
 					>
 						<template #item="{element: t}">
 							<SingleTaskInProject
@@ -100,6 +100,7 @@ export default {name: 'List'}
 <script setup lang="ts">
 import {ref, computed, nextTick, onMounted, watch} from 'vue'
 import draggable from 'zhyswan-vuedraggable'
+import type {SortableEvent} from 'sortablejs'
 
 import ProjectWrapper from '@/components/project/ProjectWrapper.vue'
 import ButtonLink from '@/components/misc/ButtonLink.vue'
@@ -117,6 +118,7 @@ import type {ITask} from '@/modelTypes/ITask'
 import {isSavedFilter} from '@/services/savedFilter'
 
 import {useBaseStore} from '@/stores/base'
+import {useDragTaskStore} from '@/stores/dragTask'
 
 import type {IProject} from '@/modelTypes/IProject'
 import type {IProjectView} from '@/modelTypes/IProjectView'
@@ -193,6 +195,7 @@ const firstNewPosition = computed(() => {
 })
 
 const baseStore = useBaseStore()
+const dragTaskStore = useDragTaskStore()
 const project = computed(() => baseStore.currentProject)
 
 const canWrite = computed(() => {
@@ -245,7 +248,7 @@ function updateTasks(updatedTask: ITask) {
 }
 
 async function saveTaskPosition(e) {
-	drag.value = false
+        drag.value = false
 
 	const task = tasks.value[e.newIndex]
 	const taskBefore = tasks.value[e.newIndex - 1] ?? null
@@ -258,10 +261,21 @@ async function saveTaskPosition(e) {
 		projectViewId: props.viewId,
 		taskId: task.id,
 	}))
-	tasks.value[e.newIndex] = {
-		...task,
-		position,
-	}
+        tasks.value[e.newIndex] = {
+                ...task,
+                position,
+        }
+}
+
+function dragStart(e: SortableEvent) {
+        drag.value = true
+        const dragged = tasks.value[e.oldIndex]
+        dragTaskStore.setDraggedTask(dragged.id)
+}
+
+function dragEnd(e: SortableEvent) {
+        dragTaskStore.setDraggedTask(null)
+        saveTaskPosition(e)
 }
 
 function prepareFiltersAndLoadTasks() {
