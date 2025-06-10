@@ -22,6 +22,8 @@ import (
 	"strconv"
 	"time"
 
+	"code.vikunja.io/api/pkg/utils"
+
 	"code.vikunja.io/api/pkg/config"
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/log"
@@ -213,7 +215,7 @@ func ReindexAllTasks() (err error) {
 
 	currentSync := &TypesenseSync{
 		Collection:    "tasks",
-		SyncStartedAt: time.Now(),
+		SyncStartedAt: utils.Now(),
 	}
 	_, err = s.Insert(currentSync)
 	if err != nil {
@@ -236,7 +238,7 @@ func ReindexAllTasks() (err error) {
 		return fmt.Errorf("could not reindex all tasks: %s", err.Error())
 	}
 
-	currentSync.SyncFinishedAt = time.Now()
+	currentSync.SyncFinishedAt = utils.Now()
 	_, err = s.Where("collection = ?", "tasks").
 		Cols("sync_finished_at").
 		Update(currentSync)
@@ -360,16 +362,16 @@ func indexDummyTask() (err error) {
 	dummyTask := &typesenseTask{
 		ID:      "-100",
 		Title:   "Dummytask",
-		Created: time.Now().Unix(),
-		Updated: time.Now().Unix(),
+		Created: utils.Now().Unix(),
+		Updated: utils.Now().Unix(),
 		Reminders: []*TaskReminder{
 			{
 				ID:             -10,
 				TaskID:         -100,
-				Reminder:       time.Now(),
+				Reminder:       utils.Now(),
 				RelativePeriod: 10,
 				RelativeTo:     ReminderRelationDueDate,
-				Created:        time.Now(),
+				Created:        utils.Now(),
 			},
 		},
 		Assignees: []*user.User{
@@ -378,8 +380,8 @@ func indexDummyTask() (err error) {
 				Username: "dummy",
 				Name:     "dummy",
 				Email:    "dummy@vikunja",
-				Created:  time.Now(),
-				Updated:  time.Now(),
+				Created:  utils.Now(),
+				Updated:  utils.Now(),
 			},
 		},
 		Labels: []*Label{
@@ -388,30 +390,30 @@ func indexDummyTask() (err error) {
 				Title:       "dummylabel",
 				Description: "Lorem Ipsum Dummy",
 				HexColor:    "000000",
-				Created:     time.Now(),
-				Updated:     time.Now(),
+				Created:     utils.Now(),
+				Updated:     utils.Now(),
 			},
 		},
 		Attachments: []*TaskAttachment{
 			{
 				ID:      -120,
 				TaskID:  -100,
-				Created: time.Now(),
+				Created: utils.Now(),
 			},
 		},
 		Comments: []*TaskComment{
 			{
 				ID:      -220,
 				Comment: "Lorem Ipsum Dummy",
-				Created: time.Now(),
-				Updated: time.Now(),
+				Created: utils.Now(),
+				Updated: utils.Now(),
 				Author: &user.User{
 					ID:       -100,
 					Username: "dummy",
 					Name:     "dummy",
 					Email:    "dummy@vikunja",
-					Created:  time.Now(),
-					Updated:  time.Now(),
+					Created:  utils.Now(),
+					Updated:  utils.Now(),
 				},
 			},
 		},
@@ -553,7 +555,7 @@ func SyncUpdatedTasksIntoTypesense() (err error) {
 		return
 	}
 
-	currentSync := &TypesenseSync{SyncStartedAt: time.Now()}
+	currentSync := &TypesenseSync{SyncStartedAt: utils.Now()}
 	_, err = s.Where("collection = ?", "tasks").
 		Cols("sync_started_at", "sync_finished_at").
 		Update(currentSync)
@@ -585,7 +587,7 @@ func SyncUpdatedTasksIntoTypesense() (err error) {
 		log.Debugf("[Typesense Sync] No tasks changed since the last sync, not syncing")
 	}
 
-	currentSync.SyncFinishedAt = time.Now()
+	currentSync.SyncFinishedAt = utils.Now()
 	_, err = s.Where("collection = ?", "tasks").
 		Cols("sync_finished_at").
 		Update(currentSync)

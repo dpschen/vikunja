@@ -20,6 +20,8 @@ import (
 	"testing"
 	"time"
 
+	"code.vikunja.io/api/pkg/utils"
+
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/events"
 	"code.vikunja.io/api/pkg/user"
@@ -618,7 +620,7 @@ func TestUpdateDone(t *testing.T) {
 			oldTask := &Task{
 				Done:        false,
 				RepeatAfter: 8600,
-				DueDate:     time.Now().Add(time.Hour),
+				DueDate:     utils.Now().Add(time.Hour),
 			}
 			newTask := &Task{
 				Done: true,
@@ -642,7 +644,7 @@ func TestUpdateDone(t *testing.T) {
 				updateDone(oldTask, newTask)
 
 				// Only comparing unix timestamps because time.Time use nanoseconds which can't ever possibly have the same value
-				assert.Equal(t, time.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.DueDate.Unix())
+				assert.Equal(t, utils.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.DueDate.Unix())
 				assert.False(t, newTask.Done)
 			})
 			t.Run("reminders", func(t *testing.T) {
@@ -667,8 +669,8 @@ func TestUpdateDone(t *testing.T) {
 
 				assert.Len(t, newTask.Reminders, 2)
 				// Only comparing unix timestamps because time.Time use nanoseconds which can't ever possibly have the same value
-				assert.Equal(t, time.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.Reminders[0].Reminder.Unix())
-				assert.Equal(t, time.Now().Add(diff+time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.Reminders[1].Reminder.Unix())
+				assert.Equal(t, utils.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.Reminders[0].Reminder.Unix())
+				assert.Equal(t, utils.Now().Add(diff+time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.Reminders[1].Reminder.Unix())
 				assert.False(t, newTask.Done)
 			})
 			t.Run("start date", func(t *testing.T) {
@@ -684,7 +686,7 @@ func TestUpdateDone(t *testing.T) {
 				updateDone(oldTask, newTask)
 
 				// Only comparing unix timestamps because time.Time use nanoseconds which can't ever possibly have the same value
-				assert.Equal(t, time.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.StartDate.Unix())
+				assert.Equal(t, utils.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.StartDate.Unix())
 				assert.False(t, newTask.Done)
 			})
 			t.Run("end date", func(t *testing.T) {
@@ -700,7 +702,7 @@ func TestUpdateDone(t *testing.T) {
 				updateDone(oldTask, newTask)
 
 				// Only comparing unix timestamps because time.Time use nanoseconds which can't ever possibly have the same value
-				assert.Equal(t, time.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.EndDate.Unix())
+				assert.Equal(t, utils.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.EndDate.Unix())
 				assert.False(t, newTask.Done)
 			})
 			t.Run("start and end date", func(t *testing.T) {
@@ -719,8 +721,8 @@ func TestUpdateDone(t *testing.T) {
 				diff := oldTask.EndDate.Sub(oldTask.StartDate)
 
 				// Only comparing unix timestamps because time.Time use nanoseconds which can't ever possibly have the same value
-				assert.Equal(t, time.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.StartDate.Unix())
-				assert.Equal(t, time.Now().Add(diff+time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.EndDate.Unix())
+				assert.Equal(t, utils.Now().Add(time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.StartDate.Unix())
+				assert.Equal(t, utils.Now().Add(diff+time.Duration(oldTask.RepeatAfter)*time.Second).Unix(), newTask.EndDate.Unix())
 				assert.False(t, newTask.Done)
 			})
 		})

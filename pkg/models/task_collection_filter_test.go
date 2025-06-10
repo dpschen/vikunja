@@ -20,6 +20,8 @@ import (
 	"testing"
 	"time"
 
+	"code.vikunja.io/api/pkg/utils"
+
 	"code.vikunja.io/api/pkg/db"
 
 	"github.com/stretchr/testify/assert"
@@ -114,7 +116,7 @@ func TestParseFilter(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, result, 1)
 		assert.Equal(t, "due_date", result[0].field)
-		in30Days := time.Now().Add(time.Hour * 24 * 30)
+		in30Days := utils.Now().Add(time.Hour * 24 * 30)
 		assert.Equal(t, in30Days.Unix(), result[0].value.(time.Time).Unix())
 	})
 	t.Run("date math strings with quotes", func(t *testing.T) {
@@ -123,7 +125,7 @@ func TestParseFilter(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, result, 1)
 		assert.Equal(t, "due_date", result[0].field)
-		in30Days := time.Now().Add(time.Hour * 24 * 30)
+		in30Days := utils.Now().Add(time.Hour * 24 * 30)
 		assert.Equal(t, in30Days.Unix(), result[0].value.(time.Time).Unix())
 	})
 	t.Run("string values with single quotes", func(t *testing.T) {
@@ -269,7 +271,7 @@ func TestParseFilter(t *testing.T) {
 		require.Len(t, result, 1)
 		assert.Equal(t, "done_at", result[0].field)
 		assert.Equal(t, taskFilterComparatorGreater, result[0].comparator)
-		sevenDaysAgo := time.Now().Add(-7 * 24 * time.Hour)
+		sevenDaysAgo := utils.Now().Add(-7 * 24 * time.Hour)
 		assert.Equal(t, sevenDaysAgo.Unix(), result[0].value.(time.Time).Unix())
 	})
 	t.Run("date filter with 0000-01-01", func(t *testing.T) {
