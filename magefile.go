@@ -35,7 +35,8 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"time"
+
+	"code.vikunja.io/api/pkg/utils"
 
 	"github.com/iancoleman/strcase"
 	"github.com/magefile/mage/mg"
@@ -1006,7 +1007,7 @@ func (Dev) MakeMigration() error {
 	str, _ := reader.ReadString('\n')
 	str = strings.Trim(str, "\n")
 
-	date := time.Now().Format("20060102150405")
+	date := utils.Now().Format("20060102150405")
 
 	migration := `// Vikunja is a to-do list application to facilitate your life.
 // Copyright 2018-present Vikunja and contributors. All rights reserved.

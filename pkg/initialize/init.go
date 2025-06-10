@@ -17,7 +17,7 @@
 package initialize
 
 import (
-	"time"
+	"code.vikunja.io/api/pkg/utils"
 
 	"code.vikunja.io/api/pkg/config"
 	"code.vikunja.io/api/pkg/cron"
@@ -117,7 +117,7 @@ func FullInit() {
 		}
 
 		err = events.Dispatch(&BootedEvent{
-			BootedAt: time.Now(),
+			BootedAt: utils.Now(),
 		})
 		if err != nil {
 			log.Fatal(err)

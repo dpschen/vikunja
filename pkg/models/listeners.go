@@ -22,6 +22,8 @@ import (
 	"strconv"
 	"time"
 
+	"code.vikunja.io/api/pkg/utils"
+
 	"code.vikunja.io/api/pkg/config"
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/events"
@@ -989,7 +991,7 @@ func (wl *WebhookListener) Handle(msg *message.Message) (err error) {
 
 		err = webhook.sendWebhookPayload(&WebhookPayload{
 			EventName: wl.EventName,
-			Time:      time.Now(),
+			Time:      utils.Now(),
 			Data:      event,
 		})
 		if err != nil {

@@ -19,6 +19,7 @@ package notifications
 import (
 	"time"
 
+	"code.vikunja.io/api/pkg/utils"
 	"xorm.io/xorm"
 )
 
@@ -88,7 +89,7 @@ func CanMarkNotificationAsRead(s *xorm.Session, notification *DatabaseNotificati
 func MarkNotificationAsRead(s *xorm.Session, notification *DatabaseNotification, read bool) (err error) {
 	notification.ReadAt = time.Time{}
 	if read {
-		notification.ReadAt = time.Now()
+		notification.ReadAt = utils.Now()
 	}
 
 	_, err = s.
@@ -102,6 +103,6 @@ func MarkAllNotificationsAsRead(s *xorm.Session, userID int64) (err error) {
 	_, err = s.
 		Where("notifiable_id = ?", userID).
 		Cols("read_at").
-		Update(&DatabaseNotification{ReadAt: time.Now()})
+		Update(&DatabaseNotification{ReadAt: utils.Now()})
 	return
 }

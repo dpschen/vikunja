@@ -92,7 +92,7 @@ func (g *Provider) GetAvatar(user *user.User, size int64) ([]byte, string, error
 		av = avatar{
 			Content:  avatarContent,
 			MimeType: mimeType,
-			LoadedAt: time.Now(),
+			LoadedAt: utils.Now(),
 		}
 
 		// Store in keyvalue cache

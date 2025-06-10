@@ -19,6 +19,8 @@ package user
 import (
 	"time"
 
+	"code.vikunja.io/api/pkg/utils"
+
 	"code.vikunja.io/api/pkg/cron"
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/log"
@@ -75,7 +77,7 @@ func notifyUsersScheduledForDeletion() {
 			continue
 		}
 
-		user.DeletionLastReminderSent = time.Now()
+		user.DeletionLastReminderSent = utils.Now()
 		_, err = s.Where("id = ?", user.ID).
 			Cols("deletion_last_reminder_sent").
 			Update(user)
@@ -115,7 +117,7 @@ func ConfirmDeletion(s *xorm.Session, user *User, token string) (err error) {
 		return err
 	}
 
-	user.DeletionScheduledAt = time.Now().Add(3 * 24 * time.Hour)
+	user.DeletionScheduledAt = utils.Now().Add(3 * 24 * time.Hour)
 	_, err = s.Where("id = ?", user.ID).
 		Cols("deletion_scheduled_at").
 		Update(user)

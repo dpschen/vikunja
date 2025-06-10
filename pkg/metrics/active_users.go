@@ -20,6 +20,8 @@ import (
 	"sync"
 	"time"
 
+	"code.vikunja.io/api/pkg/utils"
+
 	"code.vikunja.io/api/pkg/log"
 	"code.vikunja.io/api/pkg/modules/keyvalue"
 	"code.vikunja.io/api/pkg/web"
@@ -126,7 +128,7 @@ func SetUserActive(a web.Auth) (err error) {
 	defer activeUsers.mutex.Unlock()
 	activeUsers.users[a.GetID()] = &ActiveAuthenticable{
 		ID:       a.GetID(),
-		LastSeen: time.Now(),
+		LastSeen: utils.Now(),
 	}
 
 	return keyvalue.Put(activeUsersKey, activeUsers.users)
@@ -138,7 +140,7 @@ func SetLinkShareActive(a web.Auth) (err error) {
 	defer activeLinkShares.mutex.Unlock()
 	activeLinkShares.shares[a.GetID()] = &ActiveAuthenticable{
 		ID:       a.GetID(),
-		LastSeen: time.Now(),
+		LastSeen: utils.Now(),
 	}
 
 	return keyvalue.Put(activeLinkSharesKey, activeLinkShares.shares)
