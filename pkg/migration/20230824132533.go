@@ -61,7 +61,7 @@ func (task *task20230824132533) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20230824132533",
-		Description: "",
+Description: "create buckets table and add default backlog bucket",
 		Migrate: func(tx *xorm.Engine) (err error) {
 			projects := []*project20230824132533{}
 			err = tx.

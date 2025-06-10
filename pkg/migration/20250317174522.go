@@ -25,7 +25,7 @@ import (
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20250317174522",
-		Description: "",
+Description: "rename teams.oidc_id to external_id",
 		Migrate: func(tx *xorm.Engine) (err error) {
 			if tx.Dialect().URI().DBType == schemas.SQLITE {
 				_, err = tx.Exec(`create table teams_dg_tmp

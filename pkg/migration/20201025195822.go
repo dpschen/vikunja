@@ -33,7 +33,7 @@ func (user20201025195822) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20201025195822",
-		Description: "",
+Description: "add issuer and subject columns to users",
 		Migrate: func(tx *xorm.Engine) error {
 			err := tx.Sync2(user20201025195822{})
 			if err != nil {

@@ -36,7 +36,7 @@ func (tasks20210725153703) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20210725153703",
-		Description: "",
+Description: "add kanban_position column and migrate task positions",
 		Migrate: func(tx *xorm.Engine) error {
 			err := tx.Sync2(tasks20210725153703{})
 			if err != nil {

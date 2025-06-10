@@ -38,7 +38,7 @@ func (subscriptions20210209204715) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20210209204715",
-		Description: "",
+Description: "create subscriptions table for notifications",
 		Migrate: func(tx *xorm.Engine) error {
 			return tx.Sync2(subscriptions20210209204715{})
 		},

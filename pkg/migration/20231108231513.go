@@ -38,7 +38,7 @@ func (migrationStatus20231108231513) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20231108231513",
-		Description: "",
+Description: "split migration_status created time into started_at and finished_at",
 		Migrate: func(tx *xorm.Engine) error {
 
 			err := tx.Sync2(migrationStatus20231108231513{})

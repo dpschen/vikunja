@@ -25,7 +25,7 @@ import (
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20250323212553",
-		Description: "",
+Description: "convert remaining string filters to JSON format",
 		Migrate: func(tx *xorm.Engine) (err error) {
 			oldViews := []*projectViews20241118123644{}
 

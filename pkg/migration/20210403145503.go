@@ -32,7 +32,7 @@ func (savedFilters20210403145503) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20210403145503",
-		Description: "",
+Description: "add is_favorite column to saved_filters",
 		Migrate: func(tx *xorm.Engine) error {
 			return tx.Sync2(savedFilters20210403145503{})
 		},
