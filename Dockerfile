@@ -18,6 +18,11 @@ RUN	pnpm run build
 
 FROM --platform=$BUILDPLATFORM ghcr.io/techknowlogick/xgo:go-1.23.x@sha256:229c59582d5ca6b11973647cc3ee945d5b5bb630dcd5d100bd81576f631b4dd6 AS apibuilder
 
+# Enable build cache reuse when building with BuildKit.
+# This makes repeated docker builds much faster.
+ENV GOMODCACHE=/go/pkg/mod
+ENV GOCACHE=/root/.cache/go-build
+
 RUN go install github.com/magefile/mage@latest && \
     mv /go/bin/mage /usr/local/go/bin
 
@@ -28,8 +33,12 @@ COPY --from=frontendbuilder /build/dist ./frontend/dist
 ARG TARGETOS TARGETARCH TARGETVARIANT RELEASE_VERSION
 ENV RELEASE_VERSION=$RELEASE_VERSION
 
-RUN export PATH=$PATH:$GOPATH/bin && \
-	mage build:clean && \
+ARG SKIP_CLEAN=false
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    # cache mounts require BuildKit
+    export PATH=$PATH:$GOPATH/bin && \
+    if [ "$SKIP_CLEAN" != "true" ]; then mage build:clean; fi && \
     mage release:xgo "${TARGETOS}/${TARGETARCH}/${TARGETVARIANT}"
 
 #  ┬─┐┬ ┐┌┐┐┌┐┐┬─┐┬─┐
