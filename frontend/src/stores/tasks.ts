@@ -26,6 +26,7 @@ import {useProjectStore} from '@/stores/projects'
 import {useAttachmentStore} from '@/stores/attachments'
 import {useKanbanStore} from '@/stores/kanban'
 import {useBaseStore} from '@/stores/base'
+import {useProjectViewStore} from '@/stores/projectViews'
 import ProjectUserService from '@/services/projectUsers'
 import {useAuthStore} from '@/stores/auth'
 import TaskCollectionService, {type TaskFilterParams} from '@/services/taskCollection'
@@ -104,9 +105,10 @@ async function findAssignees(parsedTaskAssignees: string[], projectId: number): 
 }
 
 export const useTaskStore = defineStore('task', () => {
-	const baseStore = useBaseStore()
-	const kanbanStore = useKanbanStore()
-	const attachmentStore = useAttachmentStore()
+       const baseStore = useBaseStore()
+       const kanbanStore = useKanbanStore()
+       const projectViewStore = useProjectViewStore()
+       const attachmentStore = useAttachmentStore()
 	const labelStore = useLabelStore()
 	const projectStore = useProjectStore()
 	const authStore = useAuthStore()
@@ -155,11 +157,12 @@ export const useTaskStore = defineStore('task', () => {
 		const cancel = setModuleLoading(setIsLoading)
 
 		const taskService = new TaskService()
-		try {
-			const updatedTask = await taskService.update(task)
-			kanbanStore.ensureTaskIsInCorrectBucket(updatedTask)
-			return updatedTask
-		} finally {
+               try {
+                       const updatedTask = await taskService.update(task)
+                       kanbanStore.ensureTaskIsInCorrectBucket(updatedTask)
+                       projectViewStore.updateTaskInCache(updatedTask)
+                       return updatedTask
+               } finally {
 			cancel()
 		}
 	}
@@ -482,13 +485,14 @@ export const useTaskStore = defineStore('task', () => {
 			task.repeatMode = TASK_REPEAT_MODES.REPEAT_MODE_MONTH
 		}
 
-		const taskService = new TaskService()
-		try {
-			const createdTask = await taskService.create(task)
-			return await addLabelsToTask({
-				task: createdTask,
-				parsedLabels: parsedTask.labels,
-			})
+               const taskService = new TaskService()
+               try {
+                       const createdTask = await taskService.create(task)
+                       projectViewStore.addTaskToCache(createdTask)
+                       return await addLabelsToTask({
+                               task: createdTask,
+                               parsedLabels: parsedTask.labels,
+                       })
 		} finally {
 			cancel()
 		}
