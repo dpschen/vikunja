@@ -45,7 +45,7 @@ func changeColumnToBigint(x *xorm.Session, table, column string, nullable, defau
 			return err
 		}
 	case "postgres":
-		_, err := x.Exec("ALTER TABLE " + table + " ALTER COLUMN `" + column + "` TYPE BIGINT using `" + column + "`::bigint")
+		_, err := x.Exec("ALTER TABLE \"" + table + "\" ALTER COLUMN \"" + column + "\" TYPE BIGINT USING \"" + column + "\"::bigint")
 		if err != nil {
 			return err
 		}
