@@ -34,15 +34,34 @@ func convertChecklistInDescription(tx *xorm.Engine, table string, column string)
 	}
 
 	for _, item := range items {
-		if !strings.Contains(item[column].(string), "<li>[") {
+		raw := item[column]
+		if raw == nil {
+			// Skip rows with NULL values
+			continue
+		}
+
+		var text string
+		switch v := raw.(type) {
+		case string:
+			text = v
+		case []byte:
+			text = string(v)
+		default:
+			// Skip rows with unexpected types
+			continue
+		}
+
+		if !strings.Contains(text, "<li>[") {
 			continue
 		}
 
 		var re = regexp.MustCompile(`<ul>(\n)?<li>`)
-		item[column] = re.ReplaceAllString(item[column].(string), `<ul data-type="taskList"><li>`)
+		text = re.ReplaceAllString(text, `<ul data-type="taskList"><li>`)
 
-		item[column] = strings.ReplaceAll(item[column].(string), "<li>[ ] ", `<li data-checked="false" data-type="taskItem"><label><input type="checkbox"><span></span></label>`)
-		item[column] = strings.ReplaceAll(item[column].(string), "<li>[x] ", `<li data-checked="true" data-type="taskItem"><label><input type="checkbox" checked="checked"><span></span></label>`)
+		text = strings.ReplaceAll(text, "<li>[ ] ", `<li data-checked="false" data-type="taskItem"><label><input type="checkbox"><span></span></label>`)
+		text = strings.ReplaceAll(text, "<li>[x] ", `<li data-checked="true" data-type="taskItem"><label><input type="checkbox" checked="checked"><span></span></label>`)
+
+		item[column] = text
 
 		_, err = tx.Where("id = ?", item["id"]).
 			Table(table).
