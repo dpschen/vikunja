@@ -98,12 +98,12 @@ func init() {
 				}
 			}
 
-			err = dropTableColum(tx, "tasks", "is_favorite")
+			err = dropTableColumn(tx, "tasks", "is_favorite")
 			if err != nil {
 				return err
 			}
 
-			return dropTableColum(tx, "lists", "is_favorite")
+			return dropTableColumn(tx, "lists", "is_favorite")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil

@@ -37,7 +37,7 @@ func init() {
 			return tx.Sync2(listTask20190430111111{})
 		},
 		Rollback: func(tx *xorm.Engine) error {
-			return dropTableColum(tx, "tasks", "hex_color")
+			return dropTableColumn(tx, "tasks", "hex_color")
 		},
 	})
 }

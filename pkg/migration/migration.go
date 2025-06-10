@@ -115,8 +115,9 @@ func MigrateTo(migrationID string, x *xorm.Engine) error {
 	return m.MigrateTo(migrationID)
 }
 
-// Deletes a column from a table. All arguments are strings, to let them be standalone and not depending on any struct.
-func dropTableColum(x *xorm.Engine, tableName, col string) error {
+// dropTableColumn deletes a column from a table. All arguments are strings, to
+// let them be standalone and not depending on any struct.
+func dropTableColumn(x *xorm.Engine, tableName, col string) error {
 
 	switch config.DatabaseType.GetString() {
 	case "sqlite":
@@ -135,6 +136,14 @@ func dropTableColum(x *xorm.Engine, tableName, col string) error {
 		log.Fatal("Unknown db.")
 	}
 	return nil
+}
+
+// dropTableColum is deprecated and kept for backwards compatibility.
+// Use dropTableColumn instead.
+//
+//nolint:unused
+func dropTableColum(x *xorm.Engine, tableName, col string) error {
+	return dropTableColumn(x, tableName, col)
 }
 
 // Modifies a column definition

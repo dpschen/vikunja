@@ -40,7 +40,7 @@ func init() {
 			return tx.Sync2(status20200120201756{})
 		},
 		Rollback: func(tx *xorm.Engine) error {
-			return dropTableColum(tx, "migration_status", "index")
+			return dropTableColumn(tx, "migration_status", "index")
 		},
 	})
 

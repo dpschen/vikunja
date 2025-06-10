@@ -176,7 +176,7 @@ create unique index UQE_tasks_id
 				return err
 			}
 
-			return dropTableColum(tx, "tasks", "bucket_id")
+			return dropTableColumn(tx, "tasks", "bucket_id")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil

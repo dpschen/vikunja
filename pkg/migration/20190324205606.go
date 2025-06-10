@@ -35,7 +35,7 @@ func init() {
 		ID:          "20190324205606",
 		Description: "Remove reminders_unix from tasks",
 		Migrate: func(tx *xorm.Engine) error {
-			return dropTableColum(tx, "tasks", "reminders_unix")
+			return dropTableColumn(tx, "tasks", "reminders_unix")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return tx.Sync2(tasksReminderDateMigration20190324205606{})

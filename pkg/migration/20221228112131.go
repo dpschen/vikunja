@@ -306,5 +306,5 @@ func removeNamespaceLeftovers(tx *xorm.Engine) error {
 		return err
 	}
 
-	return dropTableColum(tx, "projects", "namespace_id")
+	return dropTableColumn(tx, "projects", "namespace_id")
 }

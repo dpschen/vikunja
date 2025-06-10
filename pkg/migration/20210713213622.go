@@ -62,7 +62,7 @@ func init() {
 				}
 			}
 
-			return dropTableColum(tx, "users", "is_active")
+			return dropTableColumn(tx, "users", "is_active")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil
