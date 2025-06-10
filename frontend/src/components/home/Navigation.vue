@@ -149,30 +149,31 @@ const savedFilterProjects = computed(() => projectStore.savedFilterProjects)
 }
 
 .menu-container {
-	display: flex;
-	flex-direction: column;
-	background: var(--site-background);
-	color: $vikunja-nav-color;
-	padding: 1rem 0;
-	transition: transform $transition-duration ease-in;
-	position: fixed;
-	top: $navbar-height;
-	bottom: 0;
-	left: 0;
-	transform: translateX(-100%);
-	width: $navbar-width;
-	overflow-y: auto;
+       display: flex;
+       flex-direction: column;
+       background: var(--site-background);
+       color: $vikunja-nav-color;
+       padding: 1rem 0;
+       transition: transform $transition-duration ease-in;
+       position: sticky;
+       top: 0;
+       left: 0;
+       width: $navbar-width;
+       height: 100vh;
+       overflow-y: auto;
+       transform: translateX(-100%);
 
-	@media screen and (max-width: $tablet) {
-		top: 0;
-		width: 70vw;
-		z-index: 20;
-	}
+       @media screen and (max-width: $tablet) {
+               position: fixed;
+               bottom: 0;
+               width: 70vw;
+               z-index: 20;
+       }
 
-	&.is-active {
-		transform: translateX(0);
-		transition: transform $transition-duration ease-out;
-	}
+       &.is-active {
+               transform: translateX(0);
+               transition: transform $transition-duration ease-out;
+       }
 }
 
 .top-menu .menu-list {
