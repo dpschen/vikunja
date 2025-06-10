@@ -122,7 +122,11 @@ func Restore(filename string) error {
 
 	// Because we don't explicitly saved the table definitions, we take the last ran db migration from the dump
 	// and execute everything until that point.
-	migrations := dbfiles["migration"]
+	migrations, ok := dbfiles["migration"]
+	if !ok || migrations == nil {
+		return fmt.Errorf("migration data missing from dump")
+	}
+
 	rc, err := migrations.Open()
 	if err != nil {
 		return fmt.Errorf("could not open migrations: %w", err)
