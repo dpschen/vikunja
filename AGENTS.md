@@ -36,3 +36,11 @@ These instructions summarize the development guidelines from the official Vikunj
 - If the PR changes the UI, include after screenshots.
 - Reference issues with `Fixes/Closes/Resolves #<number>` each on its own line.
 - Conventional Commit messages are appreciated but not mandatory.
+
+## Branch Strategy for Codex
+- Keep a branch `agents-main` with your fork-specific commits and AGENTS adjustments.
+- Keep a branch `upstream-main` which tracks `go-vikunja/vikunja`'s `main` branch.
+- Create feature branches from `upstream-main` for all pull requests.
+- Use `scripts/setup_pr_branch.sh <branch>` to update `upstream-main` and start a new feature branch.
+- Run `scripts/codex_pr.sh <branch> [title]` to run linting, tests and push the branch. It can also open a PR with the GitHub CLI.
+
