@@ -1,11 +1,11 @@
-import type {Ref} from 'vue'
+import {watch, type Ref} from 'vue'
 import type {RouteLocationNormalized, RouteLocationRaw} from 'vue-router'
 
 import {isoToKebabDate} from '@/helpers/time/isoToKebabDate'
 import {parseDateProp} from '@/helpers/time/parseDateProp'
 import {parseBooleanProp} from '@/helpers/time/parseBooleanProp'
 import {useRouteFilters} from '@/composables/useRouteFilters'
-import {useGanttTaskList} from './useGanttTaskList'
+import {useTaskList} from '@/composables/useTaskList'
 
 import type {IProject} from '@/modelTypes/IProject'
 import type {TaskFilterParams} from '@/services/taskCollection'
@@ -94,8 +94,8 @@ function ganttFiltersToApiParams(filters: GanttFilters): TaskFilterParams {
 }
 
 export type UseGanttFiltersReturn =
-	ReturnType<typeof useRouteFilters<GanttFilters>> &
-	ReturnType<typeof useGanttTaskList<GanttFilters>>
+       ReturnType<typeof useRouteFilters<GanttFilters>> &
+       ReturnType<typeof useTaskList>
 
 export function useGanttFilters(route: Ref<RouteLocationNormalized>, viewId: Ref<IProjectView['id']>): UseGanttFiltersReturn {
 	const {
@@ -110,14 +110,27 @@ export function useGanttFilters(route: Ref<RouteLocationNormalized>, viewId: Ref
 		['project.view'],
 	)
 
-	const {
-		tasks,
-		loadTasks,
+       const {
+               tasks,
+               loadTasks,
+               loading: isLoading,
+               addTask,
+               updateTask,
+               params,
+       } = useTaskList(
+               () => filters.value.projectId,
+               () => viewId.value,
+               undefined,
+               () => 'subtasks',
+       )
 
-		isLoading,
-		addTask,
-		updateTask,
-	} = useGanttTaskList<GanttFilters>(filters, ganttFiltersToApiParams, viewId)
+       watch(
+               filters,
+               () => {
+                       Object.assign(params.value, ganttFiltersToApiParams(filters.value))
+               },
+               { immediate: true, deep: true },
+       )
 
 	return {
 		filters,

@@ -3,10 +3,14 @@ import {useRoute, useRouter} from 'vue-router'
 import {useRouteQuery} from '@vueuse/router'
 
 import TaskCollectionService, {
-	type ExpandTaskFilterParam,
-	getDefaultTaskFilterParams,
-	type TaskFilterParams,
+        type ExpandTaskFilterParam,
+        getDefaultTaskFilterParams,
+        type TaskFilterParams,
 } from '@/services/taskCollection'
+import TaskService from '@/services/task'
+import TaskModel from '@/models/task'
+import type {ITaskPartialWithId} from '@/modelTypes/ITask'
+import {useProjectViewStore} from '@/stores/projectViews'
 import type {ITask} from '@/modelTypes/ITask'
 import {error} from '@/message'
 import type {IProject} from '@/modelTypes/IProject'
@@ -60,10 +64,10 @@ const SORT_BY_DEFAULT: SortBy = {
  * This mixin provides a base set of methods and properties to get tasks.
  */
 export function useTaskList(
-	projectIdGetter: ComputedGetter<IProject['id']>,
-	projectViewIdGetter: ComputedGetter<IProjectView['id']>,
-	sortByDefault: SortBy = SORT_BY_DEFAULT,
-	expandGetter: ComputedGetter<ExpandTaskFilterParam> = () => 'subtasks',
+       projectIdGetter: ComputedGetter<IProject['id']>,
+       projectViewIdGetter: ComputedGetter<IProjectView['id']>,
+       sortByDefault: SortBy = SORT_BY_DEFAULT,
+       expandGetter: ComputedGetter<ExpandTaskFilterParam> = () => 'subtasks',
 ) {
 	
 	const projectId = computed(() => projectIdGetter())
@@ -89,39 +93,50 @@ export function useTaskList(
 		},
 	)
 	
-	const authStore = useAuthStore()
+       const authStore = useAuthStore()
+       const projectViewStore = useProjectViewStore()
 	
-	const getAllTasksParams = computed(() => {
-		return [
-			{
-				projectId: projectId.value,
-				viewId: projectViewId.value,
-			},
-			{
-				...allParams.value,
-				filter_timezone: authStore.settings.timezone,
-				expand: expandGetter(),
-			},
-			page.value,
-		]
-	})
+       const getAllTasksParams = computed(() => {
+               return [
+                       {
+                               projectId: projectId.value,
+                               viewId: projectViewId.value,
+                       },
+                       {
+                               ...allParams.value,
+                               filter_timezone: authStore.settings.timezone,
+                               expand: expandGetter(),
+                       },
+                       page.value,
+               ]
+       })
+       let oldParams = ''
 
-	const taskCollectionService = shallowReactive(new TaskCollectionService())
-	const loading = computed(() => taskCollectionService.loading)
-	const totalPages = computed(() => taskCollectionService.totalPages)
+       const taskCollectionService = shallowReactive(new TaskCollectionService())
+       const taskService = shallowReactive(new TaskService())
+       const loading = computed(() => projectViewStore.isLoading(projectId.value, projectViewId.value) || taskService.loading)
+       const totalPages = computed(() => taskCollectionService.totalPages)
 
-	const tasks = ref<ITask[]>([])
-	async function loadTasks(resetBeforeLoad: boolean = true) {
-		if(resetBeforeLoad) {
-			tasks.value = []
-		}
-		try {
-			tasks.value = await taskCollectionService.getAll(...getAllTasksParams.value)
-		} catch (e) {
-			error(e)
-		}
-		return tasks.value
-	}
+       const tasks = ref<ITask[]>([])
+
+       async function loadTasks(resetBeforeLoad: boolean = true) {
+               if (resetBeforeLoad) {
+                       tasks.value = []
+               }
+               try {
+                       tasks.value = await projectViewStore.loadTasks(
+                               projectId.value,
+                               projectViewId.value,
+                               {
+                                       ...allParams.value,
+                                       expand: expandGetter(),
+                               },
+                       )
+               } catch (e) {
+                       error(e)
+               }
+               return tasks.value
+       }
 
 	const route = useRoute()
 	watch(() => route.query, (query) => {
@@ -159,21 +174,39 @@ export function useTaskList(
 	)
 
 	// Only listen for query path changes
-	watch(() => JSON.stringify(getAllTasksParams.value), (newParams, oldParams) => {
-		if (oldParams === newParams) {
-			return
-		}
+       watch(() => JSON.stringify(getAllTasksParams.value), (newParams) => {
+               if (oldParams === newParams) {
+                       return
+               }
 
-		loadTasks()
-	}, { immediate: true })
+               loadTasks()
+               oldParams = newParams
+       }, { immediate: true })
 
-	return {
-		tasks,
-		loading,
-		totalPages,
-		currentPage: page,
-		loadTasks,
-		params,
-		sortByParam: sortBy,
-	}
+       async function addTask(task: Partial<ITask>) {
+               const newTask = await taskService.create(new TaskModel({...task}))
+               tasks.value.unshift(newTask)
+               return newTask
+       }
+
+       async function updateTask(task: ITaskPartialWithId) {
+               const updated = await taskService.update(new TaskModel({...task}))
+               const idx = tasks.value.findIndex(t => t.id === updated.id)
+               if (idx !== -1) {
+                       tasks.value[idx] = updated
+               }
+               return updated
+       }
+
+       return {
+               tasks,
+               loading,
+               totalPages,
+               currentPage: page,
+               loadTasks,
+               addTask,
+               updateTask,
+               params,
+               sortByParam: sortBy,
+       }
 }
