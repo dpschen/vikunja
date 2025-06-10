@@ -15,6 +15,42 @@ jobs:
           go-version: stable
           cache: true
           cache-dependency-path: go.sum
+      - name: Cache go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Cache go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Cache go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Cache go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
       - name: Cache Mage
         id: cache-mage
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
@@ -75,6 +111,15 @@ jobs:
           go-version: stable
           cache: true
           cache-dependency-path: go.sum
+      - name: Cache go modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
       - name: prepare frontend files
         run: |
           mkdir -p frontend/dist
@@ -274,9 +319,16 @@ jobs:
   frontend-build:
     runs-on: ubuntu-latest
     steps:
+      - name: Cache frontend bundle
+        id: cache-frontend
+        uses: actions/cache@v4
+        with:
+          path: frontend/dist
+          key: frontend-${{ hashFiles('frontend/pnpm-lock.yaml', 'frontend/src/**/*') }}
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ./.github/actions/setup-frontend
       - name: Build frontend
+        if: steps.cache-frontend.outputs.cache-hit != 'true'
         working-directory: frontend
         run: pnpm build
       - name: Store Frontend
@@ -347,3 +399,20 @@ jobs:
       - test-frontend-e2e
     steps:
       - run: exit 0
+
+  benchmark-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Run benchmark
+        run: |
+          ./scripts/benchmark-build.sh > benchmark.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-benchmarks
+          path: benchmark.log

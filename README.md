@@ -40,6 +40,10 @@ try it on [try.vikunja.io](https://try.vikunja.io)!
 * [Magefile](https://vikunja.io/docs/magefile/)
 * [Testing](https://vikunja.io/docs/testing/)
 
+To install required build tools locally, run `scripts/install-tools.sh`. The
+script caches Node, Go and Mage binaries under `~/.cache/vikunja-tools` so
+subsequent runs are fast.
+
 All docs can be found on [the Vikunja home page](https://vikunja.io/docs/).
 
 ### Roadmap

@@ -50,6 +50,7 @@ const (
 var (
 	Goflags = []string{
 		"-v",
+		"-buildvcs=false",
 	}
 	Executable    = "vikunja"
 	Ldflags       = ""
@@ -721,44 +722,56 @@ func prepareXgo() {
 	runAndStreamOutput("docker", "pull", "ghcr.io/techknowlogick/xgo:latest")
 }
 
-func runXgo(targets string) error {
+func runXgo(targets []string) error {
 	mg.Deps(initVars)
 	checkAndInstallGoTool("xgo", "src.techknowlogick.com/xgo")
 
-	extraLdflags := `-linkmode external -extldflags "-static" `
+	baseLdflags := `-linkmode external -extldflags "-static" `
 
-	// See https://github.com/techknowlogick/xgo/issues/79
-	if strings.HasPrefix(targets, "darwin") {
-		extraLdflags = ""
-	}
-	outName := os.Getenv("XGO_OUT_NAME")
-	if outName == "" {
-		outName = Executable + "-" + Version
-	}
+	g := new(errgroup.Group)
+	sem := make(chan struct{}, runtime.NumCPU())
 
-	runAndStreamOutput("xgo",
-		"-dest", RootPath+"/"+DIST+"/binaries",
-		"-tags", "netgo "+Tags,
-		"-ldflags", extraLdflags+Ldflags,
-		"-targets", targets,
-		"-out", outName,
-		RootPath)
-	if os.Getenv("DRONE_WORKSPACE") != "" {
-		return filepath.Walk("/build/", func(path string, info os.FileInfo, err error) error {
-			// Skip directories
-			if info.IsDir() {
-				return nil
+	for _, t := range targets {
+		t := t
+		ldflags := baseLdflags
+		if strings.HasPrefix(t, "darwin") {
+			ldflags = ""
+		}
+		outName := os.Getenv("XGO_OUT_NAME")
+		if outName == "" {
+			outName = Executable + "-" + Version
+		}
+
+		sem <- struct{}{}
+		g.Go(func() error {
+			defer func() { <-sem }()
+			args := []string{
+				"-dest", RootPath + "/" + DIST + "/binaries",
+				"-tags", "netgo " + Tags,
+				"-ldflags", ldflags + Ldflags,
+				"-targets", t,
+				"-out", outName,
+				RootPath,
 			}
-
-			return moveFile(path, RootPath+"/"+DIST+"/binaries/"+info.Name())
+			runAndStreamOutput("xgo", args...)
+			if os.Getenv("DRONE_WORKSPACE") != "" {
+				return filepath.Walk("/build/", func(path string, info os.FileInfo, err error) error {
+					if info.IsDir() {
+						return nil
+					}
+					return moveFile(path, RootPath+"/"+DIST+"/binaries/"+info.Name())
+				})
+			}
+			return nil
 		})
 	}
-	return nil
+
+	return g.Wait()
 }
 
 // Builds binaries for windows
 func (Release) Windows() error {
-	return runXgo("windows/*")
+	return runXgo([]string{"windows/*"})
 }
 
 // Builds binaries for linux
@@ -775,12 +788,12 @@ func (Release) Linux() error {
 		"linux/mips64le",
 		"linux/riscv64",
 	}
-	return runXgo(strings.Join(targets, ","))
+	return runXgo(targets)
 }
 
 // Builds binaries for darwin
 func (Release) Darwin() error {
-	return runXgo("darwin-10.15/*")
+	return runXgo([]string{"darwin-10.15/*"})
 }
 
 func (Release) Xgo(target string) error {
@@ -794,7 +807,7 @@ func (Release) Xgo(target string) error {
 		variant = "-" + strings.ReplaceAll(parts[2], "v", "")
 	}
 
-	return runXgo(parts[0] + "/" + parts[1] + variant)
+	return runXgo([]string{parts[0] + "/" + parts[1] + variant})
 }
 
 // Compresses the built binaries in dist/binaries/ to reduce their filesize
