@@ -171,7 +171,7 @@ func renameTable(x *xorm.Engine, oldName, newName string) error {
 			return err
 		}
 	case "postgres":
-		_, err := x.Exec("ALTER TABLE `" + oldName + "` RENAME TO `" + newName + "`")
+		_, err := x.Exec("ALTER TABLE \"" + oldName + "\" RENAME TO \"" + newName + "\"")
 		if err != nil {
 			return err
 		}
