@@ -41,7 +41,7 @@ func (webhooks20230913202615) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20230913202615",
-		Description: "",
+Description: "create webhooks table",
 		Migrate: func(tx *xorm.Engine) error {
 			return tx.Sync2(webhooks20230913202615{})
 		},

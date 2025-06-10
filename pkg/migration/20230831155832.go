@@ -42,7 +42,7 @@ func (apiTokens20230831155832) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20230831155832",
-		Description: "",
+Description: "create api_tokens table for personal tokens",
 		Migrate: func(tx *xorm.Engine) error {
 			return tx.Sync2(apiTokens20230831155832{})
 		},

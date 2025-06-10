@@ -36,7 +36,7 @@ func (typesenseSync20230828125443) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20230828125443",
-		Description: "",
+Description: "create typesense_sync tracking table",
 		Migrate: func(tx *xorm.Engine) error {
 			return tx.CreateTables(typesenseSync20230828125443{})
 		},

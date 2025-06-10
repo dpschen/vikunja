@@ -50,7 +50,7 @@ func (projectView20240919130957TitleCase) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20240919130957",
-		Description: "",
+Description: "lowercase bucket_configuration fields in project views",
 		Migrate: func(tx *xorm.Engine) (err error) {
 			oldViews := []*projectView20240919130957TitleCase{}
 			// 1 is manual
