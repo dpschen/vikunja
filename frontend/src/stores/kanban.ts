@@ -15,6 +15,7 @@ import type {IBucket} from '@/modelTypes/IBucket'
 import {useAuthStore} from '@/stores/auth'
 import type {IProjectView} from '@/modelTypes/IProjectView'
 import {useBaseStore} from '@/stores/base'
+import {useProjectViewStore} from '@/stores/projectViews'
 
 const TASKS_PER_BUCKET = 25
 
@@ -36,8 +37,9 @@ function getTaskIndicesById(buckets: IBucket[], taskId: ITask['id']) {
  * It should hold only the current buckets.
  */
 export const useKanbanStore = defineStore('kanban', () => {
-	const authStore = useAuthStore()
-	const baseStore = useBaseStore()
+       const authStore = useAuthStore()
+       const baseStore = useBaseStore()
+       const projectViewStore = useProjectViewStore()
 
 	const buckets = ref<IBucket[]>([])
 	const projectId = ref<IProject['id']>(0)
@@ -259,18 +261,23 @@ export const useKanbanStore = defineStore('kanban', () => {
 		setBuckets([])
 
 		const taskCollectionService = new TaskCollectionService()
-		try {
-			const newBuckets = await taskCollectionService.getAll({projectId, viewId}, {
-				...params,
-				per_page: TASKS_PER_BUCKET,
-			})
-			setBuckets(newBuckets)
-			setProjectId(projectId)
-			return newBuckets
-		} finally {
-			cancel()
-		}
-	}
+               try {
+                       const newBuckets = await taskCollectionService.getAll({projectId, viewId}, {
+                               ...params,
+                               per_page: TASKS_PER_BUCKET,
+                       })
+                       setBuckets(newBuckets)
+                       setProjectId(projectId)
+                       const allTasks: ITask[] = []
+                       newBuckets.forEach(b => {
+                               allTasks.push(...b.tasks)
+                       })
+                       projectViewStore.setTasks(projectId, viewId, allTasks)
+                       return newBuckets
+               } finally {
+                       cancel()
+               }
+       }
 
 	async function loadNextTasksForBucket(
 		projectId: IProject['id'],
@@ -302,14 +309,16 @@ export const useKanbanStore = defineStore('kanban', () => {
 		params.per_page = TASKS_PER_BUCKET
 
 		const taskService = new TaskCollectionService()
-		try {
-			const tasks = await taskService.getAll({projectId, viewId}, params, page)
-			addTasksToBucket(tasks, bucketId)
-			setTasksLoadedForBucketPage({bucketId, page})
-			if (taskService.totalPages <= page) {
-				setAllTasksLoadedForBucket(bucketId)
-			}
-			return tasks
+               try {
+                       const tasks = await taskService.getAll({projectId, viewId}, params, page)
+                       addTasksToBucket(tasks, bucketId)
+                       const cached = projectViewStore.getTasks(projectId, viewId)
+                       projectViewStore.setTasks(projectId, viewId, [...cached, ...tasks])
+                       setTasksLoadedForBucketPage({bucketId, page})
+                       if (taskService.totalPages <= page) {
+                               setAllTasksLoadedForBucket(bucketId)
+                       }
+                       return tasks
 		} finally {
 			cancel()
 			setBucketLoading({bucketId, loading: false})
