@@ -112,7 +112,7 @@ create unique index if not exists UQE_buckets_id
 				return err
 			}
 
-			return dropTableColum(tx, "buckets", "project_id")
+			return dropTableColumn(tx, "buckets", "project_id")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil

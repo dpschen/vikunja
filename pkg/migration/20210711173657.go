@@ -90,11 +90,11 @@ func init() {
 				}
 			}
 
-			err = dropTableColum(tx, "users", "password_reset_token")
+			err = dropTableColumn(tx, "users", "password_reset_token")
 			if err != nil {
 				return err
 			}
-			return dropTableColum(tx, "users", "email_confirm_token")
+			return dropTableColumn(tx, "users", "email_confirm_token")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil

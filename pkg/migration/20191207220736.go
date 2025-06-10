@@ -70,7 +70,7 @@ func init() {
 			return nil
 		},
 		Rollback: func(tx *xorm.Engine) error {
-			return dropTableColum(tx, "tasks", "index")
+			return dropTableColumn(tx, "tasks", "index")
 		},
 	})
 }

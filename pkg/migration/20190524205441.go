@@ -61,7 +61,7 @@ func init() {
 				return err
 			}
 
-			return dropTableColum(tx, "tasks", "reminders_unix")
+			return dropTableColumn(tx, "tasks", "reminders_unix")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return tx.DropTables(taskReminder20190524205441{})

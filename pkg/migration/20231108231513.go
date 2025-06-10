@@ -87,7 +87,7 @@ func init() {
 				return err
 			}
 
-			err = dropTableColum(tx, "migration_status", "created")
+			err = dropTableColumn(tx, "migration_status", "created")
 			return err
 		},
 		Rollback: func(tx *xorm.Engine) error {

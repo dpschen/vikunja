@@ -37,7 +37,7 @@ func init() {
 			return tx.Sync2(list20191207204427{})
 		},
 		Rollback: func(tx *xorm.Engine) error {
-			return dropTableColum(tx, "list", "indentifier")
+			return dropTableColumn(tx, "list", "indentifier")
 		},
 	})
 }

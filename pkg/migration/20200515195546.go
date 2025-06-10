@@ -99,7 +99,7 @@ create unique index UQE_namespaces_id
 				return err
 			}
 
-			return dropTableColum(tx, "namespaces", "name")
+			return dropTableColumn(tx, "namespaces", "name")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil
