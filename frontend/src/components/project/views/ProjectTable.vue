@@ -386,10 +386,19 @@ const taskDetailRoutes = computed(() => Object.fromEntries(
 </script>
 
 <style lang="scss" scoped>
+
 .table {
-	background: transparent;
-	overflow-x: auto;
-	overflow-y: hidden;
+       --sticky-header-z-index: 10;
+       background: transparent;
+       overflow-x: auto;
+       overflow-y: hidden;
+
+       thead tr {
+               position: sticky;
+               top: $navbar-height + 1.5rem;
+               z-index: var(--sticky-header-z-index);
+               background: var(--white);
+       }
 
 	th {
 		white-space: nowrap;
