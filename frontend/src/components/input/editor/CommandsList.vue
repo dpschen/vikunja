@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, defineProps, defineExpose} from 'vue'
+import {ref, watch, defineProps, defineExpose, defineEmits} from 'vue'
 import type {IconProp} from '@fortawesome/fontawesome-svg-core'
 
 interface CommandItem {
@@ -41,6 +41,9 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+// allow consumers (e.g. VueRenderer) to react to key events
+const emit = defineEmits<{(e: 'keydown', event: KeyboardEvent): void}>()
 
 defineOptions({name: 'CommandsList'})
 
@@ -71,6 +74,7 @@ function enterHandler() {
 }
 
 function onKeyDown({event}: {event: KeyboardEvent}) {
+        emit('keydown', event)
         if (event.key === 'ArrowUp') {
                 upHandler()
                 return true
