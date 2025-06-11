@@ -22,6 +22,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"code.vikunja.io/api/pkg/config"
@@ -39,53 +40,64 @@ import (
 
 // We only want one instance of the engine, so we can reate it once and reuse it
 var x *xorm.Engine
+var engineOnce sync.Once
+var engineOnceErr error
 
 // CreateDBEngine initializes a db engine from the config
 func CreateDBEngine() (engine *xorm.Engine, err error) {
+	engineOnce.Do(func() {
+		if x != nil {
+			engine = x
+			return
+		}
+
+		// If the database type is not set, this likely means we need to initialize the config first
+		if config.DatabaseType.GetString() == "" {
+			config.InitConfig()
+		}
+
+		// Use Mysql if set
+		switch config.DatabaseType.GetString() {
+		case "mysql":
+			engine, err = initMysqlEngine()
+			if err != nil {
+				engineOnceErr = err
+				return
+			}
+		case "postgres":
+			engine, err = initPostgresEngine()
+			if err != nil {
+				engineOnceErr = err
+				return
+			}
+		case "sqlite":
+			// Otherwise use sqlite
+			engine, err = initSqliteEngine()
+			if err != nil {
+				engineOnceErr = err
+				return
+			}
+		default:
+			log.Fatalf("Unknown database type %s", config.DatabaseType.GetString())
+		}
+
+		engine.SetTZLocation(config.GetTimeZone()) // Vikunja's timezone
+		loc, e := time.LoadLocation("GMT")         // The db data timezone
+		if e != nil {
+			log.Fatalf("Error parsing time zone: %s", e)
+		}
+		engine.SetTZDatabase(loc)
+		engine.SetMapper(names.GonicMapper{})
+		logger := log.NewXormLogger(config.LogEnabled.GetBool(), config.LogDatabase.GetString(), config.LogDatabaseLevel.GetString())
+		engine.SetLogger(logger)
+
+		x = engine
+	})
 
 	if x != nil {
-		return x, nil
+		return x, engineOnceErr
 	}
-
-	// If the database type is not set, this likely means we need to initialize the config first
-	if config.DatabaseType.GetString() == "" {
-		config.InitConfig()
-	}
-
-	// Use Mysql if set
-	switch config.DatabaseType.GetString() {
-	case "mysql":
-		engine, err = initMysqlEngine()
-		if err != nil {
-			return
-		}
-	case "postgres":
-		engine, err = initPostgresEngine()
-		if err != nil {
-			return
-		}
-	case "sqlite":
-		// Otherwise use sqlite
-		engine, err = initSqliteEngine()
-		if err != nil {
-			return
-		}
-	default:
-		log.Fatalf("Unknown database type %s", config.DatabaseType.GetString())
-	}
-
-	engine.SetTZLocation(config.GetTimeZone()) // Vikunja's timezone
-	loc, err := time.LoadLocation("GMT")       // The db data timezone
-	if err != nil {
-		log.Fatalf("Error parsing time zone: %s", err)
-	}
-	engine.SetTZDatabase(loc)
-	engine.SetMapper(names.GonicMapper{})
-	logger := log.NewXormLogger(config.LogEnabled.GetBool(), config.LogDatabase.GetString(), config.LogDatabaseLevel.GetString())
-	engine.SetLogger(logger)
-
-	x = engine
-	return
+	return engine, engineOnceErr
 }
 
 func initMysqlEngine() (engine *xorm.Engine, err error) {
