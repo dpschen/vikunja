@@ -40,9 +40,14 @@ import (
 )
 
 const (
-	indexFile               = `index.html`
-	rootPath                = `dist/`
-	cacheControlMax         = `max-age=315360000, public, max-age=31536000, s-maxage=31536000, immutable`
+	indexFile = `index.html`
+	rootPath  = `dist/`
+	// cacheControlMax defines the Cache-Control header for long lived assets
+	// The assets are fingerprinted by the frontend build, so a new filename
+	// will be generated when their content changes. Caching them for one
+	// year is therefore safe and keeps bandwidth low while still allowing
+	// immediate updates when the service worker precache changes.
+	cacheControlMax         = `max-age=31536000, public, s-maxage=31536000, immutable`
 	cacheControlNone        = `public, max-age=0, s-maxage=0, must-revalidate`
 	configScriptTagTemplate = `
 <script>
