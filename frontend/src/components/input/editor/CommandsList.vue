@@ -43,7 +43,9 @@ interface Props {
 const props = defineProps<Props>()
 
 // allow consumers (e.g. VueRenderer) to react to key events
-const emit = defineEmits<{(e: 'keydown', event: KeyboardEvent): void}>()
+const emit = defineEmits<{
+    keydown: (event: KeyboardEvent) => void
+}>()
 
 defineOptions({name: 'CommandsList'})
 
