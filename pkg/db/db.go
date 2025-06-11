@@ -239,3 +239,11 @@ func GetDialect() string {
 
 	return dialect
 }
+
+// Close closes the database engine.
+func Close() error {
+	if x == nil {
+		return nil
+	}
+	return x.Close()
+}
