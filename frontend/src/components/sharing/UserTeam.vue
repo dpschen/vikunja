@@ -189,16 +189,14 @@ import {useAuthStore} from '@/stores/auth'
 import {useConfigStore} from '@/stores/config'
 import User from '@/components/misc/User.vue'
 
-// FIXME: I think this whole thing can now only manage user/team sharing for projects? Maybe remove a little generalization?
+// Manages user or team sharing for projects.
 
 const props = withDefaults(defineProps<{
-	type?: 'project',
-	shareType: 'user' | 'team',
-	id: number,
-	userIsAdmin?: boolean
+       shareType: 'user' | 'team',
+       id: number,
+       userIsAdmin?: boolean
 }>(), {
-	type: 'project',
-	userIsAdmin: false,
+       userIsAdmin: false,
 })
 
 const {t} = useI18n({useScope: 'global'})
@@ -238,38 +236,24 @@ function createShareTypeNameComputed(count: number) {
 const shareTypeNames = createShareTypeNameComputed(2)
 const shareTypeName = createShareTypeNameComputed(1)
 
-const sharableName = computed(() => {
-	if (props.type === 'project') {
-		return t('project.list.title')
-	}
-
-	return ''
-})
+const sharableName = computed(() => t('project.list.title'))
 
 if (props.shareType === 'user') {
-	searchService = shallowReactive(new UserService())
-	sharable = ref(new UserModel())
-	searchLabel.value = 'username'
+       searchService = shallowReactive(new UserService())
+       sharable = ref(new UserModel())
+       searchLabel.value = 'username'
 
-	if (props.type === 'project') {
-		stuffService = shallowReactive(new UserProjectService())
-		stuffModel = reactive(new UserProjectModel({projectId: props.id}))
-	} else {
-		throw new Error('Unknown type: ' + props.type)
-	}
+       stuffService = shallowReactive(new UserProjectService())
+       stuffModel = reactive(new UserProjectModel({projectId: props.id}))
 } else if (props.shareType === 'team') {
-	searchService = new TeamService()
-	sharable = ref(new TeamModel())
-	searchLabel.value = 'name'
+       searchService = new TeamService()
+       sharable = ref(new TeamModel())
+       searchLabel.value = 'name'
 
-	if (props.type === 'project') {
-		stuffService = shallowReactive(new TeamProjectService())
-		stuffModel = reactive(new TeamProjectModel({projectId: props.id}))
-	} else {
-		throw new Error('Unknown type: ' + props.type)
-	}
+       stuffService = shallowReactive(new TeamProjectService())
+       stuffModel = reactive(new TeamProjectModel({projectId: props.id}))
 } else {
-	throw new Error('Unkown share type')
+       throw new Error('Unkown share type')
 }
 
 load()
