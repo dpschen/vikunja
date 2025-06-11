@@ -289,7 +289,6 @@
 									:ref="e => setFieldRef('color', e)"
 									v-model="taskColor"
 									menu-position="bottom"
-									@update:modelValue="saveTask()"
 								/>
 							</div>
 						</CustomTransition>
@@ -590,7 +589,7 @@ import {ref, reactive, shallowReactive, computed, watch, nextTick, onMounted, on
 import {useRouter, type RouteLocation} from 'vue-router'
 import {storeToRefs} from 'pinia'
 import {useI18n} from 'vue-i18n'
-import {unrefElement} from '@vueuse/core'
+import {unrefElement, useDebounceFn} from '@vueuse/core'
 import {klona} from 'klona/lite'
 import {eventToHotkeyString} from '@github/hotkey'
 
@@ -687,13 +686,17 @@ onBeforeUnmount(() => {
 	document.removeEventListener('keydown', saveTaskViaHotkey)
 })
 
-// We doubled the task color property here because verte does not have a real change property, leading
-// to the color property change being triggered when the # is removed from it, leading to an update,
-// which leads in turn to a change... This creates an infinite loop in which the task is updated, changed,
-// updated, changed, updated and so on.
-// To prevent this, we put the task color property in a seperate value which is set to the task color
-// when it is saved and loaded.
-const taskColor = ref<ITask['hexColor']>('')
+const COLOR_SAVE_DEBOUNCE = 500
+
+const debouncedSaveColor = useDebounceFn(() => saveTask(), COLOR_SAVE_DEBOUNCE)
+
+const taskColor = computed({
+        get: () => task.value.hexColor,
+        set(value: ITask['hexColor']) {
+                task.value.hexColor = value
+                debouncedSaveColor()
+        },
+})
 
 // Used to avoid flashing of empty elements if the task content is not yet loaded.
 const visible = ref(false)
@@ -738,9 +741,8 @@ watch(
 		try {
 			const loaded = await taskService.get({id}, {expand: ['reactions', 'comments']})
 			Object.assign(task.value, loaded)
-			attachmentStore.set(task.value.attachments)
-			taskColor.value = task.value.hexColor
-			setActiveFields()
+                       attachmentStore.set(task.value.attachments)
+                       setActiveFields()
 		} finally {
 			await nextTick()
 			scrollToHeading()
@@ -846,9 +848,8 @@ async function saveTask(
 		return
 	}
 
-	currentTask.hexColor = taskColor.value
 
-	// If no end date is being set, but a start date and due date,
+       // If no end date is being set, but a start date and due date,
 	// use the due date as the end date
 	if (
 		currentTask.endDate === null &&
