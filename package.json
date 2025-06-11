@@ -1,0 +1,11 @@
+{
+    "name": "vikunja",
+    "private": true,
+    "scripts": {
+        "commitlint": "commitlint --from=HEAD~1"
+    },
+    "devDependencies": {
+        "@commitlint/cli": "^19.8.1",
+        "@commitlint/config-conventional": "^19.8.1"
+    }
+}
