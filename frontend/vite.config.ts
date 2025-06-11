@@ -16,6 +16,7 @@ import postcssPresetEnv from 'postcss-preset-env'
 import postcssEasingGradients from 'postcss-easing-gradients'
 import tailwindcss from 'tailwindcss'
 import vueDevTools from 'vite-plugin-vue-devtools'
+import lezer from 'unplugin-lezer/vite'
 
 const pathSrc = fileURLToPath(new URL('./src', import.meta.url)).replaceAll('\\', '/')
 
@@ -133,11 +134,11 @@ function getBuildConfig(env: Record<string, string>) {
 				}],
 				injectTo: 'custom',
 			}),
-			VitePWA({
-				srcDir: 'src',
-				filename: 'sw.ts',
-				strategies: 'injectManifest',
-				injectRegister: false,
+                        VitePWA({
+                                srcDir: 'src',
+                                filename: 'sw.ts',
+                                strategies: 'injectManifest',
+                                injectRegister: false,
 				manifest: {
 					name: 'Vikunja',
 					short_name: 'Vikunja',
@@ -184,16 +185,17 @@ function getBuildConfig(env: Record<string, string>) {
 							url: '/tasks/by/month',
 						},
 						{
-							name: 'Teams Overview',
-							short_name: 'Teams',
-							url: '/teams',
-						},
-					],
-				},
-			}),
-			vueDevTools({
-				launchEditor: env.VUE_DEVTOOLS_LAUNCH_EDITOR || 'code',
-			}),
+                                name: 'Teams Overview',
+                                short_name: 'Teams',
+                                url: '/teams',
+                        },
+                                ],
+                        },
+                }),
+                lezer(),
+                        vueDevTools({
+                                launchEditor: env.VUE_DEVTOOLS_LAUNCH_EDITOR || 'code',
+                        }),
 			viteSentry(getSentryConfig(env)),
 		],
 		resolve: {

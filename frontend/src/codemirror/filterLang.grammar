@@ -1,0 +1,23 @@
+@top Query { Expr }
+
+@tokens {
+  space { std.whitespace+ }
+  Field { "dueDate" | "startDate" | "endDate" | "doneAt" | "reminders" | "created" | "updated" | "assignees" | "labels" | "project" | "done" | "priority" | "percentDone" }
+  Operator { "!=" | ">=" | "<=" | ">" | "<" | "=" | "like" | "not in" | "in" | "?=" }
+  Join { "&&" | "||" }
+  LParen { "(" }
+  RParen { ")" }
+  digit { $[0-9] }
+  Number { digit+ }
+  DString { '"' DChar* '"' }
+  DChar { $[^"\n] }
+  SString { "'" SChar* "'" }
+  SChar { $[^'\n] }
+  Word { $[a-zA-Z_-]+ }
+}
+
+@skip { space }
+
+Expr { Term (Join Term)* }
+Term { Field Operator Value | LParen Expr RParen }
+Value { DString | SString | Number | Word }
