@@ -25,6 +25,8 @@
 </template>
 
 <script setup lang="ts">
+// Renders the suggestion dropdown inside the editor.
+// VueRenderer relies on the exposed onKeyDown handler and emitted events.
 import {ref, watch, defineProps, defineExpose, defineEmits} from 'vue'
 import type {IconProp} from '@fortawesome/fontawesome-svg-core'
 
@@ -50,8 +52,9 @@ const emit = defineEmits<{
 
 const selectedIndex = ref(0)
 
+// Reset the highlighted index whenever the list of commands changes
 watch(() => props.items, () => {
-        selectedIndex.value = 0
+       selectedIndex.value = 0
 })
 
 function upHandler() {
@@ -75,11 +78,12 @@ function enterHandler() {
 }
 
 function onKeyDown({event}: {event: KeyboardEvent}) {
-        emit('keydown', event)
-        if (event.key === 'ArrowUp') {
-                upHandler()
-                return true
-        }
+       // Let the parent component react to raw key events
+       emit('keydown', event)
+       if (event.key === 'ArrowUp') {
+               upHandler()
+               return true
+       }
 
         if (event.key === 'ArrowDown') {
                 downHandler()
