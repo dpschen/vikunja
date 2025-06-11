@@ -3,6 +3,7 @@
 # Versions from the repo
 NODE_VERSION=$(sed 's/^v//' ./frontend/.nvmrc)
 GO_VERSION=$(grep '^go ' go.mod | awk '{print $2}')
+PNPM_VERSION=$(grep -oP 'pnpm@\K[0-9.]+' frontend/package.json)
 
 # Installation prefix (user-writable)
 INSTALL_PREFIX="${INSTALL_PREFIX:-$HOME/.local}"
@@ -26,13 +27,17 @@ install_node() {
 COREPACK_ENABLE_AUTO_PIN=0
 
 install_pnpm() {
+        if command -v pnpm >/dev/null 2>&1 && [[ "$(pnpm -v)" == "$PNPM_VERSION" ]]; then
+                return
+        fi
 
-	# Install frontend dependencies
-	(
-	cd frontend && \
-	pnpm install --frozen-lockfile
-	)
+        corepack enable >/dev/null 2>&1
+        corepack prepare "pnpm@$PNPM_VERSION" --activate >/dev/null 2>&1
 
+        (
+        cd frontend && \
+        pnpm install --frozen-lockfile
+        )
 }
 
 install_go() {
