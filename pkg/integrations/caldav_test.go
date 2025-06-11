@@ -79,6 +79,25 @@ END:VCALENDAR`
 		assert.Contains(t, rec.Body.String(), "ACTION:DISPLAY")
 		assert.Contains(t, rec.Body.String(), "END:VALARM")
 	})
+	t.Run("PROPPATCH on task", func(t *testing.T) {
+		const proppatchBody = `<?xml version="1.0" encoding="UTF-8"?>
+<propertyupdate xmlns="DAV:">
+<set>
+<prop>
+<displayname>Updated Task</displayname>
+</prop>
+</set>
+</propertyupdate>`
+
+		e, _ := setupTestEnv()
+		rec, err := newCaldavTestRequestWithUser(t, e, "PROPPATCH", caldav.TaskHandler, &testuser15, proppatchBody, nil, map[string]string{"project": "36", "task": "uid-caldav-test"})
+		require.NoError(t, err)
+		assert.Equal(t, http.StatusNotImplemented, rec.Result().StatusCode)
+
+		rec, err = newCaldavTestRequestWithUser(t, e, http.MethodGet, caldav.TaskHandler, &testuser15, ``, nil, map[string]string{"project": "36", "task": "uid-caldav-test"})
+		require.NoError(t, err)
+		assert.Equal(t, http.StatusOK, rec.Result().StatusCode)
+	})
 }
 
 func TestCaldavSubtasks(t *testing.T) {
