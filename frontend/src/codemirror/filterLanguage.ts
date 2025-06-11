@@ -1,6 +1,6 @@
 import {LRLanguage, LanguageSupport} from '@codemirror/language'
 import {styleTags, tags as t} from '@lezer/highlight'
-import {parser} from './filterLang.js'
+import {parser} from './filterLang.grammar'
 
 const filterLanguage = LRLanguage.define({
   parser: parser.configure({
