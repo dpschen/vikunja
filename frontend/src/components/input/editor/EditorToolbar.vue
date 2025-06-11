@@ -8,7 +8,7 @@
 				@click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-header']" />
+					<Icon :icon="faHeader" />
 					<span
 						class="icon__lower-text"
 						aria-hidden="true"
@@ -23,7 +23,7 @@
 				@click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-header']" />
+					<Icon :icon="faHeader" />
 					<span
 						class="icon__lower-text"
 						aria-hidden="true"
@@ -38,7 +38,7 @@
 				@click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-header']" />
+					<Icon :icon="faHeader" />
 					<span
 						class="icon__lower-text"
 						aria-hidden="true"
@@ -56,7 +56,7 @@
 				@click="editor.chain().focus().toggleBold().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-bold']" />
+					<Icon :icon="faBold" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.bold') }}</span>
 			</BaseButton>
@@ -67,7 +67,7 @@
 				@click="editor.chain().focus().toggleItalic().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-italic']" />
+					<Icon :icon="faItalic" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.italic') }}</span>
 			</BaseButton>
@@ -78,7 +78,7 @@
 				@click="editor.chain().focus().toggleUnderline().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-underline']" />
+					<Icon :icon="faUnderline" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.underline') }}</span>
 			</BaseButton>
@@ -89,7 +89,7 @@
 				@click="editor.chain().focus().toggleStrike().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-strikethrough']" />
+					<Icon :icon="faStrikethrough" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.strikethrough') }}</span>
 			</BaseButton>
@@ -103,7 +103,7 @@
 				@click="editor.chain().focus().toggleCodeBlock().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-code']" />
+					<Icon :icon="faCode" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.code') }}</span>
 			</BaseButton>
@@ -114,7 +114,7 @@
 				@click="editor.chain().focus().toggleBlockquote().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-quote-right']" />
+					<Icon :icon="faQuoteRight" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.quote') }}</span>
 			</BaseButton>
@@ -128,7 +128,7 @@
 				@click="editor.chain().focus().toggleBulletList().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-list-ul']" />
+					<Icon :icon="faListUl" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.bulletList') }}</span>
 			</BaseButton>
@@ -139,7 +139,7 @@
 				@click="editor.chain().focus().toggleOrderedList().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-list-ol']" />
+					<Icon :icon="faListOl" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.orderedList') }}</span>
 			</BaseButton>
@@ -150,7 +150,7 @@
 				@click="editor.chain().focus().toggleTaskList().run()"
 			>
 				<span class="icon">
-					<Icon icon="fa-list-check" />
+					<Icon :icon="faListCheck" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.taskList') }}</span>
 			</BaseButton>
@@ -163,7 +163,7 @@
 				@click="e => emit('imageUploadClicked', e)"
 			>
 				<span class="icon">
-					<Icon icon="fa-image" />
+					<Icon :icon="faImage" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.image') }}</span>
 			</BaseButton>
@@ -178,7 +178,7 @@
 				@click="setLink"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-link']" />
+					<Icon :icon="faLink" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.link') }}</span>
 			</BaseButton>
@@ -190,7 +190,7 @@
 				@click="editor.chain().focus().setParagraph().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-paragraph']" />
+					<Icon :icon="faParagraph" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.text') }}</span>
 			</BaseButton>
@@ -201,7 +201,7 @@
 				@click="editor.chain().focus().setHorizontalRule().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-ruler-horizontal']" />
+					<Icon :icon="faRulerHorizontal" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.horizontalRule') }}</span>
 			</BaseButton>
@@ -214,7 +214,7 @@
 				@click="editor.chain().focus().undo().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-undo']" />
+					<Icon :icon="faUndo" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.undo') }}</span>
 			</BaseButton>
@@ -224,7 +224,7 @@
 				@click="editor.chain().focus().redo().run()"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-redo']" />
+					<Icon :icon="faRedo" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.redo') }}</span>
 			</BaseButton>
@@ -239,7 +239,7 @@
 				@click="toggleTableMode"
 			>
 				<span class="icon">
-					<Icon :icon="['fa', 'fa-table']" />
+					<Icon :icon="faTable" />
 				</span>
 				<span class="tw-sr-only">{{ $t('input.editor.table.title') }}</span>
 			</BaseButton>
@@ -368,6 +368,25 @@ import type {Editor} from '@tiptap/vue-3'
 
 import BaseButton from '@/components/base/BaseButton.vue'
 import {setLinkInEditor} from '@/components/input/editor/setLinkInEditor'
+import {
+       faHeader,
+       faBold,
+       faItalic,
+       faUnderline,
+       faStrikethrough,
+       faCode,
+       faQuoteRight,
+       faListUl,
+       faListOl,
+       faListCheck,
+       faImage,
+       faLink,
+       faParagraph,
+       faRulerHorizontal,
+       faUndo,
+       faRedo,
+       faTable,
+} from '@/components/misc/Icon'
 
 const props = defineProps<{
 	editor: Editor,
