@@ -31,6 +31,11 @@
     "title": "You are offline.",
     "text": "Please check your network connection and try again."
   },
+  "cookieBanner": {
+    "message": "We use cookies to enhance your experience.",
+    "accept": "Accept all",
+    "reject": "Reject all"
+  },
   "user": {
     "auth": {
       "username": "Username",

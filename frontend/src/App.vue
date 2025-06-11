@@ -16,6 +16,7 @@
 		
 		<Teleport to="body">
 			<AddToHomeScreen />
+			<CookieBanner />
 			<UpdateNotification />
 			<Notification />
 			<DemoMode />
@@ -47,6 +48,7 @@ import {useBaseStore} from '@/stores/base'
 import {useColorScheme} from '@/composables/useColorScheme'
 import {useBodyClass} from '@/composables/useBodyClass'
 import AddToHomeScreen from '@/components/home/AddToHomeScreen.vue'
+import CookieBanner from '@/components/misc/CookieBanner.vue'
 import DemoMode from '@/components/home/DemoMode.vue'
 
 const importAccountDeleteService = () => import('@/services/accountDelete')
