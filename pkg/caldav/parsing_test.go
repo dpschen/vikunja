@@ -354,6 +354,28 @@ END:VCALENDAR`,
 			},
 		},
 		{
+			name: "RFC3339 date formats",
+			args: args{content: `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//RandomProdID//EN
+BEGIN:VTODO
+UID:rfc3339uid
+DTSTAMP:2023-04-02T07:41:58Z
+DUE:2023-04-02
+SUMMARY:Task RFC3339
+DESCRIPTION:Lorem Ipsum
+END:VTODO
+END:VCALENDAR`,
+			},
+			wantVTask: &models.Task{
+				Title:       "Task RFC3339",
+				UID:         "rfc3339uid",
+				Description: "Lorem Ipsum",
+				Updated:     time.Date(2023, 4, 2, 7, 41, 58, 0, config.GetTimeZone()),
+				DueDate:     time.Date(2023, 4, 2, 0, 0, 0, 0, config.GetTimeZone()),
+			},
+		},
+		{
 			name: "with apple hex color",
 			args: args{content: `BEGIN:VCALENDAR
 VERSION:2.0

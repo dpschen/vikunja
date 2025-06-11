@@ -445,12 +445,23 @@ func caldavTimeToTimestamp(ianaProperty ics.IANAProperty) time.Time {
 
 	format := DateFormat
 
-	if strings.HasSuffix(tstring, "Z") {
-		format = `20060102T150405Z`
-	}
+	if strings.Contains(tstring, "-") {
+		switch {
+		case len(tstring) == len("2006-01-02"):
+			format = "2006-01-02"
+		case strings.Contains(tstring, "."):
+			format = time.RFC3339Nano
+		default:
+			format = time.RFC3339
+		}
+	} else {
+		if strings.HasSuffix(tstring, "Z") {
+			format = `20060102T150405Z`
+		}
 
-	if len(tstring) == 8 {
-		format = `20060102`
+		if len(tstring) == 8 {
+			format = `20060102`
+		}
 	}
 
 	var t time.Time
