@@ -20,7 +20,8 @@
     "strictNullChecks": true,
     
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@infectoone/vue-ganttastic": ["./src/vendor/vue-ganttastic/vue-ganttastic.ts"]
     },
     "types": [
       // https://github.com/ikenfin/vite-plugin-sentry#typescript

@@ -25,6 +25,7 @@ files/
 !pkg/files/
 vikunja-dump*
 vendor/
+!frontend/src/vendor/
 os-packages/
 mage_output_file.go
 mage-static
