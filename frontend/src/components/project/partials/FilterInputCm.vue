@@ -8,15 +8,28 @@ import {filterLanguageSupport} from '@/codemirror/filterLanguage'
 const props = defineProps<{modelValue: string}>()
 const emit = defineEmits<{ 'update:modelValue':[value:string] }>()
 
-const query = ref('')
+const query = ref(props.modelValue)
 let _view: EditorView | null = null
 
-watch(() => props.modelValue, v => {
-	if (v !== query.value) query.value = v
-})
-watch(query, v => {
-	if (v !== props.modelValue) emit('update:modelValue', v)
-})
+watch(
+       () => props.modelValue,
+       v => {
+               if (v !== query.value) {
+                       query.value = v
+                       if (_view) {
+                               _view.dispatch({
+                                       changes: {from: 0, to: _view.state.doc.length, insert: v},
+                               })
+                       }
+               }
+       },
+)
+watch(
+       query,
+       v => {
+               if (v !== props.modelValue) emit('update:modelValue', v)
+       },
+)
 
 onMounted(() => {
 	_view = new EditorView({
