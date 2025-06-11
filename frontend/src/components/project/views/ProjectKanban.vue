@@ -849,9 +849,18 @@ $filter-container-height: '1rem - #{$switch-view-height}';
 		}
 	}
 
-	.bucket {
-		border-radius: $radius;
-		position: relative;
+       .bucket {
+               // Skip rendering tasks in off-screen buckets to speed up scrolling.
+               // Wrapped in a @supports rule to avoid layout issues in browsers
+               // without content-visibility support (e.g. older Safari).
+               @supports (content-visibility: auto) {
+                       content-visibility: auto;
+                       // Ensure the column keeps its width and roughly matches its
+                       // expected height when its content is skipped.
+                       contain-intrinsic-size: $bucket-width 1000px;
+               }
+               border-radius: $radius;
+               position: relative;
 
 		margin: 0 $bucket-right-margin 0 0;
 		max-height: calc(100% - 1rem); // 1rem spacing to the bottom
