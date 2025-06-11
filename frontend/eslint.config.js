@@ -7,10 +7,11 @@ export default [
 	...pluginVue.configs['flat/recommended'],
 	...vueTsEslintConfig(),
 	{
-		ignores: [
-			'**/*.test.ts',
-			'./cypress',
-		],
+               ignores: [
+                       '**/*.test.ts',
+                       './cypress',
+                       './src/vendor/**',
+               ],
 	},
 	{
 		rules: {

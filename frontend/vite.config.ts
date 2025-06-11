@@ -197,12 +197,16 @@ function getBuildConfig(env: Record<string, string>) {
 			viteSentry(getSentryConfig(env)),
 		],
 		resolve: {
-			alias: [
-				{
-					find: '@',
-					replacement: pathSrc,
-				},
-			],
+                       alias: [
+                               {
+                                       find: '@',
+                                       replacement: pathSrc,
+                               },
+                               {
+                                       find: '@infectoone/vue-ganttastic',
+                                       replacement: resolve(pathSrc, 'vendor/vue-ganttastic/vue-ganttastic.ts'),
+                               },
+                       ],
 			extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
 		},
 		server: {
