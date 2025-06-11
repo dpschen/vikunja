@@ -96,15 +96,15 @@ describe('Project View Kanban', () => {
 	it('Can create a new bucket', () => {
 		cy.visit('/projects/1/4')
 
-		cy.get('.kanban .bucket.new-bucket .button')
-			.click()
-		cy.get('.kanban .bucket.new-bucket input.input')
-			.type('New Bucket{enter}')
-
-		cy.wait(1000) // Wait for the request to finish
-		cy.get('.kanban .bucket .title')
-			.contains('New Bucket')
-			.should('exist')
+                cy.intercept('POST', Cypress.env('API_URL') + '/projects/*/views/*/buckets').as('createBucket')
+                cy.get('.kanban .bucket.new-bucket .button')
+                        .click()
+                cy.get('.kanban .bucket.new-bucket input.input')
+                        .type('New Bucket{enter}')
+                cy.wait('@createBucket')
+                cy.get('.kanban .bucket .title')
+                        .contains('New Bucket')
+                        .should('exist')
 	})
 
 	it('Can set a bucket limit', () => {

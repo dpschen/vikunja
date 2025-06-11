@@ -45,14 +45,13 @@ context('Password Reset', () => {
 	})
 
 	it('Should redirect to login if no token is present in query param when visiting /password-reset directly', () => {
-		cy.visit('/password-reset')
-		cy.url().should('not.include', '/password-reset')
-		cy.wait(1000) // Wait for the redirect to happen - this seems to be flaky in CI
-		cy.url().should('include', '/login')
+                cy.visit('/password-reset')
+                cy.url().should('not.include', '/password-reset')
+                cy.url().should('include', '/login')
 	})
 
-	it('Should redirect to login if userPasswordReset token is not present in query param when visiting root', () => {
-		cy.visit('/')
-		cy.url().should('include', '/login')
-	})
-}) 
+       it('Should redirect to login if userPasswordReset token is not present in query param when visiting root', () => {
+               cy.visit('/')
+               cy.url().should('include', '/login')
+       })
+})
