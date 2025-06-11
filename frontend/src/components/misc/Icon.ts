@@ -96,6 +96,7 @@ import {
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
 import type {FontAwesomeIcon as FontAwesomeIconFixedTypes} from '@/types/vue-fontawesome'
+import type {IconProp} from '@fortawesome/fontawesome-svg-core'
 
 library.add(faBold)
 library.add(faUndo)
@@ -195,6 +196,25 @@ library.add(faRulerHorizontal)
 library.add(faUnderline)
 library.add(faFaceLaugh)
 library.add(faExclamation)
+
+export const faHeader: IconProp = ['fas', 'header']
+export const faBold: IconProp = ['fas', 'bold']
+export const faItalic: IconProp = ['fas', 'italic']
+export const faUnderline: IconProp = ['fas', 'underline']
+export const faStrikethrough: IconProp = ['fas', 'strikethrough']
+export const faCode: IconProp = ['fas', 'code']
+export const faQuoteRight: IconProp = ['fas', 'quote-right']
+export const faListUl: IconProp = ['fas', 'list-ul']
+export const faListOl: IconProp = ['fas', 'list-ol']
+export const faListCheck: IconProp = ['fas', 'list-check']
+export const faImage: IconProp = ['fas', 'image']
+export const faLink: IconProp = ['fas', 'link']
+export const faParagraph: IconProp = ['fas', 'paragraph']
+export const faRulerHorizontal: IconProp = ['fas', 'ruler-horizontal']
+export const faUndo: IconProp = ['fas', 'undo']
+export const faRedo: IconProp = ['fas', 'redo']
+export const faTable: IconProp = ['fas', 'table']
+export const faFont: IconProp = ['fas', 'font']
 
 // overwriting the wrong types
 export default FontAwesomeIcon as unknown as FontAwesomeIconFixedTypes
