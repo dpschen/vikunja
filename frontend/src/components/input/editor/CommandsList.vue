@@ -47,7 +47,6 @@ const emit = defineEmits<{
     keydown: (event: KeyboardEvent) => void
 }>()
 
-defineOptions({name: 'CommandsList'})
 
 const selectedIndex = ref(0)
 
