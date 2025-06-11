@@ -756,6 +756,7 @@
     "openDetail": "Open task detail view",
     "checklistTotal": "{checked} of {total} tasks",
     "checklistAllDone": "{total} tasks",
+    "kanbanUpdateFailed": "Could not update the kanban board. Please refresh the page.",
     "show": {
       "titleCurrent": "Current Tasks",
       "titleDates": "Tasks from {from} until {to}",
