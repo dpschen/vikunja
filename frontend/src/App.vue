@@ -1,8 +1,10 @@
 <template>
 	<Ready>
 		<template v-if="authStore.authUser">
-			<AppHeader />
-			<ContentAuth />
+			<div class="app-layout">
+				<AppHeader />
+				<ContentAuth />
+			</div>
 		</template>
 		<ContentLinkShare v-else-if="authStore.authLinkShare" />
 		<NoAuthWrapper
@@ -93,3 +95,11 @@ useColorScheme()
 </script>
 
 <style lang="scss" src="@/styles/global.scss" />
+
+<style lang="scss">
+.app-layout {
+       display: grid;
+       grid-template-rows: min-content 1fr;
+       min-height: 100vh;
+}
+</style>
