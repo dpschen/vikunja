@@ -13,11 +13,17 @@ workbox.setConfig({
 import { precacheAndRoute } from 'workbox-precaching'
 precacheAndRoute(self.__WB_MANIFEST)
 
+// Always use network first for html entry points
+workbox.routing.registerRoute(
+        ({request, url}) => request.mode === 'navigate' && (url.pathname === '/' || url.pathname.endsWith('index.html')),
+        new workbox.strategies.NetworkFirst(),
+)
+
 // Cache assets
 workbox.routing.registerRoute(
-	// This regexp matches all files in precache-manifest
-	new RegExp('.+\\.(css|json|js|svg|woff2|png|html|txt|wav)$'),
-	new workbox.strategies.StaleWhileRevalidate(),
+        // This regexp matches css, js, images and fonts but no html files
+        new RegExp('.+\\.(css|json|js|svg|png|jpe?g|gif|webp|woff2?|ttf|otf|txt|wav)$'),
+        new workbox.strategies.StaleWhileRevalidate(),
 )
 
 // Always send api reqeusts through the network
