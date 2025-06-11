@@ -14,7 +14,7 @@
 				class="picker__input"
 				type="color"
 				:list="colorListID"
-				:class="{'is-empty': isEmpty}"
+				:class="{'is-empty': isEmpty, 'was-reset': wasReset}"
 			>
 			<svg
 				v-show="isEmpty"
@@ -82,6 +82,7 @@ const DEFAULT_COLORS = [
 ]
 
 const color = ref('')
+const wasReset = ref(false)
 const lastChangeTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
 const defaultColors = ref(DEFAULT_COLORS)
 const colorListID = ref(createRandomID())
@@ -122,10 +123,12 @@ function update(force = false) {
 }
 
 function reset() {
-	// FIXME: I havn't found a way to make it clear to the user the color war reset.
-	//  Not sure if verte is capable of this - it does not show the change when setting this.color = ''
-	color.value = ''
-	update(true)
+       color.value = ''
+       wasReset.value = true
+       setTimeout(() => {
+               wasReset.value = false
+       }, 1000)
+       update(true)
 }
 </script>
 
@@ -170,9 +173,22 @@ function reset() {
 		height: $PICKER_SIZE - 2 * $BORDER_WIDTH;
 	}
 
-	.picker__input.is-empty {
-		opacity: 0;
-	}
+        .picker__input.is-empty {
+                opacity: 0;
+        }
+
+        .picker__input.was-reset {
+                animation: color-reset-highlight 1s ease-out;
+        }
+
+        @keyframes color-reset-highlight {
+                from {
+                        box-shadow: 0 0 0 2px var(--primary);
+                }
+                to {
+                        box-shadow: none;
+                }
+        }
 	
 	.picker__pattern {
 		pointer-events: none;
