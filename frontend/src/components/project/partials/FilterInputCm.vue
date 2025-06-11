@@ -46,7 +46,10 @@ onBeforeUnmount(() => view.value?.destroy())
 </script>
 
 <template>
-	<div ref="container" class="filter-input-cm" />
+	<div
+		ref="container"
+		class="filter-input-cm"
+	/>
 </template>
 
 <style scoped>
