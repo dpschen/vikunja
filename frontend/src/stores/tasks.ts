@@ -32,6 +32,8 @@ import TaskCollectionService, {type TaskFilterParams} from '@/services/taskColle
 import {getRandomColorHex} from '@/helpers/color/randomColor'
 import {REPEAT_TYPES} from '@/types/IRepeatAfter'
 import {TASK_REPEAT_MODES} from '@/types/IRepeatMode'
+import {error as showError} from '@/message'
+import {useI18n} from 'vue-i18n'
 
 interface MatchedAssignee extends IUser {
 	match: string,
@@ -104,12 +106,13 @@ async function findAssignees(parsedTaskAssignees: string[], projectId: number): 
 }
 
 export const useTaskStore = defineStore('task', () => {
-	const baseStore = useBaseStore()
-	const kanbanStore = useKanbanStore()
-	const attachmentStore = useAttachmentStore()
-	const labelStore = useLabelStore()
-	const projectStore = useProjectStore()
-	const authStore = useAuthStore()
+        const baseStore = useBaseStore()
+        const kanbanStore = useKanbanStore()
+        const attachmentStore = useAttachmentStore()
+        const labelStore = useLabelStore()
+        const projectStore = useProjectStore()
+        const authStore = useAuthStore()
+        const {t: translate} = useI18n()
 
 	const tasks = ref<{ [id: ITask['id']]: ITask }>({}) // TODO: or is this ITask[]
 	const isLoading = ref(false)
@@ -215,13 +218,13 @@ export const useTaskStore = defineStore('task', () => {
 				taskId: taskId,
 			}))
 			const t = kanbanStore.getTaskById(taskId)
-			if (t.task === null) {
-				// Don't try further adding a label if the task is not in kanban
-				// Usually this means the kanban board hasn't been accessed until now.
-				// Vuex seems to have its difficulties with that, so we just log the error and fail silently.
-				console.debug('Could not add assignee to task in kanban, task not found', t)
-				return r
-			}
+                        if (t.task === null) {
+                                // The task isn't loaded in the kanban store yet which means
+                                // we cannot update it locally. Inform the user instead of failing silently.
+                                console.debug('Could not add assignee to task in kanban, task not found', t)
+                                showError({message: translate('task.kanbanUpdateFailed')})
+                                return r
+                        }
 
 			kanbanStore.setTaskInBucketByIndex({
 				...t,
@@ -253,13 +256,13 @@ export const useTaskStore = defineStore('task', () => {
 			taskId: taskId,
 		}))
 		const t = kanbanStore.getTaskById(taskId)
-		if (t.task === null) {
-			// Don't try further adding a label if the task is not in kanban
-			// Usually this means the kanban board hasn't been accessed until now.
-			// Vuex seems to have its difficulties with that, so we just log the error and fail silently.
-			console.debug('Could not remove assignee from task in kanban, task not found', t)
-			return response
-		}
+                if (t.task === null) {
+                        // The task is not available locally which prevents us from
+                        // updating the kanban board. Notify the user about it.
+                        console.debug('Could not remove assignee from task in kanban, task not found', t)
+                        showError({message: translate('task.kanbanUpdateFailed')})
+                        return response
+                }
 
 		const assignees = t.task.assignees.filter(({ id }) => id !== user.id)
 
@@ -287,13 +290,12 @@ export const useTaskStore = defineStore('task', () => {
 			labelId: label.id,
 		}))
 		const t = kanbanStore.getTaskById(taskId)
-		if (t.task === null) {
-			// Don't try further adding a label if the task is not in kanban
-			// Usually this means the kanban board hasn't been accessed until now.
-			// Vuex seems to have its difficulties with that, so we just log the error and fail silently.
-			console.debug('Could not add label to task in kanban, task not found', {taskId, t})
-			return r
-		}
+                if (t.task === null) {
+                        // The task is missing from the kanban store and cannot be updated locally.
+                        console.debug('Could not add label to task in kanban, task not found', {taskId, t})
+                        showError({message: translate('task.kanbanUpdateFailed')})
+                        return r
+                }
 
 		kanbanStore.setTaskInBucketByIndex({
 			...t,
@@ -319,13 +321,12 @@ export const useTaskStore = defineStore('task', () => {
 			label.id,
 		}))
 		const t = kanbanStore.getTaskById(taskId)
-		if (t.task === null) {
-			// Don't try further adding a label if the task is not in kanban
-			// Usually this means the kanban board hasn't been accessed until now.
-			// Vuex seems to have its difficulties with that, so we just log the error and fail silently.
-			console.debug('Could not remove label from task in kanban, task not found', t)
-			return response
-		}
+                if (t.task === null) {
+                        // The task isn't present in the kanban store, so we can't update it locally.
+                        console.debug('Could not remove label from task in kanban, task not found', t)
+                        showError({message: translate('task.kanbanUpdateFailed')})
+                        return response
+                }
 
 		// Remove the label from the project
 		const labels = t.task.labels.filter(({ id }) => id !== label.id)
