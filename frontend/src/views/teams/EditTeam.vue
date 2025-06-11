@@ -110,6 +110,7 @@
 							:placeholder="$t('team.edit.search')"
 							:search-results="foundUsers"
 							label="username"
+							:search-delay="searchDelay"
 							@search="findUser"
 						>
 							<template #searchResult="{option: user}">
@@ -260,8 +261,10 @@
 
 <script lang="ts" setup>
 import {computed, ref} from 'vue'
+import {useDebounceFn} from '@vueuse/core'
 import {useI18n} from 'vue-i18n'
 import {useRoute, useRouter} from 'vue-router'
+import {SEARCH_DELAY} from '@/constants/search'
 
 import Editor from '@/components/input/AsyncEditor'
 import FancyCheckbox from '@/components/input/FancyCheckbox.vue'
@@ -307,6 +310,8 @@ const teamId = computed(() => Number(route.params.id))
 const memberToDelete = ref<ITeamMember>()
 const newMember = ref<IUser>()
 const foundUsers = ref<IUser[]>()
+
+const searchDelay = SEARCH_DELAY
 
 const showDeleteModal = ref(false)
 const showUserDeleteModal = ref(false)
@@ -387,15 +392,15 @@ async function toggleUserType(member: ITeamMember) {
 	})
 }
 
-async function findUser(query: string) {
-	if (query === '') {
-		foundUsers.value = []
-		return
-	}
+const findUser = useDebounceFn(async (query: string) => {
+        if (query === '') {
+                foundUsers.value = []
+                return
+        }
 
-	const users = await userService.value.getAll({}, {s: query})
-	foundUsers.value = users.filter((u: IUser) => u.id !== userInfo.value.id)
-}
+        const users = await userService.value.getAll({}, {s: query})
+        foundUsers.value = users.filter((u: IUser) => u.id !== userInfo.value.id)
+}, searchDelay)
 
 async function leave() {
 	try {

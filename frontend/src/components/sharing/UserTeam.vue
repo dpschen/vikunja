@@ -15,6 +15,7 @@
 						:placeholder="$t('misc.searchPlaceholder')"
 						:search-results="found"
 						:label="searchLabel"
+						:search-delay="searchDelay"
 						@search="find"
 					>
 						<template #searchResult="{option: result}">
@@ -162,6 +163,8 @@ export default {name: 'UserTeamShare'}
 
 <script setup lang="ts">
 import {ref, reactive, computed, shallowReactive, type Ref} from 'vue'
+import {useDebounceFn} from '@vueuse/core'
+import {SEARCH_DELAY} from '@/constants/search'
 import {useI18n} from 'vue-i18n'
 
 import UserProjectService from '@/services/userProject'
@@ -358,29 +361,30 @@ async function toggleType(sharable) {
 }
 
 const found = ref([])
+const searchDelay = SEARCH_DELAY
 
 const currentUserId = computed(() => authStore.info.id)
-async function find(query: string) {
-	if (query === '') {
-		found.value = []
-		return
-	}
+const find = useDebounceFn(async (query: string) => {
+        if (query === '') {
+                found.value = []
+                return
+        }
 
-	// Include public teams here if we are sharing with teams and its enabled in the config
-	let results = []
-	if (props.shareType === 'team' && configStore.publicTeamsEnabled) {
-		results = await searchService.getAll({}, {s: query, includePublic: true})
-	} else {
-		results = await searchService.getAll({}, {s: query})
-	}
+        // Include public teams here if we are sharing with teams and its enabled in the config
+        let results = []
+        if (props.shareType === 'team' && configStore.publicTeamsEnabled) {
+                results = await searchService.getAll({}, {s: query, includePublic: true})
+        } else {
+                results = await searchService.getAll({}, {s: query})
+        }
 
-	found.value = results
-		.filter(m => {
-			if(props.shareType === 'user' && m.id === currentUserId.value) {
-				return false
-			}
-			
-			return typeof sharables.value.find(s => s.id === m.id) === 'undefined'
-		})
-}
+        found.value = results
+                .filter(m => {
+                        if(props.shareType === 'user' && m.id === currentUserId.value) {
+                                return false
+                        }
+
+                        return typeof sharables.value.find(s => s.id === m.id) === 'undefined'
+                })
+}, searchDelay)
 </script>
