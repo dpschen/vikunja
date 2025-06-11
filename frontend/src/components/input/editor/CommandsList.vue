@@ -24,74 +24,84 @@
 	</div>
 </template>
 
-<script lang="ts">
-/* eslint-disable vue/component-api-style */
-export default {
-	props: {
-		items: {
-			type: Array,
-			required: true,
-		},
+<script setup lang="ts">
+// Renders the suggestion dropdown inside the editor.
+// VueRenderer relies on the exposed onKeyDown handler and emitted events.
+import {ref, watch, defineProps, defineExpose, defineEmits} from 'vue'
+import type {IconProp} from '@fortawesome/fontawesome-svg-core'
 
-		command: {
-			type: Function,
-			required: true,
-		},
-	},
-
-	data() {
-		return {
-			selectedIndex: 0,
-		}
-	},
-
-	watch: {
-		items() {
-			this.selectedIndex = 0
-		},
-	},
-
-	methods: {
-		onKeyDown({event}) {
-			if (event.key === 'ArrowUp') {
-				this.upHandler()
-				return true
-			}
-
-			if (event.key === 'ArrowDown') {
-				this.downHandler()
-				return true
-			}
-
-			if (event.key === 'Enter') {
-				this.enterHandler()
-				return true
-			}
-
-			return false
-		},
-
-		upHandler() {
-			this.selectedIndex = ((this.selectedIndex + this.items.length) - 1) % this.items.length
-		},
-
-		downHandler() {
-			this.selectedIndex = (this.selectedIndex + 1) % this.items.length
-		},
-
-		enterHandler() {
-			this.selectItem(this.selectedIndex)
-		},
-
-		selectItem(index) {
-			const item = this.items[index]
-
-			if (item) {
-				this.command(item)
-			}
-		},
-	},
+interface CommandItem {
+        title: string
+        description: string
+        icon: IconProp
+        command: ({editor, range}: { editor: unknown; range: unknown }) => void
 }
+
+interface Props {
+        items: CommandItem[]
+        command: (item: CommandItem) => void
+}
+
+const props = defineProps<Props>()
+
+// allow consumers (e.g. VueRenderer) to react to key events
+const emit = defineEmits<{
+    keydown: (event: KeyboardEvent) => void
+}>()
+
+
+const selectedIndex = ref(0)
+
+// Reset the highlighted index whenever the list of commands changes
+watch(() => props.items, () => {
+       selectedIndex.value = 0
+})
+
+function upHandler() {
+        selectedIndex.value = ((selectedIndex.value + props.items.length) - 1) % props.items.length
+}
+
+function downHandler() {
+        selectedIndex.value = (selectedIndex.value + 1) % props.items.length
+}
+
+function selectItem(index: number) {
+        const item = props.items[index]
+
+        if (item) {
+                props.command(item)
+        }
+}
+
+function enterHandler() {
+        selectItem(selectedIndex.value)
+}
+
+function onKeyDown({event}: {event: KeyboardEvent}) {
+       // Let the parent component react to raw key events
+       emit('keydown', event)
+       if (event.key === 'ArrowUp') {
+               upHandler()
+               return true
+       }
+
+        if (event.key === 'ArrowDown') {
+                downHandler()
+                return true
+        }
+
+        if (event.key === 'Enter') {
+                enterHandler()
+                return true
+        }
+
+        return false
+}
+
+// expose the handler so VueRenderer can access it
+defineExpose({
+        onKeyDown,
+})
 </script>
 
 <style lang="scss" scoped>
