@@ -3,15 +3,18 @@ import ProjectService from '@/services/project'
 import type {IProject} from '@/modelTypes/IProject'
 import {getBlobFromBlurHash} from '@/helpers/getBlobFromBlurHash'
 
-export function useProjectBackground(project: MaybeRefOrGetter<IProject>) {
+export function useProjectBackground(project: MaybeRefOrGetter<IProject | null>) {
 	const background = ref<string | null>(null)
 	const backgroundLoading = ref(false)
 	const blurHashUrl = ref('')
 
-	watch(
-		() => [toValue(project).id, toValue(project)?.backgroundBlurHash] as [IProject['id'], IProject['backgroundBlurHash']],
-		async ([projectId, blurHash], oldValue) => {
-			const projectValue = toValue(project)
+       watch(
+               () => [
+                       toValue(project)?.id ?? null,
+                       toValue(project)?.backgroundBlurHash ?? null,
+               ] as [IProject['id'] | null, IProject['backgroundBlurHash'] | null],
+               async ([projectId, blurHash], oldValue) => {
+                       const projectValue = toValue(project)
 			if (
 				projectValue === null ||
 				!projectValue.backgroundInformation ||

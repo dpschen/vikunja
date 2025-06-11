@@ -11,7 +11,7 @@ export function useRenewTokenOnFocus() {
 	const router = useRouter()
 	const authStore = useAuthStore()
 
-	const userInfo = computed(() => authStore.info)
+       const userInfo = computed(() => authStore.info.value)
 	const authenticated = computed(() => authStore.authenticated)
 
 	// Try renewing the token every time vikunja is loaded initially
@@ -25,9 +25,9 @@ export function useRenewTokenOnFocus() {
 		}
 
 		const nowInSeconds = new Date().getTime() / MILLISECONDS_A_SECOND
-		const expiresIn = userInfo.value !== null
-			? userInfo.value.exp - nowInSeconds
-			: 0
+       const expiresIn = userInfo.value
+               ? userInfo.value.exp - nowInSeconds
+               : 0
 
 		// If the token expiry is negative, it is already expired and we have no choice but to redirect
 		// the user to the login page
