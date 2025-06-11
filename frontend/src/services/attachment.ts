@@ -1,5 +1,7 @@
 import AbstractService from './abstractService'
 import AttachmentModel from '../models/attachment'
+import {useConfigStore} from '@/stores/config'
+import {getHumanSize} from '@/helpers/getHumanSize'
 
 import type { IAttachment } from '@/modelTypes/IAttachment'
 
@@ -10,6 +12,34 @@ export enum PREVIEW_SIZE {
 	MD = 'md',
 	LG = 'lg',
 	XL = 'xl',
+}
+
+export class FileTooLargeError extends Error {
+	constructor(public fileName: string, public fileSize: number, public maxSize: number) {
+		super(`File '${fileName}' is too large. Maximum size is ${getHumanSize(maxSize)}.`)
+		this.name = 'FileTooLargeError'
+	}
+}
+
+function parseFileSize(size: string): number {
+	const match = size.trim().match(/^(\d+(?:\.\d+)?)\s*(k|m|g|t)?i?b?$/i)
+	if (!match) {
+		return NaN
+	}
+	const value = parseFloat(match[1])
+	const unit = match[2]?.toLowerCase()
+	switch (unit) {
+		case 'k':
+			return value * 1024
+		case 'm':
+			return value * 1024 * 1024
+		case 'g':
+			return value * 1024 * 1024 * 1024
+		case 't':
+			return value * 1024 * 1024 * 1024 * 1024
+		default:
+			return value
+	}
 }
 
 export default class AttachmentService extends AbstractService<IAttachment> {
@@ -64,9 +94,21 @@ export default class AttachmentService extends AbstractService<IAttachment> {
 	 * @returns {Promise<any|never>}
 	 */
 	create(model: IAttachment, files: File[] | FileList) {
+		const configStore = useConfigStore()
+		const defaultMax = 25 * 1024 * 1024
+		let maxSize = defaultMax
+		if (configStore.maxFileSize) {
+			const parsed = parseFileSize(configStore.maxFileSize)
+			if (!isNaN(parsed)) {
+				maxSize = parsed
+			}
+		}
+
 		const data = new FormData()
 		for (let i = 0; i < files.length; i++) {
-			// TODO: Validation of file size
+			if (files[i].size > maxSize) {
+				return Promise.reject(new FileTooLargeError(files[i].name, files[i].size, maxSize))
+			}
 			data.append('files', new Blob([files[i]]), files[i].name)
 		}
 
