@@ -6,6 +6,7 @@ These instructions summarize the development guidelines from the official Vikunj
 - Respect the formatting rules from `.editorconfig` in the repository root and all subfolders.
 - The root `.editorconfig` covers the entire repository, including the frontend.
 - When changing frontend code adhere to the ESLint rules defined in `frontend/eslint.config.js`. Run `pnpm lint` (or `pnpm lint:fix`) to check and automatically fix issues.
+- When changing styles, use Tailwind classes with the configured prefix. Keep SCSS only when explicitly requested and only modify the parts that change.
 
 # Building
 
