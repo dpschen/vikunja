@@ -23,7 +23,7 @@ package tools
 
 import (
 	_ "github.com/cweill/gotests"
-	_ "github.com/swaggo/swag/cmd/swag"
+	_ "github.com/swaggo/swag/v2/cmd/swag"
 	_ "src.techknowlogick.com/xgo"
 
 	_ "github.com/magefile/mage"
