@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 //lint:file-ignore ST1018 The const below is not ours
 
 // Vikunja is a to-do list application to facilitate your life.
@@ -1873,3 +1874,6 @@ color: '#666';
 </script>
 </body>
 </html>`
+=======
+	"github.com/swaggo/swag/v2"
+>>>>>>> 3a9a647e9 (chore: update swag to v2 with openapi 3.1)
