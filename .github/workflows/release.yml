@@ -273,7 +273,7 @@ jobs:
       - name: generate
         run: |
           export PATH=$PATH:$GOPATH/bin
-          go install github.com/swaggo/swag/cmd/swag
+          go install github.com/swaggo/swag/v2/cmd/swag
           chmod +x ./mage-static
           ./mage-static generate:swagger-docs
       - name: Check for changes
