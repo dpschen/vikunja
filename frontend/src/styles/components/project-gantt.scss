@@ -1,0 +1,29 @@
+.gantt-skeleton-rows {
+    padding: 1rem;
+    list-style: none;
+
+    .gantt-skeleton-row {
+        height: 1.5rem;
+        margin-bottom: .5rem;
+        border-radius: $radius;
+        background: var(--grey-200);
+        position: relative;
+        overflow: hidden;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, hsla(var(--white-hsl), 0.6), transparent);
+            animation: gantt-skeleton-loading 1s infinite;
+        }
+    }
+}
+
+@keyframes gantt-skeleton-loading {
+    from { left: -100%; }
+    to { left: 100%; }
+}
