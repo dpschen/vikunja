@@ -1233,8 +1233,8 @@ const DefaultConfigYAMLSamplePath = "config.yml.sample"
 func (Generate) SwaggerDocs() {
 	mg.Deps(initVars)
 
-	checkAndInstallGoTool("swag", "github.com/swaggo/swag/cmd/swag")
-	runAndStreamOutput("swag", "init", "-g", "./pkg/routes/routes.go", "--parseDependency", "-d", RootPath, "-o", RootPath+"/pkg/swagger")
+	checkAndInstallGoTool("swag", "github.com/swaggo/swag/v2/cmd/swag")
+	runAndStreamOutput("swag", "init", "--v3.1", "-g", "./pkg/routes/routes.go", "--parseDependency", "-d", RootPath, "-o", RootPath+"/pkg/swagger")
 }
 
 type ConfigNode struct {
