@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div
-			:class="{'is-loading': taskService.loading}"
+			:class="{'is-loading': taskService.loading, 'task--overdue': isOverdue}"
 			class="task loader-container single-task"
 			tabindex="-1"
 			@click="openTaskDetail"
@@ -83,7 +83,7 @@
 						>	
 							<time
 								:datetime="formatISO(task.dueDate)"
-								:class="{'overdue': task.dueDate <= new Date() && !task.done}"
+								:class="{'overdue': isOverdue}"
 								class="is-italic"
 								:aria-expanded="isOpen ? 'true' : 'false'"
 							>
@@ -211,6 +211,7 @@ import {useIntervalFn} from '@vueuse/core'
 import {playPopSound} from '@/helpers/playPop'
 import {isEditorContentEmpty} from '@/helpers/editorContentEmpty'
 import {TASK_REPEAT_MODES} from '@/types/IRepeatMode'
+import {useGlobalNow} from '@/composables/useGlobalNow'
 
 const props = withDefaults(defineProps<{
 	theTask: ITask,
@@ -295,6 +296,14 @@ useIntervalFn(updateDueDate, 60_000, {
 onMounted(updateDueDate)
 
 watch(() => task.value.dueDate, updateDueDate)
+
+const {now} = useGlobalNow()
+const isOverdue = computed(() => (
+       !task.value.done &&
+       task.value.dueDate !== null &&
+       task.value.dueDate.getTime() > 0 &&
+       task.value.dueDate.getTime() <= now.value.getTime()
+))
 
 let oldTask
 
