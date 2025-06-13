@@ -30,6 +30,12 @@ These instructions summarize the development guidelines from the official Vikunj
 - Run frontend unit tests with `pnpm test:unit` (run `pnpm install --frozen-lockfile` in `frontend/` first).
 - Run `pnpm lint` and `pnpm typecheck` to match CI checks. `typecheck` might fail. Fix type errors only in the files you changed. If unrelated files fail, note it in the PR but do not attempt to fix those errors.
 - When running Cypress tests locally, use Chrome if available. `scripts/install-tools.sh` installs it automatically. If Chrome is missing, run the tests inside the `cypress/browsers` Docker image or fall back to Electron with `xvfb-run`.
+- Run `./scripts/install-tools.sh` to install Node, pnpm, Go, Mage and Chrome.
+- Build the frontend with `pnpm --dir frontend install --frozen-lockfile` and `pnpm --dir frontend run build`.
+- Build the API with `mage build` and start it with a testing token: `VIKUNJA_SERVICE_ROOTPATH=$(pwd) VIKUNJA_SERVICE_TESTINGTOKEN=<secret> ./vikunja &`.
+- In another shell start the frontend preview server with `pnpm --dir frontend run preview`.
+- Execute Cypress with `xvfb-run -a pnpm --dir frontend exec cypress run --e2e --browser chrome`.
+- See `Cypress-single-test-notes.md` for troubleshooting details.
 
 ## Pull Requests
 - PRs must be opened against the `main` branch.

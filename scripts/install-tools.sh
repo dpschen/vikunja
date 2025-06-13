@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # Versions from the repo
 NODE_VERSION=$(sed 's/^v//' ./frontend/.nvmrc)
