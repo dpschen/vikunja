@@ -90,7 +90,7 @@ function getBuildConfig(env: Record<string, string>) {
 		test: {
 			environment: 'happy-dom',
 			exclude: [...configDefaults.exclude, 'e2e/**'],
-			'vitest.commandLine': 'pnpm test:unit',
+			'vitest.commandLine': 'bun x vitest run --dir ./src',
 		},
 		css: {
 			preprocessorOptions: {

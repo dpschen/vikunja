@@ -216,16 +216,15 @@ jobs:
       - name: Git describe
         id: ghd
         uses: proudust/gh-describe@v2
-      - name: Install pnpm
-        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v1
         with:
-          package_json_file: desktop/package.json
+          bun-version: latest
       - name: Setup Node
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version-file: frontend/.nvmrc
-          cache: pnpm
-          cache-dependency-path: desktop/pnpm-lock.yaml
+          cache-dependency-path: desktop/bun.lock
       - name: Install Linux dependencies
         if: ${{ runner.os == 'Linux' }}
         run: sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
@@ -237,7 +236,7 @@ jobs:
       - name: Build desktop app
         working-directory: desktop
         run: |
-          pnpm install  --frozen-lockfile --prefer-offline --fetch-timeout 100000
+          bun install --frozen-lockfile
           node build.js "${{ steps.ghd.outputs.describe }}" ${{ github.ref_type == 'tag' }}
       - name: Upload to S3
         uses: kolaente/s3-action@41963184b524ccac734ea4d8c964ac74b5b1af89 # v1.2.1

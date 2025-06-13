@@ -242,7 +242,7 @@ jobs:
       - uses: ./.github/actions/setup-frontend
       - name: Lint
         working-directory: frontend
-        run: pnpm lint
+        run: bun run lint
 
   frontend-typecheck:
     runs-on: ubuntu-latest
@@ -252,7 +252,7 @@ jobs:
       - name: Typecheck
         continue-on-error: true
         working-directory: frontend
-        run: pnpm typecheck
+        run: bun run typecheck
 
   test-frontend-unit:
     runs-on: ubuntu-latest
@@ -261,7 +261,7 @@ jobs:
       - uses: ./.github/actions/setup-frontend
       - name: Run unit tests
         working-directory: frontend
-        run: pnpm test:unit
+        run: bun x vitest run --dir ./src
 
   frontend-build:
     runs-on: ubuntu-latest
@@ -270,7 +270,7 @@ jobs:
       - uses: ./.github/actions/setup-frontend
       - name: Build frontend
         working-directory: frontend
-        run: pnpm build
+        run: bun run build
       - name: Store Frontend
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
@@ -326,8 +326,8 @@ jobs:
           record: true
           parallel: true
           start: |
-            pnpm run preview:vikunja
-            pnpm run preview
+            bun run preview:vikunja
+            bun run preview
           wait-on: http://127.0.0.1:4173,http://127.0.0.1:3456/api/v1/info
           wait-on-timeout: 10
   

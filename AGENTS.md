@@ -5,17 +5,17 @@ These instructions summarize the development guidelines from the official Vikunj
 ## Formatting
 - Respect the formatting rules from `.editorconfig` in the repository root and all subfolders.
 - The root `.editorconfig` covers the entire repository, including the frontend.
-- When changing frontend code adhere to the ESLint rules defined in `frontend/eslint.config.js`. Run `pnpm lint` (or `pnpm lint:fix`) to check and automatically fix issues.
+- When changing frontend code adhere to the ESLint rules defined in `frontend/eslint.config.js`. Run `bun run lint` (or `bun run lint --fix`) to check and automatically fix issues.
 - When changing styles, use Tailwind classes with the configured prefix. Keep SCSS only when explicitly requested and only modify the parts that change.
 
 # Building
 
 1. **Frontend**:
-	- Requires Node.js (version defined in `frontend/.nvmrc`) and pnpm (install via corepack).
-	- Run `pnpm install --frozen-lockfile` inside `frontend/`.
-	- Build with `pnpm run build` to create the `dist/` bundle.
-	- Lint with `pnpm lint` and run TypeScript checks with `pnpm typecheck`.
-	- Run frontend unit tests with `pnpm test:unit`.
+        - Requires Node.js (version defined in `frontend/.nvmrc`) and [Bun](https://bun.sh/).
+        - Run `bun install` inside `frontend/`.
+        - Build with `bun run build` to create the `dist/` bundle.
+        - Lint with `bun run lint` and run TypeScript checks with `bun run typecheck`.
+        - Run frontend unit tests with `bun x vitest run --dir ./src`.
 2. **API**:
 	- Requires Go (use version from `go.mod`) and Mage.
 	- If the frontend bundle is missing, build it or create a dummy file with `mkdir -p frontend/dist && touch frontend/dist/index.html`.
@@ -27,8 +27,8 @@ These instructions summarize the development guidelines from the official Vikunj
 - Set `VIKUNJA_SERVICE_ROOTPATH` to the repository root before running tests so fixtures load correctly.
 - Run API unit tests with `mage test:unit`.
 - Run API integration tests with `mage test:integration`.
-- Run frontend unit tests with `pnpm test:unit` (run `pnpm install --frozen-lockfile` in `frontend/` first).
-- Run `pnpm lint` and `pnpm typecheck` to match CI checks. `typecheck` might fail. Only make sure you don't create new issues.
+- Run frontend unit tests with `bun x vitest run --dir ./src` (run `bun install` in `frontend/` first).
+- Run `bun run lint` and `bun run typecheck` to match CI checks. `typecheck` might fail. Only make sure you don't create new issues.
 
 ## Pull Requests
 - PRs must be opened against the `main` branch.

@@ -1,18 +1,17 @@
 name: Setup Frontend
-description: Common setup for frontend jobs using pnpm
+description: Common setup for frontend jobs using bun
 runs:
   using: "composite"
   steps:
-    - uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4
+    - uses: oven-sh/setup-bun@v1
       with:
-        run_install: false
-        package_json_file: frontend/package.json
+        bun-version: latest
+        cache: true
     - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version-file: frontend/.nvmrc
-        cache: 'pnpm'
-        cache-dependency-path: frontend/pnpm-lock.yaml
+        cache-dependency-path: frontend/bun.lock
     - name: Install dependencies
       working-directory: frontend
-      run: pnpm install --frozen-lockfile --prefer-offline
+      run: bun install --frozen-lockfile
       shell: bash

@@ -14,8 +14,10 @@ For general information about the project, refer to the top-level readme of this
 ## Project setup
 
 ```shell
-pnpm install
+bun install
 ```
+
+You can also use [@antfu/ni](https://github.com/antfu/ni) to run `ni` which automatically picks the right package manager.
 
 ### Development
 
@@ -35,17 +37,17 @@ In the end, it should look like `DEV_PROXY=https://try.vikunja.io` if you work a
 #### Start dev server (compiles and hot-reloads)
 
 ```shell
-pnpm run dev
+bun run dev
 ```
 
 ### Compiles and minifies for production
 
 ```shell
-pnpm run build
+bun run build
 ```
 
 ### Lints and fixes files
 
 ```shell
-pnpm run lint
+bun run lint
 ```

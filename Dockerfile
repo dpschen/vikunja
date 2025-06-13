@@ -1,20 +1,17 @@
 # syntax=docker/dockerfile:1@sha256:9857836c9ee4268391bb5b09f9f157f3c91bb15821bb77969642813b0d00518d
-FROM --platform=$BUILDPLATFORM node:22.16.0-alpine@sha256:41e4389f3d988d2ed55392df4db1420ad048ae53324a8e2b7c6d19508288107e AS frontendbuilder
+FROM --platform=$BUILDPLATFORM oven/bun:1.2.14-alpine@sha256:41e4389f3d988d2ed55392df4db1420ad048ae53324a8e2b7c6d19508288107e AS frontendbuilder
 
 WORKDIR /build
 
-ENV PNPM_CACHE_FOLDER=.cache/pnpm/
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV CYPRESS_INSTALL_BINARY=0
 
-COPY frontend/pnpm-lock.yaml frontend/package.json frontend/.npmrc ./ 
-COPY frontend/patches ./patches
-RUN npm install -g corepack && corepack enable && \
-    pnpm fetch # installs into cache only
+COPY frontend/package.json frontend/bun.lock ./ 
+RUN bun install --frozen-lockfile
 
-RUN pnpm install --frozen-lockfile --offline
+
 COPY frontend/ ./
-RUN	pnpm run build
+RUN	bun run build
 
 FROM --platform=$BUILDPLATFORM ghcr.io/techknowlogick/xgo:go-1.23.x@sha256:229c59582d5ca6b11973647cc3ee945d5b5bb630dcd5d100bd81576f631b4dd6 AS apibuilder
 

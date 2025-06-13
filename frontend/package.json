@@ -13,7 +13,7 @@
   },
   "homepage": "https://vikunja.io/",
   "funding": "https://opencollective.com/vikunja",
-  "packageManager": "pnpm@10.11.1",
+  "packageManager": "bun@1.2.14",
   "keywords": [
     "todo",
     "productivity",
@@ -25,21 +25,21 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "serve": "pnpm run dev",
+    "serve": "bun run dev",
     "preview": "vite preview --port 4173",
     "preview:dev": "vite preview --outDir dist-dev --mode development --port 4173",
     "preview:vikunja": "../vikunja",
     "build": "vite build && workbox copyLibraries dist/",
     "build:dev": "vite build --mode development --outDir dist-dev/",
     "lint": "eslint 'src/**/*.{js,ts,vue}'",
-    "lint:fix": "pnpm run lint --fix",
+    "lint:fix": "bun run lint --fix",
     "test:e2e": "start-server-and-test preview http://127.0.0.1:4173 'cypress run --e2e --browser chrome'",
     "test:e2e-record-test": "start-server-and-test preview:test http://127.0.0.1:4173 'cypress run --e2e --browser chrome --record'",
     "test:e2e-dev-dev": "start-server-and-test preview:dev http://127.0.0.1:4173 'cypress open --e2e'",
     "test:e2e-dev": "start-server-and-test preview http://127.0.0.1:4173 'cypress open --e2e'",
     "test:unit": "vitest --dir ./src",
     "typecheck": "vue-tsc --build --force",
-    "fonts:update": "pnpm fonts:download && pnpm fonts:subset",
+    "fonts:update": "bun run fonts:download && bun run fonts:subset",
     "fonts:download": "./scripts/fonts-download.sh",
     "fonts:subset": "./scripts/fonts-subset.sh",
     "story:dev": "histoire dev",
@@ -153,19 +153,5 @@
     "vue-tsc": "2.2.10",
     "wait-on": "8.0.3",
     "workbox-cli": "7.3.0"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@github/hotkey@3.1.1": "patches/@github__hotkey@3.1.1.patch",
-      "flexsearch@0.7.43": "patches/flexsearch@0.7.43.patch"
-    },
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@sentry/cli",
-      "cypress",
-      "esbuild",
-      "puppeteer",
-      "vue-demi"
-    ]
   }
 }
