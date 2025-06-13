@@ -53,18 +53,30 @@
 					:padding="false"
 					class="has-overflow"
 				>
-					<GanttChart
-						:filters="filters"
-						:tasks="tasks"
-						:is-loading="isLoading"
-						:default-task-start-date="defaultTaskStartDate"
-						:default-task-end-date="defaultTaskEndDate"
-						@update:task="updateTask"
-					/>
-					<TaskForm
-						v-if="canWrite"
-						@createTask="addGanttTask"
-					/>
+					<template v-if="!loading">
+						<GanttChart
+							:filters="filters"
+							:tasks="tasks"
+							:is-loading="isLoading"
+							:default-task-start-date="defaultTaskStartDate"
+							:default-task-end-date="defaultTaskEndDate"
+							@update:task="updateTask"
+						/>
+						<TaskForm
+							v-if="canWrite"
+							@createTask="addGanttTask"
+						/>
+					</template>
+					<ul
+						v-else
+						class="gantt-skeleton-rows"
+					>
+						<li
+							v-for="n in SKELETON_ROW_COUNT"
+							:key="n"
+							class="gantt-skeleton-row"
+						/>
+					</ul>
 				</Card>
 			</div>
 		</template>
@@ -72,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref, toRefs} from 'vue'
+import {computed, ref, toRefs, withDefaults} from 'vue'
 import type Flatpickr from 'flatpickr'
 import {useI18n} from 'vue-i18n'
 import type {RouteLocationNormalized} from 'vue-router'
@@ -95,18 +107,21 @@ import type {IProjectView} from '@/modelTypes/IProjectView'
 
 type Options = Flatpickr.Options.Options
 
-const props = defineProps<{
-	isLoadingProject: boolean,
-	route: RouteLocationNormalized
-	viewId: IProjectView['id']
-}>()
+const props = withDefaults(defineProps<{
+        isLoadingProject: boolean,
+        route: RouteLocationNormalized
+        viewId: IProjectView['id']
+        loading?: boolean
+}>(), {
+        loading: false,
+})
 
 const GanttChart = createAsyncComponent(() => import('@/components/tasks/GanttChart.vue'))
 
 const baseStore = useBaseStore()
 const canWrite = computed(() => baseStore.currentProject?.maxRight > RIGHTS.READ)
 
-const {route, viewId} = toRefs(props)
+const {route, viewId, loading} = toRefs(props)
 const {
 	filters,
 	hasDefaultFilters,
@@ -118,6 +133,8 @@ const {
 } = useGanttFilters(route, viewId)
 
 const DEFAULT_DATE_RANGE_DAYS = 7
+
+const SKELETON_ROW_COUNT = 6
 
 const today = new Date()
 const defaultTaskStartDate: DateISO = new Date(today.setHours(0, 0, 0, 0)).toISOString()
