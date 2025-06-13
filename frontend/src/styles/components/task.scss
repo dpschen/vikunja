@@ -2,3 +2,7 @@
 .link-share-container:not(.has-background) .task-view {
   background: transparent;
 }
+
+.task--overdue {
+  color: var(--danger);
+}
