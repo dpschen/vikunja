@@ -52,13 +52,26 @@ install_go() {
 }
 
 install_mage() {
-	# Install mage into our user bin dir
-	GOBIN="$BIN_DIR" GO111MODULE=on go install github.com/magefile/mage@v1.15.0
+        # Install mage into our user bin dir
+        GOBIN="$BIN_DIR" GO111MODULE=on go install github.com/magefile/mage@v1.15.0
+}
+
+install_chrome() {
+        if command -v google-chrome >/dev/null 2>&1; then
+                return
+        fi
+
+        local deb="google-chrome.deb"
+        curl -fsSL -o "$deb" "https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
+        sudo apt-get update -qq >/dev/null
+        sudo apt-get install -y "./$deb" >/dev/null
+        rm "$deb"
 }
 
 install_node
 install_pnpm
 install_go
 install_mage
+install_chrome
 
 echo "Setup complete. Binaries are in $BIN_DIR."
