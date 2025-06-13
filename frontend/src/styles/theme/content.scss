@@ -28,3 +28,8 @@
   background-color: var(--grey-200);
   border-left: .25rem solid var(--grey-300);
 }
+
+.dark code {
+  background-color: var(--code-background);
+  color: var(--code);
+}
