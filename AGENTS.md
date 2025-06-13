@@ -28,7 +28,8 @@ These instructions summarize the development guidelines from the official Vikunj
 - Run API unit tests with `mage test:unit`.
 - Run API integration tests with `mage test:integration`.
 - Run frontend unit tests with `pnpm test:unit` (run `pnpm install --frozen-lockfile` in `frontend/` first).
-- Run `pnpm lint` and `pnpm typecheck` to match CI checks. `typecheck` might fail. Only make sure you don't create new issues.
+- Run `pnpm lint` and `pnpm typecheck` to match CI checks. `typecheck` might fail. Fix type errors only in the files you changed. If unrelated files fail, note it in the PR but do not attempt to fix those errors.
+- When running Cypress tests locally, use Chrome if available. `scripts/install-tools.sh` installs it automatically. If Chrome is missing, run the tests inside the `cypress/browsers` Docker image or fall back to Electron with `xvfb-run`.
 
 ## Pull Requests
 - PRs must be opened against the `main` branch.
