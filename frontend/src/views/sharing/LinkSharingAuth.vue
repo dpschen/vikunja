@@ -7,9 +7,10 @@
 			v-if="authenticateWithPassword"
 			class="box"
 		>
-			<p class="pb-2">
-				{{ $t('sharing.passwordRequired') }}
-			</p>
+			<p
+				v-t="'sharing.passwordRequired'"
+				class="pb-2"
+			/>
 			<div class="field">
 				<div class="control">
 					<input

@@ -262,11 +262,11 @@ function validateSelectedEvents() {
 			@submit="deleteWebhook()"
 		>
 			<template #header>
-				<span>{{ $t('project.webhooks.delete') }}</span>
+				<span v-t="'project.webhooks.delete'" />
 			</template>
 
 			<template #text>
-				<p>{{ $t('project.webhooks.deleteText') }}</p>
+				<p v-t="'project.webhooks.deleteText'" />
 			</template>
 		</Modal>
 	</CreateEdit>

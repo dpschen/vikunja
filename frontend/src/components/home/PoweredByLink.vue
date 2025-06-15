@@ -4,7 +4,7 @@
 		:href="computedUrl"
 		target="_blank"
 	>
-		{{ $t('misc.poweredBy') }}
+		<span v-t="'misc.poweredBy'" />
 	</BaseButton>
 </template>
 

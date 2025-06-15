@@ -5,21 +5,19 @@
 	>
 		<template #previous="{ disabled }">
 			<BaseButton
+				v-t="'misc.previous'"
 				:disabled="disabled"
 				class="pagination-previous"
 				@click="changePage(currentPage - 1)"
-			>
-				{{ $t('misc.previous') }}
-			</BaseButton>
+			/>
 		</template>
 		<template #next="{ disabled }">
 			<BaseButton
+				v-t="'misc.next'"
 				:disabled="disabled"
 				class="pagination-next"
 				@click="changePage(currentPage + 1)"
-			>
-				{{ $t('misc.next') }}
-			</BaseButton>
+			/>
 		</template>
 		<template #page-link="{ page, isCurrent }">
 			<BaseButton

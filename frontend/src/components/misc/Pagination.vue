@@ -5,21 +5,19 @@
 	>
 		<template #previous="{ disabled }">
 			<RouterLink
+				v-t="'misc.previous'"
 				:disabled="disabled || undefined"
 				:to="getRouteForPagination(currentPage - 1)"
 				class="pagination-previous"
-			>
-				{{ $t('misc.previous') }}
-			</RouterLink>
+			/>
 		</template>
 		<template #next="{ disabled }">
 			<RouterLink
+				v-t="'misc.next'"
 				:disabled="disabled || undefined"
 				:to="getRouteForPagination(currentPage + 1)"
 				class="pagination-next"
-			>
-				{{ $t('misc.next') }}
-			</RouterLink>
+			/>
 		</template>
 		<template #page-link="{ page, isCurrent }">
 			<RouterLink

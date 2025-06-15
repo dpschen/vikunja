@@ -1,7 +1,7 @@
 <template>
 	<div class="content">
-		<h1>{{ $t('migrate.title') }}</h1>
-		<p>{{ $t('migrate.description') }}</p>
+		<h1 v-t="'migrate.title'" />
+		<p v-t="'migrate.description'" />
 		<div class="migration-services">
 			<RouterLink
 				v-for="{name, id, icon} in availableMigrators"

@@ -11,7 +11,7 @@
 			{{ $t('team.create.title') }}
 		</XButton>
 
-		<h1>{{ $t('team.title') }}</h1>
+		<h1 v-t="'team.title'" />
 		<ul
 			v-if="teams.length > 0"
 			class="teams box"
@@ -31,10 +31,12 @@
 			v-else-if="!teamService.loading"
 			class="has-text-centered has-text-grey is-italic"
 		>
-			{{ $t('team.noTeams') }}
-			<RouterLink :to="{name: 'teams.create'}">
-				{{ $t('team.create.title') }}.
-			</RouterLink>
+			<span v-t="'team.noTeams'" />
+			<RouterLink
+				:to="{name: 'teams.create'}"
+			>
+				{{ $t('team.create.title') }}
+			</RouterLink>.
 		</p>
 	</div>
 </template>

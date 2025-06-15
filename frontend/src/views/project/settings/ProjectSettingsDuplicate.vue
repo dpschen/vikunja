@@ -6,7 +6,7 @@
 		:loading="isLoading"
 		@primary="duplicate"
 	>
-		<p>{{ $t('project.duplicate.text') }}</p>
+		<p v-t="'project.duplicate.text'" />
 		<ProjectSearch v-model="parentProject" />
 	</CreateEdit>
 </template>

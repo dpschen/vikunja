@@ -4,7 +4,7 @@
 		class="is-done"
 		:class="{ 'is-done--small': variant === 'small' }"
 	>
-		{{ $t('task.attributes.done') }}
+		<span v-t="'task.attributes.done'" />
 	</div>
 </template>
 

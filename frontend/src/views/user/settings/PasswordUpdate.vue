@@ -7,9 +7,10 @@
 		<form @submit.prevent="updatePassword">
 			<div class="field">
 				<label
+					v-t="'user.settings.newPassword'"
 					class="label"
 					for="newPassword"
-				>{{ $t('user.settings.newPassword') }}</label>
+				/>
 				<div class="control">
 					<input
 						id="newPassword"
@@ -24,9 +25,10 @@
 			</div>
 			<div class="field">
 				<label
+					v-t="'user.settings.newPasswordConfirm'"
 					class="label"
 					for="newPasswordConfirm"
-				>{{ $t('user.settings.newPasswordConfirm') }}</label>
+				/>
 				<div class="control">
 					<input
 						id="newPasswordConfirm"
@@ -41,9 +43,10 @@
 			</div>
 			<div class="field">
 				<label
+					v-t="'user.settings.currentPassword'"
 					class="label"
 					for="currentPassword"
-				>{{ $t('user.settings.currentPassword') }}</label>
+				/>
 				<div class="control">
 					<input
 						id="currentPassword"

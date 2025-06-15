@@ -1,6 +1,7 @@
 import {createI18n} from 'vue-i18n'
 import type {PluralizationRule} from 'vue-i18n'
 import langEN from './lang/en.json'
+import supportedLocales from '@/../../pkg/i18n/lang/locales.json'
 
 import localizedFormat from 'dayjs/plugin/localizedFormat'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -10,38 +11,7 @@ import {loadDayJsLocale} from '@/i18n/useDayjsLanguageSync.ts'
 dayjs.extend(localizedFormat)
 dayjs.extend(relativeTime)
 
-export const SUPPORTED_LOCALES = {
-	'en': 'English',
-	'de-DE': 'Deutsch',
-	'de-swiss': 'Schwizertütsch',
-	'ru-RU': 'Русский',
-	'fr-FR': 'Français',
-	'vi-VN': 'Tiếng Việt',
-	'it-IT': 'Italiano',
-	'cs-CZ': 'Čeština',
-	'pl-PL': 'Polski',
-	'nl-NL': 'Nederlands',
-	'pt-PT': 'Português',
-	'zh-CN': '中文',
-	'no-NO': 'Norsk Bokmål',
-	'es-ES': 'Español',
-	'da-DK': 'Dansk',
-	'ja-JP': '日本語',
-	'hu-HU': 'Magyar',
-	'ar-SA': 'اَلْعَرَبِيَّةُ',
-	'sl-SI': 'Slovenščina',
-	'pt-BR': 'Português Brasileiro',
-	'hr-HR': 'Hrvatski',
-	'uk-UA': 'Українська',
-	'lt-LT': 'Lietuvių Kalba',
-	'bg-BG': 'Български',
-	'ko-KR': '한국어',
-	'tr-TR': 'Türkçe',
-	'fi-FI': 'Suomi',
-	'he-IL': 'עִבְרִית',
-	// IMPORTANT: Also add new languages to useDayjsLanguageSync
-	// IMPORTANT: Also add new languages to pkg/i18n/i18n.go
-} as const
+export const SUPPORTED_LOCALES = supportedLocales as Record<string, string>
 
 export type SupportedLocale = keyof typeof SUPPORTED_LOCALES
 

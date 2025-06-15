@@ -27,9 +27,10 @@
 		>
 			<div class="field">
 				<label
+					v-t="'user.auth.password'"
 					class="label"
 					for="password"
-				>{{ $t('user.auth.password') }}</label>
+				/>
 				<Password
 					@submit="resetPassword"
 					@update:modelValue="v => credentials.password = v"

@@ -221,11 +221,11 @@ async function saveViewPosition(e) {
 		@submit="deleteView(viewIdToDelete)"
 	>
 		<template #header>
-			<span>{{ $t('project.views.delete') }}</span>
+			<span v-t="'project.views.delete'" />
 		</template>
 
 		<template #text>
-			<p>{{ $t('project.views.deleteText') }}</p>
+			<p v-t="'project.views.deleteText'" />
 		</template>
 	</Modal>
 </template>

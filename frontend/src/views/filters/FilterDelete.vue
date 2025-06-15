@@ -4,11 +4,11 @@
 		@submit="deleteFilter()"
 	>
 		<template #header>
-			<span>{{ $t('filters.delete.header') }}</span>
+			<span v-t="'filters.delete.header'" />
 		</template>
 
 		<template #text>
-			<p>{{ $t('filters.delete.text') }}</p>
+			<p v-t="'filters.delete.text'" />
 		</template>
 	</Modal>
 </template>

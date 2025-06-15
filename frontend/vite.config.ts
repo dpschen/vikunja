@@ -119,10 +119,9 @@ function getBuildConfig(env: Record<string, string>) {
 				svgo: false,
 			}),
 			VueI18nPlugin({
-				// TODO: only install needed stuff
-				// Whether to install the full set of APIs, components, etc. provided by Vue I18n.
-				// By default, all of them will be installed.
-				fullInstall: true,
+				fullInstall: false,
+				runtimeOnly: true,
+				compositionOnly: true,
 				include: resolve(dirname(pathSrc), './src/i18n/lang/**'),
 			}),
 			// https://github.com/Applelo/unplugin-inject-preload

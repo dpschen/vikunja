@@ -22,9 +22,10 @@
 		>
 			<div class="field">
 				<label
+					v-t="'user.auth.usernameEmail'"
 					class="label"
 					for="username"
-				>{{ $t('user.auth.usernameEmail') }}</label>
+				/>
 				<div class="control">
 					<input
 						id="username"
@@ -43,17 +44,17 @@
 				</div>
 				<p
 					v-if="!usernameValid"
+					v-t="'user.auth.usernameRequired'"
 					class="help is-danger"
-				>
-					{{ $t('user.auth.usernameRequired') }}
-				</p>
+				/>
 			</div>
 			<div class="field">
 				<div class="label-with-link">
 					<label
+						v-t="'user.auth.password'"
 						class="label"
 						for="password"
-					>{{ $t('user.auth.password') }}</label>
+					/>
 					<RouterLink
 						v-if="localAuthEnabled"
 						:to="{ name: 'user.password-reset.request' }"
@@ -76,9 +77,10 @@
 				class="field"
 			>
 				<label
+					v-t="'user.auth.totpTitle'"
 					class="label"
 					for="totpPasscode"
-				>{{ $t('user.auth.totpTitle') }}</label>
+				/>
 				<div class="control">
 					<input
 						id="totpPasscode"
@@ -102,7 +104,7 @@
 						type="checkbox"
 						class="mr-1"
 					>
-					{{ $t('user.auth.remember') }}
+					<span v-t="'user.auth.remember'" />
 				</label>
 			</div>
 

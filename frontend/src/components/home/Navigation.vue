@@ -23,7 +23,7 @@
 						<span class="menu-item-icon icon">
 							<Icon icon="calendar" />
 						</span>
-						{{ $t('navigation.overview') }}
+						<span v-t="'navigation.overview'" />
 					</RouterLink>
 				</li>
 				<li>
@@ -34,7 +34,7 @@
 						<span class="menu-item-icon icon">
 							<Icon :icon="['far', 'calendar-alt']" />
 						</span>
-						{{ $t('navigation.upcoming') }}
+						<span v-t="'navigation.upcoming'" />
 					</RouterLink>
 				</li>
 				<li>
@@ -45,7 +45,7 @@
 						<span class="menu-item-icon icon">
 							<Icon icon="layer-group" />
 						</span>
-						{{ $t('project.projects') }}
+						<span v-t="'project.projects'" />
 					</RouterLink>
 				</li>
 				<li>
@@ -56,7 +56,7 @@
 						<span class="menu-item-icon icon">
 							<Icon icon="tags" />
 						</span>
-						{{ $t('label.title') }}
+						<span v-t="'label.title'" />
 					</RouterLink>
 				</li>
 				<li>
@@ -67,7 +67,7 @@
 						<span class="menu-item-icon icon">
 							<Icon icon="users" />
 						</span>
-						{{ $t('team.title') }}
+						<span v-t="'team.title'" />
 					</RouterLink>
 				</li>
 			</menu>
