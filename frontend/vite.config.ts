@@ -92,25 +92,26 @@ function getBuildConfig(env: Record<string, string>) {
 			exclude: [...configDefaults.exclude, 'e2e/**'],
 			'vitest.commandLine': 'pnpm test:unit',
 		},
-		css: {
-			preprocessorOptions: {
-				sass: {
-					quietDeps: true, // silence deprecation warnings
-				},
-				scss: {
-					additionalData: PREFIXED_SCSS_STYLES,
-					charset: false, // fixes  "@charset" must be the first rule in the file" warnings,
-					quietDeps: true, // silence deprecation warnings
-				},
-			},
-			postcss: {
-				plugins: [
-					tailwindcss(),
-					postcssEasingGradients(),
-					postcssPresetEnv(),
-				],
-			},
-		},
+                css: {
+                        preprocessorOptions: {
+                                sass: {
+                                        quietDeps: true, // silence deprecation warnings
+                                },
+                                scss: {
+                                        additionalData: PREFIXED_SCSS_STYLES,
+                                        charset: false, // fixes  "@charset" must be the first rule in the file" warnings,
+                                        quietDeps: true, // silence deprecation warnings
+                                },
+                        },
+                        postcss: {
+                                plugins: [
+                                        tailwindcss(),
+                                        postcssEasingGradients(),
+                                        postcssPresetEnv(),
+                                ],
+                        },
+                        minify: false,
+                },
 		plugins: [
 			vue(),
 			svgLoader({
