@@ -22,7 +22,7 @@ const pathBulma = resolve(dirname(pathSrc), 'vendor/bulma-css-variables')
 
 // the @use rules have to be the first in the compiled stylesheets
 const PREFIXED_SCSS_STYLES = `@use "sass:math";
-@import "${pathSrc}/styles/common-imports.scss";`
+@use "${pathSrc}/styles/common-imports.scss";`
 
 /*
 ** Configure sentry plugin
