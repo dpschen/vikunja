@@ -7,6 +7,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 All releases can be found on https://code.vikunja.io/vikunja/releases.
 
+## [Unreleased]
+
+### Dependencies
+
+* *(deps)* Update dependency @intlify/unplugin-vue-i18n to v11.0.0-beta.3
+
 ## [0.24.6] - 2024-12-22
 
 ### Bug Fixes
