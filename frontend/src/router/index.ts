@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 import type { RouteLocation } from 'vue-router'
 import {saveLastVisited} from '@/helpers/saveLastVisited'
 
@@ -17,8 +17,10 @@ import UpcomingTasks from '@/views/tasks/ShowTasks.vue'
 
 import NotFoundComponent from '@/views/404.vue'
 
+const isElectron = Boolean((window as unknown as {process?: {versions?: {electron?: string}}}).process?.versions?.electron)
+
 const router = createRouter({
-	history: createWebHistory(import.meta.env.BASE_URL),
+	history: isElectron ? createWebHashHistory(import.meta.env.BASE_URL) : createWebHistory(import.meta.env.BASE_URL),
 	scrollBehavior(to, from, savedPosition) {
 		// If the user is using their forward/backward keys to navigate, we want to restore the scroll view
 		if (savedPosition) {
