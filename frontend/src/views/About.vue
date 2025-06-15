@@ -21,7 +21,7 @@
 					variant="secondary"
 					@click.prevent.stop="$router.back()"
 				>
-					{{ $t('misc.close') }}
+					<span v-t="'misc.close'" />
 				</XButton>
 			</template>
 		</Card>

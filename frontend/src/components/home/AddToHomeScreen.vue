@@ -8,9 +8,7 @@
 			icon="arrow-up-from-bracket"
 			class="add-icon"
 		/>
-		<p>
-			{{ $t('home.addToHomeScreen') }}
-		</p>
+		<p v-t="'home.addToHomeScreen'" />
 		<BaseButton
 			class="hide-button"
 			@click="() => hideMessage = true"

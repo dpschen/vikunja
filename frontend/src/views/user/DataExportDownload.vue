@@ -1,15 +1,14 @@
 <template>
 	<div class="content">
-		<h1>{{ $t('user.export.downloadTitle') }}</h1>
+		<h1 v-t="'user.export.downloadTitle'" />
 		<template v-if="isLocalUser">
-			<p>{{ $t('user.export.descriptionPasswordRequired') }}</p>
+			<p v-t="'user.export.descriptionPasswordRequired'" />
 			<div class="field">
 				<label
+					v-t="'user.settings.currentPassword'"
 					class="label"
 					for="currentPasswordDataExport"
-				>
-					{{ $t('user.settings.currentPassword') }}
-				</label>
+				/>
 				<div class="control">
 					<input
 						id="currentPasswordDataExport"
@@ -24,10 +23,9 @@
 				</div>
 				<p
 					v-if="errPasswordRequired"
+					v-t="'user.deletion.passwordRequired'"
 					class="help is-danger"
-				>
-					{{ $t('user.deletion.passwordRequired') }}
-				</p>
+				/>
 			</div>
 		</template>
 

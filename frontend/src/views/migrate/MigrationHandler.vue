@@ -1,7 +1,7 @@
 <template>
 	<div class="content">
 		<h1>{{ $t('migrate.titleService', {name: migrator.name}) }}</h1>
-		<p>{{ $t('migrate.descriptionDo') }}</p>
+		<p v-t="'migrate.descriptionDo'" />
 
 		<template v-if="message === '' && lastMigrationStartedAt === null && !migrationJustStarted">
 			<template v-if="isMigrating === false">
@@ -58,7 +58,7 @@
 					</div>
 					<Logo class="logo" />
 				</div>
-				<p>{{ $t('migrate.inProgress') }}</p>
+				<p v-t="'migrate.inProgress'" />
 			</div>
 		</template>
 		<div v-else-if="!migrationJustStarted && lastMigrationStartedAt && lastMigrationFinishedAt === null">

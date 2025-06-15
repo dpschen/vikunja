@@ -13,9 +13,10 @@
 				<Message v-if="motd !== ''">
 					{{ motd }}
 				</Message>
-				<h2 class="image-title">
-					{{ $t('misc.welcomeBack') }}
-				</h2>
+				<h2
+					v-t="'misc.welcomeBack'"
+					class="image-title"
+				/>
 			</section>
 			<section class="content">
 				<div>

@@ -9,13 +9,13 @@
 			name="previous"
 			:disabled="currentPage === 1"
 		>
-			{{ $t('misc.previous') }}
+			<span v-t="'misc.previous'" />
 		</slot>
 		<slot
 			name="next"
 			:disabled="currentPage === totalPages"
 		>
-			{{ $t('misc.next') }}
+			<span v-t="'misc.next'" />
 		</slot>
 		<ul class="pagination-list">
 			<li

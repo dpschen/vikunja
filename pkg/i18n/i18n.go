@@ -28,7 +28,7 @@ import (
 	"code.vikunja.io/api/pkg/log"
 )
 
-//go:embed lang/*.json
+//go:embed lang/*.json lang/locales.json
 var localeFS embed.FS
 
 // TranslationStore represents a collection of translation entries
@@ -46,48 +46,33 @@ var translator = &Translator{
 	fallbackLang: "en",
 }
 
-var availableLanguages = map[string]bool{
-	"en":       true,
-	"de-DE":    true,
-	"de-swiss": true,
-	"ru-RU":    true,
-	"fr-FR":    true,
-	"vi-VN":    true,
-	"it-IT":    true,
-	"cs-CZ":    true,
-	"pl-PL":    true,
-	"nl-NL":    true,
-	"pt-PT":    true,
-	"zh-CN":    true,
-	"no-NO":    true,
-	"es-ES":    true,
-	"da-DK":    true,
-	"ja-JP":    true,
-	"hu-HU":    true,
-	"ar-SA":    true,
-	"sl-SI":    true,
-	"pt-BR":    true,
-	"hr-HR":    true,
-	"uk-UA":    true,
-	"lt-LT":    true,
-	"bg-BG":    true,
-	"ko-KR":    true,
-	"tr-TR":    true,
-	"fi-FI":    true,
-	"he-IL":    true,
-	// IMPORTANT: Also add new languages to the frontend
-}
+var availableLanguages map[string]bool
+var supportedLocales map[string]string
 
 // Init initializes the global translator with translation files
 func Init() {
 	dir := "lang"
+
+	data, err := localeFS.ReadFile(filepath.Join(dir, "locales.json"))
+	if err != nil {
+		log.Fatalf("Failed to read locales list: %v", err)
+	}
+	if err := json.Unmarshal(data, &supportedLocales); err != nil {
+		log.Fatalf("Failed to parse locales list: %v", err)
+	}
+
+	availableLanguages = make(map[string]bool, len(supportedLocales))
+	for lang := range supportedLocales {
+		availableLanguages[lang] = true
+	}
+
 	entries, err := fs.ReadDir(localeFS, dir)
 	if err != nil {
 		log.Fatalf("Failed to read embedded translation directory: %v", err)
 	}
 
 	for _, entry := range entries {
-		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".json") {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".json") || entry.Name() == "locales.json" {
 			continue
 		}
 

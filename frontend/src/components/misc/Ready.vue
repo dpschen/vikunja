@@ -9,10 +9,11 @@
 		class="app offline"
 	>
 		<div class="offline-message">
-			<h1 class="title">
-				{{ $t('offline.title') }}
-			</h1>
-			<p>{{ $t('offline.text') }}</p>
+			<h1
+				v-t="'offline.title'"
+				class="title"
+			/>
+			<p v-t="'offline.text'" />
 		</div>
 	</div>
 	<template v-else-if="baseStore.ready">
@@ -20,21 +21,20 @@
 	</template>
 	<section v-else-if="baseStore.error !== ''">
 		<NoAuthWrapper>
-			<p v-if="baseStore.error === ERROR_NO_API_URL">
-				{{ $t('ready.noApiUrlConfigured') }}
-			</p>
+			<p
+				v-if="baseStore.error === ERROR_NO_API_URL"
+				v-t="'ready.noApiUrlConfigured'"
+			/>
 			<Message
 				v-else
 				variant="danger"
 				class="mb-4"
 			>
 				<p>
-					{{ $t('ready.errorOccured') }}<br>
+					<span v-t="'ready.errorOccured'" /><br>
 					{{ baseStore.error }}
 				</p>
-				<p>
-					{{ $t('ready.checkApiUrl') }}
-				</p>
+				<p v-t="'ready.checkApiUrl'" />
 			</Message>
 			<ApiConfig
 				:configure-open="true"
@@ -50,7 +50,7 @@
 			<Logo class="logo" />
 			<p>
 				<span class="loader-container is-loading-small is-loading" />
-				{{ $t('ready.loading') }}
+				<span v-t="'ready.loading'" />
 			</p>
 		</section>
 	</CustomTransition>

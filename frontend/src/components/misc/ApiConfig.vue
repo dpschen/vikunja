@@ -2,9 +2,10 @@
 	<div class="api-config">
 		<div v-if="configureApi">
 			<label
+				v-t="'apiConfig.url'"
 				class="label"
 				for="api-url"
-			>{{ $t('apiConfig.url') }}</label>
+			/>
 			<div class="field has-addons">
 				<div class="control is-expanded">
 					<input

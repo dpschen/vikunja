@@ -186,9 +186,10 @@ function toggleGroupPermissionsFromChild(group: string, checked: boolean) {
 				<th>{{ $t('user.settings.apiTokens.attributes.permissions') }}</th>
 				<th>{{ $t('user.settings.apiTokens.attributes.expiresAt') }}</th>
 				<th>{{ $t('misc.created') }}</th>
-				<th class="has-text-right">
-					{{ $t('misc.actions') }}
-				</th>
+				<th
+					v-t="'misc.actions'"
+					class="has-text-right"
+				/>
 			</tr>
 			<tr
 				v-for="tk in tokens"
