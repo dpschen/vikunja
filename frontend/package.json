@@ -80,7 +80,6 @@
     "@vueuse/router": "13.3.0",
     "axios": "1.9.0",
     "blurhash": "2.0.5",
-    "bulma-css-variables": "0.9.33",
     "change-case": "5.4.4",
     "dayjs": "1.11.13",
     "dompurify": "3.2.6",
@@ -157,8 +156,7 @@
   "pnpm": {
     "patchedDependencies": {
       "@github/hotkey@3.1.1": "patches/@github__hotkey@3.1.1.patch",
-      "flexsearch@0.7.43": "patches/flexsearch@0.7.43.patch",
-      "bulma-css-variables": "patches/bulma-css-variables.patch"
+      "flexsearch@0.7.43": "patches/flexsearch@0.7.43.patch"
     },
     "onlyBuiltDependencies": [
       "@parcel/watcher",

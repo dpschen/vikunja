@@ -18,6 +18,7 @@ import tailwindcss from 'tailwindcss'
 import vueDevTools from 'vite-plugin-vue-devtools'
 
 const pathSrc = fileURLToPath(new URL('./src', import.meta.url)).replaceAll('\\', '/')
+const pathBulma = resolve(dirname(pathSrc), 'vendor/bulma-css-variables')
 
 // the @use rules have to be the first in the compiled stylesheets
 const PREFIXED_SCSS_STYLES = `@use "sass:math";
@@ -201,6 +202,10 @@ function getBuildConfig(env: Record<string, string>) {
 				{
 					find: '@',
 					replacement: pathSrc,
+				},
+				{
+					find: 'bulma-css-variables',
+					replacement: pathBulma,
 				},
 			],
 			extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],

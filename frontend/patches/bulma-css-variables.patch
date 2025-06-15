@@ -595,7 +595,6 @@ index 51cf348ab31a7639aa501c9214b1a85ce3033812..4c3680eeea71a023b86f4e16cbcb321a
 +@forward "mixins"
 +@forward "controls"
 +@forward "extends"
-\ No newline at end of file
 diff --git a/sass/utilities/controls.sass b/sass/utilities/controls.sass
 index 9eb6c250a2a2f82758611113e33e9446d75c7502..16ca787007d41ea86d7d2491adf1ca19063400e0 100644
 --- a/sass/utilities/controls.sass
@@ -610,9 +609,9 @@ diff --git a/sass/utilities/derived-variables.sass b/sass/utilities/derived-vari
 index 8c039798b384464e353864a5366cc4b941be9525..ab42c895362662f099dc35aef94a63207b514df7 100644
 --- a/sass/utilities/derived-variables.sass
 +++ b/sass/utilities/derived-variables.sass
-@@ -1,5 +1,5 @@
--@import "initial-variables"
--@import "functions"
+@@ -1,5 +1,7 @@
++@forward "initial-variables"
++@forward "functions"
 +@use "initial-variables" as *
 +@use "functions" as *
  
@@ -622,10 +621,10 @@ diff --git a/sass/utilities/extends.sass b/sass/utilities/extends.sass
 index c994fc1ac35f291a37267cbe57758f1840fe0dda..f7585ea1e36140af9bc7511ecd6ed04186f13d9f 100644
 --- a/sass/utilities/extends.sass
 +++ b/sass/utilities/extends.sass
-@@ -1,4 +1,4 @@
+@@ -1,4 +1,5 @@
 -@import "mixins"
 +@use "mixins" as *
- 
++@use "controls" as *
  %control
    +control
 diff --git a/sass/utilities/mixins.sass b/sass/utilities/mixins.sass

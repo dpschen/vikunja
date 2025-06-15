@@ -8,9 +8,6 @@ patchedDependencies:
   '@github/hotkey@3.1.1':
     hash: 145ab3233cbcd3bc934b4961cd8710e2b15e4ae5dd20862a8d1d6621d7f9d4a8
     path: patches/@github__hotkey@3.1.1.patch
-  bulma-css-variables:
-    hash: d9e573f7a7fbf1568c672fd3b273756246d12b1b3cca470faadb7ca76891414d
-    path: patches/bulma-css-variables.patch
   flexsearch@0.7.43:
     hash: f7066310ad918eadadaf64278c0a00d7ca785faf7d7fb631392b50db140954a6
     path: patches/flexsearch@0.7.43.patch
@@ -118,9 +115,6 @@ importers:
       blurhash:
         specifier: 2.0.5
         version: 2.0.5
-      bulma-css-variables:
-        specifier: 0.9.33
-        version: 0.9.33(patch_hash=d9e573f7a7fbf1568c672fd3b273756246d12b1b3cca470faadb7ca76891414d)
       change-case:
         specifier: 5.4.4
         version: 5.4.4
@@ -3099,10 +3093,6 @@ packages:
   builtin-modules@3.3.0:
     resolution: {integrity: sha512-zhaCDicdLuWN5UbN5IMnFqNMhNfo919sH85y2/ea+5Yg9TsTkeZxpL+JLbp6cgYFS4sRLp3YV4S6yDuqVWHYOw==}
     engines: {node: '>=6'}
-
-  bulma-css-variables@0.9.33:
-    resolution: {integrity: sha512-D85dXLyLOBBDCuSSOeASc0kN2IknJqo5hzkZ22hxDHobxko/qay0nD+zNl2CJtF8v/7iwvQXqzVSDRnFVRSg9A==}
-    deprecated: bulma-css-variables is deprecated. Project has been shifted to monorepo @bulvar/bulma
 
   bundle-name@4.1.0:
     resolution: {integrity: sha512-tjwM5exMg6BGRI+kNmTntNsvdZS1X8BFYS6tnJ2hdH0kVxM6/eVZ2xy+FqStSWvYmtfFMDLIxurorHwDKfDz5Q==}
@@ -9961,8 +9951,6 @@ snapshots:
       ieee754: 1.2.1
 
   builtin-modules@3.3.0: {}
-
-  bulma-css-variables@0.9.33(patch_hash=d9e573f7a7fbf1568c672fd3b273756246d12b1b3cca470faadb7ca76891414d): {}
 
   bundle-name@4.1.0:
     dependencies:
