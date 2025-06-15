@@ -1,8 +1,5 @@
 const {app, BrowserWindow, shell} = require('electron')
 const path = require('path')
-const express = require('express')
-const eApp = express()
-const portInUse = require('./portInUse.js')
 
 const frontendPath = 'frontend/'
 
@@ -25,25 +22,8 @@ function createWindow() {
 	// Hide the toolbar
 	mainWindow.setMenuBarVisibility(false)
 
-	// We try to use the same port every time and only use a different one if that does not succeed.
-	let port = 45735
-	portInUse(port, used => {
-		if(used) {
-			console.log(`Port ${port} already used, switching to a random one`)
-			port = 0 // This lets express choose a random port
-		}
-
-		// Start a local express server to serve static files
-		eApp.use(express.static(path.join(__dirname, frontendPath)))
-		// Handle urls set by the frontend - use app.use as catch-all instead of route pattern
-		eApp.use((request, response) => {
-			response.sendFile(path.join(__dirname, frontendPath, 'index.html'))
-		})
-		const server = eApp.listen(port,  '127.0.0.1', () => {
-			console.log(`Server started on port ${server.address().port}`)
-			mainWindow.loadURL(`http://127.0.0.1:${server.address().port}`)
-		})
-	})
+	// Load the frontend directly from the filesystem
+	mainWindow.loadFile(path.join(__dirname, frontendPath, 'index.html'))
 }
 
 // This method will be called when Electron has finished
