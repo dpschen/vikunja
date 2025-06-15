@@ -1,0 +1,645 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+deleted file mode 100644
+index 543531a208ca1f8c12d358176b58d33934fc5cd6..0000000000000000000000000000000000000000
+diff --git a/bulma.sass b/bulma.sass
+index 0f9e32cc2de26e165904a88c9bd606667f75d825..a110cfbc48b6d6ed61c9468498c112663953d0bf 100644
+--- a/bulma.sass
++++ b/bulma.sass
+@@ -1,11 +1,11 @@
+ @charset "utf-8"
+-/*! bulma-css-variables v0.9.33 | MIT License | github.com/dino4udo/bulma-css-variables */
+-@import "sass/utilities/_all"
+-@import "sass/base/_all"
+-@import "sass/elements/_all"
+-@import "sass/form/_all"
+-@import "sass/components/_all"
+-@import "sass/grid/_all"
+-@import "sass/helpers/_all"
+-@import "sass/layout/_all"
+-@import "sass/themes/basic"
++/*! bulma-css-variables v0.9.5 | MIT License | github.com/dino4udo/bulma-css-variables */
++@use "sass/utilities/_all" as *
++@use "sass/base/_all" as *
++@use "sass/elements/_all" as *
++@use "sass/form/_all" as *
++@use "sass/components/_all" as *
++@use "sass/grid/_all" as *
++@use "sass/helpers/_all" as *
++@use "sass/layout/_all" as *
++@use "sass/themes/basic" as *
+\ No newline at end of file
+diff --git a/bulma-rtl.sass b/bulma-rtl.sass
+new file mode 100644
+index 0000000000000000000000000000000000000000..a9bd5b126479d3d97a46cf06b6a997672c057c61
+--- /dev/null
++++ b/bulma-rtl.sass
+@@ -0,0 +1,3 @@
++@charset "utf-8"
++$rtl: true
++@use "bulma" as *
+\ No newline at end of file
+diff --git a/sass/base/_all.sass b/sass/base/_all.sass
+index a5ae0a7b2755ce50378a5b208147647801fd1319..c89561534204d2a7e68c2ef5139fc157aef8ea6e 100644
+--- a/sass/base/_all.sass
++++ b/sass/base/_all.sass
+@@ -1,6 +1,6 @@
+ /* Bulma Base */
+ @charset "utf-8"
+ 
+-@import "minireset"
+-@import "generic"
+-@import "animations"
++@forward "minireset"
++@forward "generic"
++@forward "animations"
+\ No newline at end of file
+diff --git a/sass/base/generic.sass b/sass/base/generic.sass
+index a9134fcc0cb1e232d6f89feef25efa340a4ba01f..2eba0162f4f76c316e8ca1957a02acada52fc765 100644
+--- a/sass/base/generic.sass
++++ b/sass/base/generic.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $body-background-color: var(--scheme-main, #{$scheme-main}) !default
+ $body-size: 16px !default
+diff --git a/sass/components/_all.sass b/sass/components/_all.sass
+index a7062ec173f5cabf3b02b145cfa63f2ec489e707..98cf1c50e66c7512afb5c56c7e34521f2d3345fc 100644
+--- a/sass/components/_all.sass
++++ b/sass/components/_all.sass
+@@ -1,15 +1,15 @@
+ /* Bulma Components */
+ @charset "utf-8"
+ 
+-@import "breadcrumb"
+-@import "card"
+-@import "dropdown"
+-@import "level"
+-@import "media"
+-@import "menu"
+-@import "message"
+-@import "modal"
+-@import "navbar"
+-@import "pagination"
+-@import "panel"
+-@import "tabs"
++@forward "breadcrumb"
++@forward "card"
++@forward "dropdown"
++@forward "level"
++@forward "media"
++@forward "menu"
++@forward "message"
++@forward "modal"
++@forward "navbar"
++@forward "pagination"
++@forward "panel"
++@forward "tabs"
+\ No newline at end of file
+diff --git a/sass/components/breadcrumb.sass b/sass/components/breadcrumb.sass
+index 2990df70939fddf73e241b6fa609f9a80f752ec7..ff2cf20849d2ed5c83b5bc6fba069715769f773a 100644
+--- a/sass/components/breadcrumb.sass
++++ b/sass/components/breadcrumb.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $breadcrumb-item-color: var(--link, #{$link}) !default
+ $breadcrumb-item-hover-color: var(--link-hover, #{$link-hover}) !default
+diff --git a/sass/components/card.sass b/sass/components/card.sass
+index 1312e6c894023d62665aa42fa9f085ff3f3f4a6d..6f102acae89e541149f74b5dbdbbd8d397861981 100644
+--- a/sass/components/card.sass
++++ b/sass/components/card.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $card-color: var(--text, #{$text}) !default
+ $card-background-color: var(--scheme-main, #{$scheme-main}) !default
+diff --git a/sass/components/dropdown.sass b/sass/components/dropdown.sass
+index 6936034a32ad89e4e03c343b5eac2b86975e1960..9057484405a9ce1cf8a26c4b51836417231cb17c 100644
+--- a/sass/components/dropdown.sass
++++ b/sass/components/dropdown.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $dropdown-menu-min-width: 12rem !default
+ 
+diff --git a/sass/components/level.sass b/sass/components/level.sass
+index 6dae04a852b6bf24d5c1cae96c62e7f579c3347d..c5407baf0b5ab433ec5e6c0fbd9d2de817c7e16f 100644
+--- a/sass/components/level.sass
++++ b/sass/components/level.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $level-item-spacing: calc(#{var(--block-spacing, #{$block-spacing})} * 0.5) !default
+ 
+diff --git a/sass/components/media.sass b/sass/components/media.sass
+index 972b2950f39e40b3666cbadc7de64548256cf4b6..9312a0e691a9fe4e94a45904b9e7189f15dfb743 100644
+--- a/sass/components/media.sass
++++ b/sass/components/media.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $media-border-color: rgba(var(--border-rgb, #{bulmaToRGB($grey-lighter)}), 0.5) !default
+ $media-border-size: 1px !default
+diff --git a/sass/components/menu.sass b/sass/components/menu.sass
+index 8956fb21e44cc7fe46520524b12f9a0c7083b953..d3677cbf3eb4f5ae120b225380ed859d54052dd1 100644
+--- a/sass/components/menu.sass
++++ b/sass/components/menu.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $menu-item-color: var(--text, #{$text}) !default
+ $menu-item-radius: var(--radius-small, #{$radius-small}) !default
+diff --git a/sass/components/message.sass b/sass/components/message.sass
+index c7903bfc653106ec7eab034ad3982c23f5c41567..0efc8831df9c3dd043edaf74f3a6461459ade409 100644
+--- a/sass/components/message.sass
++++ b/sass/components/message.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $message-background-color: var(--background, #{$background}) !default
+ $message-radius: var(--radius, #{$radius}) !default
+diff --git a/sass/components/modal.sass b/sass/components/modal.sass
+index 26adc11803ff5c75f0e5d8208b7dc28e02cd19a1..77b462b0c0c9acacee761e8fb188993b36993f5e 100644
+--- a/sass/components/modal.sass
++++ b/sass/components/modal.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $modal-z: 40 !default
+ 
+diff --git a/sass/components/navbar.sass b/sass/components/navbar.sass
+index ed617d0593027277a48db649b4cd49898a8e5120..deb07aa6e0a38c4e2cf23dd679b6d9ba4e055b10 100644
+--- a/sass/components/navbar.sass
++++ b/sass/components/navbar.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $navbar-background-color: var(--scheme-main, #{$scheme-main}) !default
+ $navbar-box-shadow-size: 0 2px 0 0 !default
+diff --git a/sass/components/pagination.sass b/sass/components/pagination.sass
+index d02129981cac4d7001a8a9929a44ba1925b0786e..a5ec4df5cd98c36d39007dc2d2750e861c816523 100644
+--- a/sass/components/pagination.sass
++++ b/sass/components/pagination.sass
+@@ -1,5 +1,5 @@
+-@import "../utilities/controls"
+-@import "../utilities/mixins"
++@use "../utilities/controls" as *
++@use "../utilities/mixins" as *
+ 
+ $pagination-color: var(--text-strong, #{$text-strong}) !default
+ $pagination-border-color: var(--border, #{$border}) !default
+diff --git a/sass/components/panel.sass b/sass/components/panel.sass
+index 8939ed11737af6e0cb135c86f5956f1793ec54d9..85b68beac237c2507d9bd9c9143f58d7cc7edb86 100644
+--- a/sass/components/panel.sass
++++ b/sass/components/panel.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $panel-font-size: var(--size-normal, #{$size-normal}) !default
+ $panel-margin: var(--block-spacing, #{$block-spacing}) !default
+diff --git a/sass/components/tabs.sass b/sass/components/tabs.sass
+index f6376ee6b2793851448b019f557835ce9f167180..caf7a8d95737312cd6a819ea14048e5b6ae8c9c9 100644
+--- a/sass/components/tabs.sass
++++ b/sass/components/tabs.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $tabs-border-bottom-color: var(--border, #{$border}) !default
+ $tabs-border-bottom-style: solid !default
+diff --git a/sass/elements/_all.sass b/sass/elements/_all.sass
+index 511047aaed1a32ff3a77d650ee97cfef6515d9c3..c54f414aa6fa015d32f735c9e11173069b62555e 100644
+--- a/sass/elements/_all.sass
++++ b/sass/elements/_all.sass
+@@ -1,16 +1,16 @@
+ /* Bulma Elements */
+ @charset "utf-8"
+ 
+-@import "box"
+-@import "button"
+-@import "container"
+-@import "content"
+-@import "icon"
+-@import "image"
+-@import "notification"
+-@import "progress"
+-@import "table"
+-@import "tag"
+-@import "title"
++@forward "box"
++@forward "button"
++@forward "container"
++@forward "content"
++@forward "icon"
++@forward "image"
++@forward "notification"
++@forward "progress"
++@forward "table"
++@forward "tag"
++@forward "title"
+ 
+-@import "other"
++@forward "other"
+\ No newline at end of file
+diff --git a/sass/elements/box.sass b/sass/elements/box.sass
+index bb05f64a27a76e1932c5d654bd0f3531dc1fd118..761434c7488bc6c8117d6b6f9221276977f4ed88 100644
+--- a/sass/elements/box.sass
++++ b/sass/elements/box.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $box-color: var(--text, #{$text}) !default
+ $box-background-color: var(--scheme-main, #{$scheme-main}) !default
+diff --git a/sass/elements/button.sass b/sass/elements/button.sass
+index 53c66fac84a8c62c0ffd9e64bd00745a068b777b..6c3918f2e629e9dcc4bf4e672bb0b77fd213512a 100644
+--- a/sass/elements/button.sass
++++ b/sass/elements/button.sass
+@@ -1,5 +1,5 @@
+-@import "../utilities/controls"
+-@import "../utilities/mixins"
++@use "../utilities/controls" as *
++@use "../utilities/mixins" as *
+ 
+ $button-color: var(--text-strong, #{$text-strong}) !default
+ $button-background-color: var(--scheme-main, #{$scheme-main}) !default
+diff --git a/sass/elements/container.sass b/sass/elements/container.sass
+index c13011e36c86176d2ebdaf2500c53efdd965661e..9e331d2c690079c12f084bd0296c75f8a7235029 100644
+--- a/sass/elements/container.sass
++++ b/sass/elements/container.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $container-offset: (2 * $gap) !default
+ $container-max-width: $fullhd !default
+diff --git a/sass/elements/content.sass b/sass/elements/content.sass
+index 81310f4ce3c6ae6065a14f99867d0c7533bc0d03..5fdf186c27447d9fff50cf6b011913fa225ad851 100644
+--- a/sass/elements/content.sass
++++ b/sass/elements/content.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $content-heading-color: var(--text-strong, #{$text-strong}) !default
+ $content-heading-weight: var(--weight-semibold, #{$weight-semibold}) !default
+diff --git a/sass/elements/image.sass b/sass/elements/image.sass
+index 1d23852363783250db87aaea2c05e8c20a089029..0f6d0b657e7a039747fe92229fec6e8a28c8d806 100644
+--- a/sass/elements/image.sass
++++ b/sass/elements/image.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $dimensions: 16 24 32 48 64 96 128 !default
+ 
+diff --git a/sass/elements/notification.sass b/sass/elements/notification.sass
+index 19dca63ca20c43678d558578ddf55af8b41a0d4c..0fcb0012217aeaa9ede6ff80c9931b937d618199 100644
+--- a/sass/elements/notification.sass
++++ b/sass/elements/notification.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $notification-background-color: var(--background, #{$background}) !default
+ $notification-code-background-color: var(--scheme-main, #{$scheme-main}) !default
+diff --git a/sass/elements/other.sass b/sass/elements/other.sass
+index aa2f611658b4fc2df8940451356d8d9df2ae9277..08b36f5c758db0981a720f6745a3175f0f7368c4 100644
+--- a/sass/elements/other.sass
++++ b/sass/elements/other.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $number-background: var(--background, #{$background}) !default
+ $number-radius-rounded: var(--radius-rounded, #{$radius-rounded}) !default
+diff --git a/sass/elements/progress.sass b/sass/elements/progress.sass
+index e322f59c8e08d1a434721bd4d5d7a15e43da24e5..73c8b9672b2ff7194a37c3b5517b41bf66b60211 100644
+--- a/sass/elements/progress.sass
++++ b/sass/elements/progress.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $progress-bar-background-color: var(--border-light, #{$border-light}) !default
+ $progress-value-background-color: var(--text, #{$text}) !default
+diff --git a/sass/elements/table.sass b/sass/elements/table.sass
+index 78c9ce1b8b0a0576f9aa6c09b13261be9a9569ea..2b02d0975417bc1eac858d173467062f06418055 100644
+--- a/sass/elements/table.sass
++++ b/sass/elements/table.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $table-color: var(--text-strong, #{$text-strong}) !default
+ $table-background-color: var(--scheme-main, #{$scheme-main}) !default
+diff --git a/sass/elements/tag.sass b/sass/elements/tag.sass
+index 4d614fee98a5cc120e43cac7646e1376b50ee1eb..cdcb467ab0525514a53dacf3f5b91a36f8370e32 100644
+--- a/sass/elements/tag.sass
++++ b/sass/elements/tag.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $tag-background-color: $background !default
+ $tag-color: var(--text, #{$text}) !default
+diff --git a/sass/elements/title.sass b/sass/elements/title.sass
+index 010ce4a19a4efccd808f8e4b10f5747af1ad93ac..5e4eaefa7c9b8ee548a97e7f4cef47b4da95a4ba 100644
+--- a/sass/elements/title.sass
++++ b/sass/elements/title.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $title-color: var(--text-strong, #{$text-strong}) !default
+ $title-family: false !default
+diff --git a/sass/form/_all.sass b/sass/form/_all.sass
+index 0a15f80a17b9b032fc096ef119056deabc1a7654..d0a678299c014eb0c1402f8e2d1b3b7323d35489 100644
+--- a/sass/form/_all.sass
++++ b/sass/form/_all.sass
+@@ -1,9 +1,9 @@
+ /* Bulma Form */
+ @charset "utf-8"
+ 
+-@import "shared"
+-@import "input-textarea"
+-@import "checkbox-radio"
+-@import "select"
+-@import "file"
+-@import "tools"
++@forward "shared"
++@forward "input-textarea"
++@forward "checkbox-radio"
++@forward "select"
++@forward "file"
++@forward "tools"
+\ No newline at end of file
+diff --git a/sass/form/file.sass b/sass/form/file.sass
+index 95e294c5dfccedf1c49fb3d8df1d47768795d9aa..367ff78b5e5a6337c61734f0e1fadbe1d892b81e 100644
+--- a/sass/form/file.sass
++++ b/sass/form/file.sass
+@@ -44,7 +44,7 @@ $css-vars-map: ('file-border-color': ($file-border-color),'file-radius': ($file-
+       --focus-box-shadow-color: var(--focus-box-shadow-color-hsla, #{bulmaRgba($color, 0.25)})
+       --active-background-color: #{bulmaCSSVarDarken($name, calc(#{var(--#{$name}-light-l)} - 5%))}
+       .file-cta
+-        background-color: var(--#{$name} #{$color})
++        background-color: var(--#{$name}, #{$color})
+         border-color: transparent
+         color: var(--#{$name}-invert, #{$color-invert})
+       &:hover,
+diff --git a/sass/form/shared.sass b/sass/form/shared.sass
+index bb29419364ccac71d66f481ba5d790f213510314..0c8490d0eb3f22e69d2948d1e8b6b370295bf254 100644
+--- a/sass/form/shared.sass
++++ b/sass/form/shared.sass
+@@ -1,5 +1,5 @@
+-@import "../utilities/controls"
+-@import "../utilities/mixins"
++@use "../utilities/controls" as *
++@use "../utilities/mixins" as *
+ 
+ $form-colors: $colors !default
+ 
+diff --git a/sass/grid/_all.sass b/sass/grid/_all.sass
+index 0b5ed31095957a573b4b91562edb5de5a27d3009..8c9d4b89a3fee1c604f124520459ae8a349a3b88 100644
+--- a/sass/grid/_all.sass
++++ b/sass/grid/_all.sass
+@@ -1,5 +1,5 @@
+ /* Bulma Grid */
+ @charset "utf-8"
+ 
+-@import "columns"
+-@import "tiles"
++@forward "columns"
++@forward "tiles"
+\ No newline at end of file
+diff --git a/sass/grid/columns.sass b/sass/grid/columns.sass
+index ffd620cdbd6309da43fe367da1eb48b73e17960a..7ebfa53047884e7c7fb89c016152fd34c48d45f2 100644
+--- a/sass/grid/columns.sass
++++ b/sass/grid/columns.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $column-gap: 0.75rem !default
+ 
+diff --git a/sass/grid/tiles.sass b/sass/grid/tiles.sass
+index 45e1dfb875b0afaa36ab57f10be5da1c73c41021..aec59eac77cf089b1a11ec792d438e7116f5693b 100644
+--- a/sass/grid/tiles.sass
++++ b/sass/grid/tiles.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $tile-spacing: 0.75rem !default
+ 
+diff --git a/sass/helpers/_all.sass b/sass/helpers/_all.sass
+index d673da687a42807192537cba6fbce48a3a8e4739..9ef9faeb105f31340c9a3de85a77aaa4ab633086 100644
+--- a/sass/helpers/_all.sass
++++ b/sass/helpers/_all.sass
+@@ -1,12 +1,12 @@
+ /* Bulma Helpers */
+ @charset "utf-8"
+ 
+-@import "color"
+-@import "flexbox"
+-@import "float"
+-@import "other"
+-@import "overflow"
+-@import "position"
+-@import "spacing"
+-@import "typography"
+-@import "visibility"
++@forward "color"
++@forward "flexbox"
++@forward "float"
++@forward "other"
++@forward "overflow"
++@forward "position"
++@forward "spacing"
++@forward "typography"
++@forward "visibility"
+\ No newline at end of file
+diff --git a/sass/helpers/color.sass b/sass/helpers/color.sass
+index a18fb987e453a24b3b5277ae2ded594d135e36df..221904bd1a9c23d007635a1eaa4649b110d91f69 100644
+--- a/sass/helpers/color.sass
++++ b/sass/helpers/color.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/derived-variables"
++@use "../utilities/derived-variables" as *
+ 
+ @each $name, $pair in $colors
+   $color: nth($pair, 1)
+diff --git a/sass/helpers/float.sass b/sass/helpers/float.sass
+index f62f24e076246d82c63c94e61baea754a804e7a8..537f8e5743a0cbe54362d3f644df935fb6e32f38 100644
+--- a/sass/helpers/float.sass
++++ b/sass/helpers/float.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ .is-clearfix
+   +clearfix
+diff --git a/sass/helpers/other.sass b/sass/helpers/other.sass
+index 6e2e63ce077dd6c8225810c09f14d129d062d57a..dc939f4718d1b34e10bd032ee6b5d4de87ab4983 100644
+--- a/sass/helpers/other.sass
++++ b/sass/helpers/other.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ .is-radiusless
+   border-radius: 0 !important
+diff --git a/sass/helpers/position.sass b/sass/helpers/position.sass
+index 4b8fda479b3b4b284fa42692bbba6a1a64fdbcf6..774a0c7afa1c55f2aa4c356e541c6175abd85b56 100644
+--- a/sass/helpers/position.sass
++++ b/sass/helpers/position.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ .is-overlay
+   @extend %overlay
+diff --git a/sass/helpers/typography.sass b/sass/helpers/typography.sass
+index bdbdf386f2f91defa7581350addeabdc579e980c..44020e8d8a76f7832a88d30bf6adda08a8f8203a 100644
+--- a/sass/helpers/typography.sass
++++ b/sass/helpers/typography.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ =typography-size($target:'')
+   @each $size in $sizes
+diff --git a/sass/helpers/visibility.sass b/sass/helpers/visibility.sass
+index a1bb0d56aa292af6a9951899dcf480a481df775c..39431ffb9f4abbb6e2139b90ad929859a1270f73 100644
+--- a/sass/helpers/visibility.sass
++++ b/sass/helpers/visibility.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $displays: 'block' 'flex' 'inline' 'inline-block' 'inline-flex'
+ 
+diff --git a/sass/layout/_all.sass b/sass/layout/_all.sass
+index 4d1df5b72026986339234f39e306fae69b6e8219..78c0f323a185841d452f1a21e0eb26df3cd7e36c 100644
+--- a/sass/layout/_all.sass
++++ b/sass/layout/_all.sass
+@@ -1,6 +1,6 @@
+ /* Bulma Layout */
+ @charset "utf-8"
+ 
+-@import "hero"
+-@import "section"
+-@import "footer"
++@forward "hero"
++@forward "section"
++@forward "footer"
+\ No newline at end of file
+diff --git a/sass/layout/footer.sass b/sass/layout/footer.sass
+index 356ff4739ff4aaba2b4721562f043fce90085740..7efeb7a01f2445048f86347fe4bcb3e100a74928 100644
+--- a/sass/layout/footer.sass
++++ b/sass/layout/footer.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/derived-variables"
++@use "../utilities/derived-variables" as *
+ 
+ $footer-background-color: var(--scheme-main-bis, #{$scheme-main-bis}) !default
+ $footer-color: false !default
+diff --git a/sass/layout/hero.sass b/sass/layout/hero.sass
+index 4754d5953c5eb953a50c78131f69a765c2a3dbd4..cd636c4c79a6a1354f59ee72fbda5e9773bce9ac 100644
+--- a/sass/layout/hero.sass
++++ b/sass/layout/hero.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $hero-body-padding: 3rem 1.5rem !default
+ $hero-body-padding-tablet: 3rem 3rem !default
+diff --git a/sass/layout/section.sass b/sass/layout/section.sass
+index f556dfb28914aff1782beda7e37fda28a4476986..cc4ab8e516ab8fe7c0141f5d9b900fa04551c600 100644
+--- a/sass/layout/section.sass
++++ b/sass/layout/section.sass
+@@ -1,4 +1,4 @@
+-@import "../utilities/mixins"
++@use "../utilities/mixins" as *
+ 
+ $section-padding: 3rem 1.5rem !default
+ $section-padding-desktop: 3rem 3rem !default
+diff --git a/sass/utilities/_all.sass b/sass/utilities/_all.sass
+index 51cf348ab31a7639aa501c9214b1a85ce3033812..4c3680eeea71a023b86f4e16cbcb321aea785bd5 100644
+--- a/sass/utilities/_all.sass
++++ b/sass/utilities/_all.sass
+@@ -1,9 +1,9 @@
+ /* Bulma Utilities */
+ @charset "utf-8"
+ 
+-@import "initial-variables"
+-@import "functions"
+-@import "derived-variables"
+-@import "mixins"
+-@import "controls"
+-@import "extends"
++@forward "initial-variables"
++@forward "functions"
++@forward "derived-variables"
++@forward "mixins"
++@forward "controls"
++@forward "extends"
+\ No newline at end of file
+diff --git a/sass/utilities/controls.sass b/sass/utilities/controls.sass
+index 9eb6c250a2a2f82758611113e33e9446d75c7502..16ca787007d41ea86d7d2491adf1ca19063400e0 100644
+--- a/sass/utilities/controls.sass
++++ b/sass/utilities/controls.sass
+@@ -1,4 +1,4 @@
+-@import "derived-variables"
++@use "derived-variables" as *
+ 
+ $control-radius: var(--radius, #{$radius}) !default
+ $control-radius-small: var(--radius-small, #{$radius-small}) !default
+diff --git a/sass/utilities/derived-variables.sass b/sass/utilities/derived-variables.sass
+index 8c039798b384464e353864a5366cc4b941be9525..ab42c895362662f099dc35aef94a63207b514df7 100644
+--- a/sass/utilities/derived-variables.sass
++++ b/sass/utilities/derived-variables.sass
+@@ -1,5 +1,5 @@
+-@import "initial-variables"
+-@import "functions"
++@use "initial-variables" as *
++@use "functions" as *
+ 
+ $primary: $turquoise !default
+ 
+diff --git a/sass/utilities/extends.sass b/sass/utilities/extends.sass
+index c994fc1ac35f291a37267cbe57758f1840fe0dda..f7585ea1e36140af9bc7511ecd6ed04186f13d9f 100644
+--- a/sass/utilities/extends.sass
++++ b/sass/utilities/extends.sass
+@@ -1,4 +1,4 @@
+-@import "mixins"
++@use "mixins" as *
+ 
+ %control
+   +control
+diff --git a/sass/utilities/mixins.sass b/sass/utilities/mixins.sass
+index ddfb486dbec74b3799c18c307fbdeff49e540ef0..8eabf68cbe0afd52a8a65618256ef48ff7c168c3 100644
+--- a/sass/utilities/mixins.sass
++++ b/sass/utilities/mixins.sass
+@@ -1,4 +1,4 @@
+-@import "derived-variables"
++@use "derived-variables" as *
+ 
+ =clearfix
+   &::after
+@@ -273,4 +273,3 @@
+   position: absolute
+   right: $offset
+   top: $offset
+-
