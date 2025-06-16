@@ -4,6 +4,10 @@ import AttachmentModel from '../models/attachment'
 import type { IAttachment } from '@/modelTypes/IAttachment'
 
 import {downloadBlob} from '@/helpers/downloadBlob'
+import {useConfigStore} from '@/stores/config'
+import {error} from '@/message'
+import {i18n} from '@/i18n'
+import {parseHumanSize} from '@/helpers/getHumanSize'
 
 export enum PREVIEW_SIZE {
 	SM = 'sm',
@@ -65,9 +69,18 @@ export default class AttachmentService extends AbstractService<IAttachment> {
 	 */
 	create(model: IAttachment, files: File[] | FileList) {
 		const data = new FormData()
+		const config = useConfigStore()
+		const maxSize = parseHumanSize(config.maxFileSize)
 		for (let i = 0; i < files.length; i++) {
-			// TODO: Validation of file size
+			if (files[i].size > maxSize) {
+				error({message: i18n.global.t('attachment.fileTooLarge', {size: config.maxFileSize})})
+				continue
+			}
 			data.append('files', new Blob([files[i]]), files[i].name)
+		}
+		
+		if (!Array.from(data.keys()).includes('files')) {
+			return Promise.reject(new Error('file too large'))
 		}
 
 		return this.uploadFormData(

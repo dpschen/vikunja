@@ -853,7 +853,8 @@
       "setAsCover": "Make cover",
       "unsetAsCover": "Remove cover",
       "successfullyChangedCoverImage": "The cover image was successfully changed.",
-      "usedAsCover": "Cover image"
+      "usedAsCover": "Cover image",
+      "fileTooLarge": "Files must not exceed {size}."
     },
     "comment": {
       "title": "Comments",
