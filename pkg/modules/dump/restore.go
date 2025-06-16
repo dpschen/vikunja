@@ -333,8 +333,10 @@ func restoreConfig(configFile, dotEnvFile *zip.File) error {
 		buf := bytes.Buffer{}
 		_, err = buf.ReadFrom(dotenv)
 		if err != nil {
+			_ = dotenv.Close()
 			return err
 		}
+		_ = dotenv.Close()
 
 		log.Warningf("Please make sure the following settings are properly configured in your instance:\n%s", buf.String())
 		log.Warning("Make sure your current config matches the following env variables, confirm by pressing enter when done.")
