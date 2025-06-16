@@ -65,6 +65,7 @@ func init() {
 				}
 
 				src, _, err := image.Decode(bgFile.File)
+				_ = bgFile.File.Close()
 				if err != nil && !errors.Is(err, image.ErrFormat) {
 					return err
 				}
