@@ -343,9 +343,12 @@ func pingbackByPhotoID(photoID string) {
 	if err != nil {
 		log.Errorf("Unsplash Pingback Failed: %s", err.Error())
 	}
-	_, err = http.DefaultClient.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Errorf("Unsplash Pingback Failed: %s", err.Error())
+		return
 	}
+	defer resp.Body.Close()
+
 	log.Debugf("Pinged unsplash for photo %s", photoID)
 }
