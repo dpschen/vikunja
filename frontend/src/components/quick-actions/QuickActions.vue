@@ -98,6 +98,7 @@
 
 <script setup lang="ts">
 import {type ComponentPublicInstance, computed, ref, shallowReactive, watchEffect} from 'vue'
+import {useFuse} from '@vueuse/integrations/useFuse'
 import {useI18n} from 'vue-i18n'
 import {useRouter} from 'vue-router'
 
@@ -216,10 +217,13 @@ const foundLabels = computed(() => {
 	return labelStore.filterLabelsByQuery([], text)
 })
 
-// FIXME: use fuzzysearch
-const foundCommands = computed(() => availableCmds.value.filter((a) =>
-	a.title.toLowerCase().includes(query.value.toLowerCase()),
-))
+const {results: commandResults} = useFuse(query, availableCmds, {fuseOptions: {keys: ['title']}})
+const foundCommands = computed(() => {
+       if (query.value === '') {
+               return availableCmds.value
+       }
+       return commandResults.value.map(r => r.item)
+})
 
 interface Result {
 	type: ACTION_TYPE

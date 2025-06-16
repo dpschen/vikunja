@@ -1,4 +1,5 @@
 import {computed, ref} from 'vue'
+import Fuse from 'fuse.js'
 import {acceptHMRUpdate, defineStore} from 'pinia'
 import router from '@/router'
 
@@ -39,13 +40,13 @@ interface MatchedAssignee extends IUser {
 
 // IDEA: maybe use a small fuzzy search here to prevent errors
 function findPropertyByValue(object, key, value, fuzzy = false) {
-	return Object.values(object).find(l => {
-		if (fuzzy) {
-			return l[key]?.toLowerCase().includes(value.toLowerCase())
-		}
-	
-		return l[key]?.toLowerCase() === value.toLowerCase()
-	})
+       const list = Object.values(object)
+       if (fuzzy) {
+               const fuse = new Fuse(list, {keys: [key]})
+               return fuse.search(value)[0]?.item
+       }
+
+       return list.find(l => l[key]?.toLowerCase() === value.toLowerCase())
 }
 
 // Check if the user exists in the search results

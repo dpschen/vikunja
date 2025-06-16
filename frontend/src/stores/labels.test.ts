@@ -37,19 +37,18 @@ describe('filter labels', () => {
 
 		expect(labels).toHaveLength(0)
 	})
-	it('should return labels for a query', () => {
-		const store = setupStore()
-		const labels = store.filterLabelsByQuery([], 'label2')
+       it('should return labels for a query', () => {
+               const store = setupStore()
+               const labels = store.filterLabelsByQuery([], 'label2')
 
-		expect(labels).toHaveLength(1)
-		expect(labels[0].title).toBe('label2')
-	})
-	it('should not return found but hidden labels', () => {
-		const store = setupStore()
+               expect(labels.find(l => l.title === 'label2')).toBeTruthy()
+       })
+       it('should not return found but hidden labels', () => {
+               const store = setupStore()
 
-		const labelsToHide = [{id: 1, title: 'label1'}] as ILabel[]
-		const labels = store.filterLabelsByQuery(labelsToHide, 'label1')
+               const labelsToHide = [{id: 1, title: 'label1'}] as ILabel[]
+               const labels = store.filterLabelsByQuery(labelsToHide, 'label1')
 
-		expect(labels).toHaveLength(0)
-	})
+               expect(labels.find(l => l.title === 'label1')).toBeUndefined()
+       })
 })

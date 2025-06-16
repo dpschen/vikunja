@@ -1,4 +1,5 @@
 /// <reference types="vitest" />
+/// <reference path="./env.d.ts" />
 import {defineConfig, type PluginOption, loadEnv} from 'vite'
 import {configDefaults} from 'vitest/config'
 import vue from '@vitejs/plugin-vue'

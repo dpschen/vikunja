@@ -19,7 +19,7 @@ import {getSavedFilterIdFromProjectId} from '@/services/savedFilter'
 import type {IProjectView} from '@/modelTypes/IProjectView'
 import {RIGHTS} from '@/constants/rights.ts'
 
-const {add, remove, search, update} = createNewIndexer('projects', ['title', 'description'])
+const {add, remove, search, update} = createNewIndexer<IProject>('projects', ['title', 'description'])
 
 export const useProjectStore = defineStore('project', () => {
 	const baseStore = useBaseStore()
