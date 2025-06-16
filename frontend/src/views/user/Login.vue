@@ -15,6 +15,13 @@
 		>
 			{{ errorMessage }}
 		</Message>
+		<XButton
+			class="is-small is-pulled-right mb-2"
+			variant="tertiary"
+			@click="toggleColorScheme"
+		>
+			{{ nextSchemeLabel }}
+		</XButton>
 		<form
 			v-if="localAuthEnabled || ldapAuthEnabled"
 			id="loginform"
@@ -161,6 +168,7 @@ import {useAuthStore} from '@/stores/auth'
 import {useConfigStore} from '@/stores/config'
 
 import {useTitle} from '@/composables/useTitle'
+import {useColorScheme} from '@/composables/useColorScheme'
 
 const {t} = useI18n({useScope: 'global'})
 useTitle(() => t('user.auth.login'))
@@ -183,6 +191,20 @@ const errorMessage = ref('')
 const password = ref('')
 const validatePasswordInitially = ref(false)
 const rememberMe = ref(false)
+
+const {isDark} = useColorScheme()
+const nextScheme = computed(() => isDark.value ? 'light' : 'dark')
+const nextSchemeLabel = computed(() => t(`user.settings.appearance.colorScheme.${nextScheme.value}`))
+
+function toggleColorScheme() {
+  authStore.setUserSettings({
+    ...authStore.settings,
+    frontendSettings: {
+      ...authStore.settings.frontendSettings,
+      colorSchema: nextScheme.value,
+    },
+  })
+}
 
 const authenticated = computed(() => authStore.authenticated)
 
