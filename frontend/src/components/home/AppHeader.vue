@@ -29,6 +29,7 @@
 				v-if="!isEditorContentEmpty(currentProject.description)"
 				:to="{ name: 'project.info', params: { projectId: currentProject.id } }"
 				class="project-title-button"
+				:aria-label="$t('project.description')"
 			>
 				<span class="tw-sr-only">{{ $t('project.description') }}</span>
 				<Icon icon="circle-info" />
@@ -42,6 +43,7 @@
 				<template #trigger="{ toggleOpen }">
 					<BaseButton
 						class="project-title-button"
+						:aria-label="$t('project.openSettingsMenu')"
 						@click="toggleOpen"
 					>
 						<span class="tw-sr-only">{{ $t('project.openSettingsMenu') }}</span>
@@ -57,6 +59,15 @@
 		<div class="navbar-end">
 			<OpenQuickActions />
 			<Notifications />
+			<BaseButton
+				variant="secondary"
+				:shadow="false"
+				class="color-scheme-toggle"
+				:aria-label="isDark ? $t('user.settings.appearance.colorScheme.light') : $t('user.settings.appearance.colorScheme.dark')"
+				@click="toggleColorScheme"
+			>
+				<Icon :icon="isDark ? 'sun' : ['far', 'moon']" />
+			</BaseButton>
 			<Dropdown>
 				<template #trigger="{ toggleOpen, open }">
 					<BaseButton
@@ -126,6 +137,7 @@ import Logo from '@/components/home/Logo.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import MenuButton from '@/components/home/MenuButton.vue'
 import OpenQuickActions from '@/components/misc/OpenQuickActions.vue'
+import { useColorScheme } from '@/composables/useColorScheme'
 
 import { getProjectTitle } from '@/helpers/getProjectTitle'
 import { isEditorContentEmpty } from '@/helpers/editorContentEmpty'
@@ -141,10 +153,25 @@ const canWriteCurrentProject = computed(() => baseStore.currentProject?.maxRight
 const menuActive = computed(() => baseStore.menuActive)
 
 const authStore = useAuthStore()
+const { isDark } = useColorScheme()
 
 const configStore = useConfigStore()
 const imprintUrl = computed(() => configStore.legal.imprintUrl)
 const privacyPolicyUrl = computed(() => configStore.legal.privacyPolicyUrl)
+
+function toggleColorScheme() {
+        const newScheme = isDark.value ? 'light' : 'dark'
+        authStore.saveUserSettings({
+                settings: {
+                        ...authStore.settings,
+                        frontendSettings: {
+                                ...authStore.settings.frontendSettings,
+                                colorSchema: newScheme,
+                        },
+                },
+                showMessage: false,
+        })
+}
 </script>
 
 <style lang="scss" scoped>

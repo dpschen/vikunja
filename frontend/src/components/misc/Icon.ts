@@ -81,17 +81,19 @@ import {
 	faX, faArrowTurnDown, faListCheck, faXmark, faXmarksLines, faFont, faRulerHorizontal, faUnderline,
 } from '@fortawesome/free-solid-svg-icons'
 import {
-	faBellSlash,
-	faCalendarAlt,
-	faCheckSquare,
-	faClock,
-	faComments,
-	faSave,
-	faSquareCheck,
-	faStar,
-	faSun,
-	faTimesCircle,
-	faCircleQuestion, faFaceLaugh,
+        faBellSlash,
+        faCalendarAlt,
+        faCheckSquare,
+        faClock,
+        faComments,
+        faSave,
+        faSquareCheck,
+        faStar,
+        faSun,
+        faMoon,
+        faTimesCircle,
+        faCircleQuestion,
+        faFaceLaugh,
 } from '@fortawesome/free-regular-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
 
@@ -173,6 +175,7 @@ library.add(faStar)
 library.add(faStarSolid)
 library.add(faStop)
 library.add(faSun)
+library.add(faMoon)
 library.add(faTachometerAlt)
 library.add(faTags)
 library.add(faTasks)
