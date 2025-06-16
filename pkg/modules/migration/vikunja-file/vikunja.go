@@ -245,8 +245,13 @@ func addDetailsToProject(l *models.ProjectWithTasksAndBuckets, storedFiles map[i
 			return fmt.Errorf("could not open project background file %d for reading: %w", l.BackgroundFileID, err)
 		}
 		var buf bytes.Buffer
-		if _, err := buf.ReadFrom(bf); err != nil {
-			return fmt.Errorf("could not read project background file %d: %w", l.BackgroundFileID, err)
+		_, readErr := buf.ReadFrom(bf)
+		closeErr := bf.Close()
+		if readErr != nil {
+			return fmt.Errorf("could not read project background file %d: %w", l.BackgroundFileID, readErr)
+		}
+		if closeErr != nil {
+			return fmt.Errorf("could not close project background file %d: %w", l.BackgroundFileID, closeErr)
 		}
 
 		l.BackgroundInformation = &buf
