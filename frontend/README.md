@@ -44,7 +44,9 @@ pnpm run dev
 pnpm run build
 ```
 
-### Lints and fixes files
+### Lints and checks translation keys
+
+Runs ESLint with rules that ensure used translation keys exist.
 
 ```shell
 pnpm run lint

@@ -118,12 +118,14 @@ function getBuildConfig(env: Record<string, string>) {
 				// we don't need to optimize them again.
 				svgo: false,
 			}),
-			VueI18nPlugin({
-				fullInstall: false,
-				runtimeOnly: true,
-				compositionOnly: true,
-				include: resolve(dirname(pathSrc), './src/i18n/lang/**'),
-			}),
+                       VueI18nPlugin({
+                               fullInstall: false,
+                               runtimeOnly: true,
+                               compositionOnly: true,
+                               dropMessageCompiler: true,
+                               strictMessage: true,
+                               include: resolve(dirname(pathSrc), './src/i18n/lang/**'),
+                       }),
 			// https://github.com/Applelo/unplugin-inject-preload
 			UnpluginInjectPreload({
 				files: [{
