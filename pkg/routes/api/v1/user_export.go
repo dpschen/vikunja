@@ -135,6 +135,11 @@ func DownloadUserDataExport(c echo.Context) error {
 	if err != nil {
 		return handler.HandleHTTPError(err)
 	}
+	defer func() {
+		if exportFile.File != nil {
+			_ = exportFile.File.Close()
+		}
+	}()
 
 	http.ServeContent(c.Response(), c.Request(), exportFile.Name, exportFile.Created, exportFile.File)
 	return nil
