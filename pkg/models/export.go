@@ -94,6 +94,12 @@ func ExportUserData(s *xorm.Session, u *user.User) (err error) {
 	if err != nil {
 		return err
 	}
+	exportedName := exported.Name()
+	defer func() {
+		if exported != nil {
+			_ = exported.Close()
+		}
+	}()
 
 	stat, err := exported.Stat()
 	if err != nil {
@@ -116,7 +122,11 @@ func ExportUserData(s *xorm.Session, u *user.User) (err error) {
 	}
 
 	// Remove the old file
-	err = os.Remove(exported.Name())
+	if err := exported.Close(); err != nil {
+		return err
+	}
+	exported = nil
+	err = os.Remove(exportedName)
 	if err != nil {
 		return err
 	}
