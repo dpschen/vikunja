@@ -177,6 +177,7 @@ func GetTaskAttachment(c echo.Context) error {
 		_ = s.Rollback()
 		return handler.HandleHTTPError(err)
 	}
+	defer taskAttachment.File.File.Close()
 
 	if err := s.Commit(); err != nil {
 		_ = s.Rollback()
