@@ -305,6 +305,9 @@ importers:
       start-server-and-test:
         specifier: 2.0.12
         version: 2.0.12
+      storybook:
+        specifier: ^9.0.10
+        version: 9.0.10(@testing-library/dom@10.4.0)
       typescript:
         specifier: 5.8.3
         version: 5.8.3
