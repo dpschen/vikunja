@@ -48,6 +48,8 @@ import {useRoute, useRouter} from 'vue-router'
 import {useI18n} from 'vue-i18n'
 import {useTitle} from '@vueuse/core'
 
+import {getErrorText} from '@/message'
+
 import Message from '@/components/misc/Message.vue'
 import {LINK_SHARE_HASH_PREFIX} from '@/constants/linkShareHash'
 
@@ -106,49 +108,42 @@ function useAuth() {
 		})
 	}
 
-	async function authenticate() {
-		authenticateWithPassword.value = false
-		errorMessage.value = ''
+       function handleAuthError(e) {
+               if (e?.response?.data?.code === 13001) {
+                       authenticateWithPassword.value = true
+                       return
+               }
+               errorMessage.value = getErrorText(e)
+       }
 
-		if (authLinkShare.value) {
-			// FIXME: push to 'project.list' since authenticated?
-			return
-		}
+       async function authenticate() {
+               authenticateWithPassword.value = false
+               errorMessage.value = ''
 
-		// TODO: no password
+               if (authLinkShare.value) {
+                       // FIXME: push to 'project.list' since authenticated?
+                       return
+               }
 
-		loading.value = true
+               loading.value = true
 
-		try {
-			const {project_id: projectId} = await authStore.linkShareAuth({
-				hash: route.params.share,
-				password: password.value,
-			})
-			const logoVisible = route.query.logoVisible
-				? route.query.logoVisible === 'true'
-				: true
-			baseStore.setLogoVisible(logoVisible)
+               try {
+                       const {project_id: projectId} = await authStore.linkShareAuth({
+                               hash: route.params.share,
+                               password: password.value,
+                       })
+                       const logoVisible = route.query.logoVisible
+                               ? route.query.logoVisible === 'true'
+                               : true
+                       baseStore.setLogoVisible(logoVisible)
 
-			return redirectToProject(projectId)
-		} catch (e) {
-			if (e?.response?.data?.code === 13001) {
-				authenticateWithPassword.value = true
-				return
-			}
-
-			// TODO: Put this logic in a global errorMessage handler method which checks all auth codes
-			let err = t('sharing.error')
-			if (e?.response?.data?.message) {
-				err = e.response.data.message
-			}
-			if (e?.response?.data?.code === 13002) {
-				err = t('sharing.invalidPassword')
-			}
-			errorMessage.value = err
-		} finally {
-			loading.value = false
-		}
-	}
+                       return redirectToProject(projectId)
+               } catch (e) {
+                       handleAuthError(e)
+               } finally {
+                       loading.value = false
+               }
+       }
 
 	authenticate()
 

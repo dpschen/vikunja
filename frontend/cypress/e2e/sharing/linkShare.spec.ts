@@ -19,6 +19,25 @@ function prepareLinkShare() {
 	}
 }
 
+function preparePasswordLinkShare() {
+       const projects = createProjects()
+       const tasks = TaskFactory.create(10, {
+               project_id: projects[0].id,
+       })
+       const linkShares = LinkShareFactory.create(1, {
+               project_id: projects[0].id,
+               right: 0,
+               sharing_type: 2,
+               password: '12345678',
+       })
+
+       return {
+               share: linkShares[0],
+               project: projects[0],
+               tasks,
+       }
+}
+
 describe('Link shares', () => {
 	it('Can view a link share', () => {
 		const {share, project, tasks} = prepareLinkShare()
@@ -48,12 +67,35 @@ describe('Link shares', () => {
 			.should('contain', tasks[0].title)
 	})
 	
-	it('Should work when directly viewing a task with share hash present', () => {
-		const {share, project, tasks} = prepareLinkShare()
+        it('Should work when directly viewing a task with share hash present', () => {
+                const {share, project, tasks} = prepareLinkShare()
 
 		cy.visit(`/tasks/${tasks[0].id}#share-auth-token=${share.hash}`)
 
-		cy.get('h1.title')
-			.should('contain', tasks[0].title)
-	})
+                cy.get('h1.title')
+                        .should('contain', tasks[0].title)
+        })
+
+        it('Authenticates a password protected share', () => {
+                const {share, project} = preparePasswordLinkShare()
+
+                cy.visit(`/share/${share.hash}/auth`)
+
+                cy.contains('This shared project requires a password').should('be.visible')
+                cy.get('#linkSharePassword').type('12345678')
+                cy.contains('button', 'Login').click()
+
+                cy.get('h1.title').should('contain', project.title)
+        })
+
+        it('Shows an error for wrong password', () => {
+                const {share} = preparePasswordLinkShare()
+
+                cy.visit(`/share/${share.hash}/auth`)
+
+                cy.get('#linkSharePassword').type('wrongpassword')
+                cy.contains('button', 'Login').click()
+
+                cy.get('.message.danger').should('contain', 'The provided link share password is invalid.')
+        })
 })
