@@ -111,6 +111,9 @@ func ExportUserData(s *xorm.Session, u *user.User) (err error) {
 		return err
 	}
 
+	// Close the reopened file after saving it in Vikunja
+	exported.Close()
+
 	// Save the file id with the user
 	u.ExportFileID = exportFile.ID
 	_, err = s.
