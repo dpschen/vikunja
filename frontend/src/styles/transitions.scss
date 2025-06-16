@@ -1,3 +1,5 @@
+@use "./common-imports.scss" as *;
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity $transition-duration;
