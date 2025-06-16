@@ -124,6 +124,13 @@ func setupActiveLinkSharesMetric() {
 func SetUserActive(a web.Auth) (err error) {
 	activeUsers.mutex.Lock()
 	defer activeUsers.mutex.Unlock()
+
+	for id, u := range activeUsers.users {
+		if time.Since(u.LastSeen) >= secondsUntilInactive*time.Second {
+			delete(activeUsers.users, id)
+		}
+	}
+
 	activeUsers.users[a.GetID()] = &ActiveAuthenticable{
 		ID:       a.GetID(),
 		LastSeen: time.Now(),
@@ -136,6 +143,13 @@ func SetUserActive(a web.Auth) (err error) {
 func SetLinkShareActive(a web.Auth) (err error) {
 	activeLinkShares.mutex.Lock()
 	defer activeLinkShares.mutex.Unlock()
+
+	for id, u := range activeLinkShares.shares {
+		if time.Since(u.LastSeen) >= secondsUntilInactive*time.Second {
+			delete(activeLinkShares.shares, id)
+		}
+	}
+
 	activeLinkShares.shares[a.GetID()] = &ActiveAuthenticable{
 		ID:       a.GetID(),
 		LastSeen: time.Now(),
