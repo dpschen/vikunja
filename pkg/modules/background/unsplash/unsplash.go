@@ -40,6 +40,9 @@ import (
 const (
 	unsplashAPIURL = `https://api.unsplash.com/`
 	cachePrefix    = `unsplash_photo_`
+	// maxCachedEmptyPages defines how many pages of results without a search
+	// query are kept in memory before the oldest one is removed.
+	maxCachedEmptyPages = 5
 )
 
 // Provider represents an unsplash image provider
@@ -120,6 +123,43 @@ func getImageID(fullURL string) string {
 	return strings.Replace(strings.Split(fullURL, "?")[0], "https://images.unsplash.com/", "", 1)
 }
 
+// cleanupInitialCache removes cached pages when they exceed the configured
+// lifetime or number of pages. The cleanup happens before new entries are
+// added to ensure the cache stays within limits.
+func cleanupInitialCache(page int64) {
+	if emptySearchResult == nil {
+		return
+	}
+
+	// Drop all cached pages if they're older than one hour
+	if time.Since(emptySearchResult.lastCached) >= time.Hour {
+		emptySearchResult.images = make(map[int64][]*background.Image)
+		return
+	}
+
+	// Ensure we don't keep more than the allowed number of pages in memory
+	if len(emptySearchResult.images) < maxCachedEmptyPages {
+		return
+	}
+
+	if _, exists := emptySearchResult.images[page]; exists {
+		return
+	}
+
+	var oldestPage int64
+	var set bool
+	for p := range emptySearchResult.images {
+		if !set || p < oldestPage {
+			oldestPage = p
+			set = true
+		}
+	}
+
+	if set {
+		delete(emptySearchResult.images, oldestPage)
+	}
+}
+
 // Gets an unsplash photo either from cache or directly from the unsplash api
 func getUnsplashPhotoInfoByID(photoID string) (photo *Photo, err error) {
 
@@ -155,6 +195,8 @@ func (p *Provider) Search(_ *xorm.Session, search string, page int64) (result []
 
 	// If we don't have a search query, return results from the unsplash featured collection
 	if search == "" {
+
+		cleanupInitialCache(page)
 
 		var existsForPage bool
 
@@ -200,8 +242,10 @@ func (p *Provider) Search(_ *xorm.Session, search string, page int64) (result []
 			}
 		}
 
-		emptySearchResult.lastCached = time.Now()
+		cleanupInitialCache(page)
+
 		emptySearchResult.images[page] = result
+		emptySearchResult.lastCached = time.Now()
 
 		return
 	}
