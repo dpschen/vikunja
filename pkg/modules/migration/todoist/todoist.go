@@ -569,10 +569,10 @@ func (m *Migration) Migrate(u *user.User) (err error) {
 		if err != nil {
 			return
 		}
-		defer resp.Body.Close()
 
 		completedSyncResponse := &doneItemSync{}
 		err = json.NewDecoder(resp.Body).Decode(completedSyncResponse)
+		resp.Body.Close()
 		if err != nil {
 			return
 		}
@@ -603,7 +603,6 @@ func (m *Migration) Migrate(u *user.User) (err error) {
 			if err != nil {
 				return
 			}
-			defer resp.Body.Close()
 
 			if resp.StatusCode == http.StatusNotFound {
 				// Done items of deleted projects may show up here but since the project is already deleted
@@ -611,11 +610,13 @@ func (m *Migration) Migrate(u *user.User) (err error) {
 				buf := bytes.Buffer{}
 				_, _ = buf.ReadFrom(resp.Body)
 				log.Debugf("[Todoist Migration] Could not retrieve task details for task %d: %s", i.TaskID, buf.String())
+				resp.Body.Close()
 				continue
 			}
 
 			doneI := &itemWrapper{}
 			err = json.NewDecoder(resp.Body).Decode(doneI)
+			resp.Body.Close()
 			if err != nil {
 				return
 			}
