@@ -10,6 +10,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 All releases can be found on https://code.vikunja.io/frontend/releases.
 
+### Changed
+
+* Switched from FlexSearch to Fuse.js for local search using useFuse
+
 The releases aim at the api versions which is why there are missing versions.
 
 ## [0.22.1] - 2024-01-28
@@ -3730,10 +3734,10 @@ The releases aim at the api versions which is why there are missing versions.
 * *(deps)* Update dependency @vueuse/core to v8.1.1 (#1690)
 * *(deps)* Update dependency vitest to v0.7.0 (#1692)
 * *(deps)* Update dependency @vueuse/router to v8.1.1 (#1691)
-* *(deps)* Update dependency @types/flexsearch to v0.7.3 (#1677)
 * *(deps)* Update dependency vitest to v0.7.4 (#1693)
 * *(deps)* Update dependency caniuse-lite to v1.0.30001319 (#1695)
 * *(deps)* Update dependency vitest to v0.7.6 (#1698)
+* *(deps)* Update dependency @types/flexsearch to v0.7.3 (#1677)
 * *(deps)* Update dependency @vueuse/router to v8.1.2 (#1697)
 * *(deps)* Update yarn to v1.22.18 (#1694)
 * *(deps)* Update dependency @vueuse/core to v8.1.2 (#1696)
@@ -4257,9 +4261,9 @@ The releases aim at the api versions which is why there are missing versions.
 * Search in quick actions (#943) ([0fe4338](0fe433891ad5c3f8e5ae99f5e310bea34865e6c4))
 * Show namespace of related tasks if they are different than the current one (#923) ([db605e0](db605e0d219605f86c66dab70186a7d053f44c3e))
 * Add v-shortcut directive for keyboard shortcuts (#942) ([feea191](feea191ecf68fb22e466466a516254513051fd7e))
+* Use flexsearch for all local searches (#997) ([507a73e](507a73e74c2551e9e3d9829a148a884d7d6203b3))
 * Use script setup for filter views (#951) ([e63fd58](e63fd587c81fd8fc2596fd097a1bf613480233f2))
 * Re-style the keyboard shortcuts menu (#996) ([fcadbc3](fcadbc352b5fccd282f3e083479f3a8ff5fc5c13))
-* Use flexsearch for all local searches (#997) ([507a73e](507a73e74c2551e9e3d9829a148a884d7d6203b3))
 * Feature/use-setup-api-for-user-and-about-pages (#929) ([d0d4096](d0d4096f8b4b80959c164c57bf2288dea3e6e82d))
 * Directly open general settings when opening user settings and none selected (#1001) ([665cc84](665cc841745fc0c8dc4c00149468aa85b8c2bfc5))
 * Add postcss-preset-env (#1022) ([2656c74](2656c74f374696d11f7158130fd5bc5e346437bb))

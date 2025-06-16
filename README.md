@@ -29,8 +29,11 @@ If you find any security-related issues you don't want to disclose publicly, ple
 
 ## Features
 
-See [the features page](https://vikunja.io/features/) on our website for a more exhaustive list or 
+See [the features page](https://vikunja.io/features/) on our website for a more exhaustive list or
 try it on [try.vikunja.io](https://try.vikunja.io)!
+
+Vikunja provides fast fuzzy searching in the web interface using [Fuse.js](https://fusejs.io/) via the
+[VueUse `useFuse` integration](https://vueuse.org/integrations/useFuse/).
 
 ## Docs
 

@@ -8,7 +8,7 @@ import {createNewIndexer} from '@/indexes'
 import {setModuleLoading} from '@/stores/helper'
 import type {ILabel} from '@/modelTypes/ILabel'
 
-const {add, remove, update, search} = createNewIndexer('labels', ['title', 'description'])
+const {add, remove, update, search} = createNewIndexer<ILabel>('labels', ['title', 'description'])
 
 async function getAllLabels(page = 1): Promise<ILabel[]> {
 	const labelService = new LabelService()
@@ -41,12 +41,11 @@ export const useLabelStore = defineStore('label', () => {
 	const getLabelsByIds = computed(() => (ids: ILabel['id'][]) =>
 		ids.map(id => labels.value[id]).filter(Boolean),
 	)
-
-
 	// **
-	// * Checks if a list of labels is available in the store and filters them then query
+	// * Checks if a list of labels is available in the store and filters them by query.
+	// * The query is matched using fuzzy search via Fuse.js which may return multiple results.
 	// **
-	const filterLabelsByQuery = computed(() => {
+		const filterLabelsByQuery = computed(() => {
 		return (labelsToHide: ILabel[], query: string) => {
 			const labelIdsToHide: number[] = labelsToHide.map(({id}) => id)
 
