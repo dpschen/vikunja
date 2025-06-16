@@ -110,7 +110,7 @@ func TestTaskCollection(t *testing.T) {
 			assert.NotContains(t, rec.Body.String(), `task #14`)
 		})
 		t.Run("Sort Order", func(t *testing.T) {
-			// TODO: Add more cases
+			// additional sort order cases
 			// should equal priority asc
 			t.Run("by priority", func(t *testing.T) {
 				rec, err := testHandler.testReadAllWithUser(url.Values{"sort_by": []string{"priority"}}, urlParams)
@@ -158,6 +158,16 @@ func TestTaskCollection(t *testing.T) {
 				rec, err := testHandler.testReadAllWithUser(url.Values{"sort_by": []string{"due_date"}, "order_by": []string{"asc"}}, urlParams)
 				require.NoError(t, err)
 				assert.Contains(t, rec.Body.String(), `[{"id":6,"title":"task #6 lower due date","description":"","done":false,"done_at":"0001-01-01T00:00:00Z","due_date":"2018-11-30T22:25:24Z","reminders":null,"project_id":1,"repeat_after":0,"repeat_mode":0,"priority":0,"start_date":"0001-01-01T00:00:00Z","end_date":"0001-01-01T00:00:00Z","assignees":null,"labels":null,"hex_color":"","percent_done":0,"identifier":"test1-6","index":6,"related_tasks":{},"attachments":null,"cover_image_attachment_id":0,"is_favorite":false,"created":"2018-12-01T01:12:04Z","updated":"2018-12-01T01:12:04Z","bucket_id":0,"position":0,"reactions":null,"created_by":{"id":1,"name":"","username":"user1","created":"2018-12-01T15:13:12Z","updated":"2018-12-02T15:13:12Z"}}`)
+			})
+			t.Run("by title", func(t *testing.T) {
+				rec, err := testHandler.testReadAllWithUser(url.Values{"sort_by": []string{"title"}}, urlParams)
+				require.NoError(t, err)
+				assert.Contains(t, rec.Body.String(), `[{"id":1,"title":"task #1"`)
+			})
+			t.Run("by title desc", func(t *testing.T) {
+				rec, err := testHandler.testReadAllWithUser(url.Values{"sort_by": []string{"title"}, "order_by": []string{"desc"}}, urlParams)
+				require.NoError(t, err)
+				assert.Contains(t, rec.Body.String(), `"title":"task #33 with percent done"`)
 			})
 			t.Run("invalid sort parameter", func(t *testing.T) {
 				_, err := testHandler.testReadAllWithUser(url.Values{"sort_by": []string{"loremipsum"}}, urlParams)
@@ -333,7 +343,16 @@ func TestTaskCollection(t *testing.T) {
 			assert.Contains(t, rec.Body.String(), `task #24`) // Shared via namespace user readonly
 			assert.Contains(t, rec.Body.String(), `task #25`) // Shared via namespace user write
 			assert.Contains(t, rec.Body.String(), `task #26`) // Shared via namespace user admin
-			// TODO: Add some cases where the user has access to the project, somhow shared
+			t.Run("project shared via team", func(t *testing.T) {
+				rec, err := testHandler.testReadAllWithUser(nil, map[string]string{"project": "6"})
+				require.NoError(t, err)
+				assert.Contains(t, rec.Body.String(), `task #15`)
+			})
+			t.Run("project shared via team desc", func(t *testing.T) {
+				rec, err := testHandler.testReadAllWithUser(url.Values{"sort_by": []string{"title"}, "order_by": []string{"desc"}}, map[string]string{"project": "6"})
+				require.NoError(t, err)
+				assert.Contains(t, rec.Body.String(), `task #15`)
+			})
 		})
 		t.Run("Search", func(t *testing.T) {
 			rec, err := testHandler.testReadAllWithUser(url.Values{"s": []string{"task #6"}}, nil)
