@@ -49,3 +49,17 @@ pnpm run build
 ```shell
 pnpm run lint
 ```
+
+### Storybook
+
+Storybook can be used to preview and test components.
+
+```shell
+pnpm storybook
+```
+
+The static build can be created with:
+
+```shell
+pnpm storybook:build
+```
