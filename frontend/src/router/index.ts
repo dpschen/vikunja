@@ -434,30 +434,31 @@ router.beforeEach(async (to, from) => {
 	const authStore = useAuthStore()
 
 	if(from.hash && from.hash.startsWith(LINK_SHARE_HASH_PREFIX)) {
-		to.hash = from.hash
+	to.hash = from.hash
 	}
 
 	if (to.hash.startsWith(LINK_SHARE_HASH_PREFIX) && !authStore.authLinkShare) {
-		saveLastVisited(to.name as string, to.params, to.query)
-		return {
-			name: 'link-share.auth',
-			params: {
-				share: to.hash.replace(LINK_SHARE_HASH_PREFIX, ''),
-			},
-		}
+	saveLastVisited(to.name as string, to.params, to.query)
+	return {
+	name: 'link-share.auth',
+	params: {
+	share: to.hash.replace(LINK_SHARE_HASH_PREFIX, ''),
+	},
+	}
 	}
 
 	const newRoute = await getAuthForRoute(to, authStore)
 	if(newRoute) {
-		return {
-			...newRoute,
-			hash: to.hash,
-		}
+	return {
+	...newRoute,
+	hash: to.hash,
+	}
 	}
 	
 	if(!to.fullPath.endsWith(to.hash)) {
-		return to.fullPath + to.hash
+	return to.fullPath + to.hash
 	}
 })
+
 
 export default router
