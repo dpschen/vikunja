@@ -355,6 +355,7 @@ func checkVikunjaVersion(versionFile *zip.File) error {
 	if err != nil {
 		return fmt.Errorf("could not open version file: %w", err)
 	}
+	defer vf.Close()
 
 	var bufVersion bytes.Buffer
 	if _, err := bufVersion.ReadFrom(vf); err != nil {
