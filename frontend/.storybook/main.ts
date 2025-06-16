@@ -2,7 +2,8 @@ import type { StorybookConfig } from '@storybook/vue3';
 
 const config: StorybookConfig = {
   stories: [
-    '../src/**/*.stories.@(ts|js|vue)'
+    '../src/**/*.stories.@(ts|js|vue)',
+    '../src/**/*.story.@(ts|js|vue)'
   ],
   addons: [
     '@storybook/addon-actions',
