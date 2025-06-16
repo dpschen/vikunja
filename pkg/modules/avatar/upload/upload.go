@@ -81,6 +81,7 @@ func (p *Provider) GetAvatar(u *user.User, size int64) (avatar []byte, mimeType 
 	}
 
 	img, _, err := image.Decode(f.File)
+	_ = f.File.Close()
 	if err != nil {
 		return nil, "", err
 	}
