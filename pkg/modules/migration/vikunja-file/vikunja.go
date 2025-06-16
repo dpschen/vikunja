@@ -246,8 +246,10 @@ func addDetailsToProject(l *models.ProjectWithTasksAndBuckets, storedFiles map[i
 		}
 		var buf bytes.Buffer
 		if _, err := buf.ReadFrom(bf); err != nil {
+			bf.Close()
 			return fmt.Errorf("could not read project background file %d: %w", l.BackgroundFileID, err)
 		}
+		bf.Close()
 
 		l.BackgroundInformation = &buf
 	}
@@ -272,9 +274,11 @@ func addDetailsToProject(l *models.ProjectWithTasksAndBuckets, storedFiles map[i
 			}
 			var buf bytes.Buffer
 			if _, err := buf.ReadFrom(af); err != nil {
+				af.Close()
 				log.Warningf(logPrefix+"Could not read attachment %d: %v, skipping", attachment.ID, err)
 				continue
 			}
+			af.Close()
 
 			attachment.ID = 0
 			attachment.File.ID = 0
