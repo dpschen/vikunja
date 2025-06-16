@@ -20,6 +20,7 @@ import (
 	"testing"
 
 	"code.vikunja.io/api/pkg/db"
+	"code.vikunja.io/api/pkg/events"
 	"code.vikunja.io/api/pkg/user"
 
 	"github.com/stretchr/testify/assert"
@@ -186,7 +187,47 @@ func TestSubscription_Create(t *testing.T) {
 		assert.True(t, IsErrSubscriptionAlreadyExists(err))
 	})
 
-	// TODO: Add tests to test triggering of notifications for subscribed things
+	t.Run("task assigned sends notification", func(t *testing.T) {
+		db.LoadAndAssertFixtures(t)
+		s := db.NewSession()
+		defer s.Close()
+
+		task, err := GetTaskByIDSimple(s, 22)
+		require.NoError(t, err)
+
+		ev := &TaskAssigneeCreatedEvent{
+			Task:     &task,
+			Assignee: &user.User{ID: 2},
+			Doer:     &user.User{ID: 1},
+		}
+
+		events.TestListener(t, ev, &SendTaskAssignedNotification{})
+
+		db.AssertExists(t, "notifications", map[string]interface{}{
+			"notifiable_id": int64(6),
+			"name":          (&TaskAssignedNotification{}).Name(),
+		}, false)
+	})
+	t.Run("task deleted sends project subscriber notification", func(t *testing.T) {
+		db.LoadAndAssertFixtures(t)
+		s := db.NewSession()
+		defer s.Close()
+
+		task, err := GetTaskByIDSimple(s, 21)
+		require.NoError(t, err)
+
+		ev := &TaskDeletedEvent{
+			Task: &task,
+			Doer: &user.User{ID: 1},
+		}
+
+		events.TestListener(t, ev, &SendTaskDeletedNotification{})
+
+		db.AssertExists(t, "notifications", map[string]interface{}{
+			"notifiable_id": int64(6),
+			"name":          (&TaskDeletedNotification{}).Name(),
+		}, false)
+	})
 }
 
 func TestSubscription_Delete(t *testing.T) {
