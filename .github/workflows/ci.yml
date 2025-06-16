@@ -12,8 +12,17 @@ on:
       - main
 
 jobs:
+  setup-node:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version-file: frontend/.nvmrc
+
   test:
     name: Test
+    needs:
+      - setup-node
     uses: ./.github/workflows/test.yml
     secrets: inherit
 
