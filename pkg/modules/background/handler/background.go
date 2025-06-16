@@ -334,6 +334,7 @@ func GetProjectBackground(c echo.Context) error {
 		_ = s.Rollback()
 		return handler.HandleHTTPError(err)
 	}
+	defer bgFile.File.Close()
 	stat, err := bgFile.File.Stat()
 	if err != nil {
 		_ = s.Rollback()
