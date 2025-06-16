@@ -342,10 +342,16 @@ func pingbackByPhotoID(photoID string) {
 	req, err := http.NewRequestWithContext(context.Background(), http.MethodGet, "https://views.unsplash.com/v?app_id="+config.BackgroundsUnsplashApplicationID.GetString()+"&photo_id="+photoID, nil)
 	if err != nil {
 		log.Errorf("Unsplash Pingback Failed: %s", err.Error())
+		return
 	}
-	_, err = http.DefaultClient.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Errorf("Unsplash Pingback Failed: %s", err.Error())
+		return
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= 300 {
+		log.Errorf("Unsplash Pingback Failed: status code %d", resp.StatusCode)
 	}
 	log.Debugf("Pinged unsplash for photo %s", photoID)
 }
