@@ -1,19 +1,26 @@
 import pluginVue from 'eslint-plugin-vue'
 import js from '@eslint/js'
 import vueTsEslintConfig from '@vue/eslint-config-typescript'
+import pluginI18n from '@intlify/eslint-plugin-vue-i18n'
 
 export default [
-	js.configs.recommended,
-	...pluginVue.configs['flat/recommended'],
-	...vueTsEslintConfig(),
+       {
+               ...js.configs.recommended,
+               files: ['**/*.js', '**/*.ts', '**/*.vue'],
+               ignores: ['src/i18n/lang/**', 'src/version.json'],
+       },
+       ...pluginVue.configs['flat/recommended'],
+       ...pluginI18n.configs['flat/recommended'],
+       ...vueTsEslintConfig().map(c => ({...c, files: c.files || ['**/*.ts', '**/*.tsx', '**/*.vue']})),
 	{
 		ignores: [
 			'**/*.test.ts',
 			'./cypress',
 		],
 	},
-	{
-		rules: {
+       {
+               files: ['**/*.js', '**/*.ts', '**/*.vue'],
+               rules: {
 			'quotes': ['error', 'single'],
 			'comma-dangle': ['error', 'always-multiline'],
 			'semi': ['error', 'never'],
@@ -49,19 +56,28 @@ export default [
 			'vue/no-ref-object-reactivity-loss': 'error',
 			'vue/no-setup-props-reactivity-loss': 'error',
 
-			'@typescript-eslint/no-unused-vars': [
-				'error',
-				{
-					// 'args': 'all',
-					// 'argsIgnorePattern': '^_',
-					'caughtErrors': 'all',
-					'caughtErrorsIgnorePattern': '^_',
-					// 'destructuredArrayIgnorePattern': '^_',
-					'varsIgnorePattern': '^_',
-					'ignoreRestSiblings': true,
-				},
-			],
-		},
+                       '@typescript-eslint/no-unused-vars': [
+                               'error',
+                               {
+                                       // 'args': 'all',
+                                       // 'argsIgnorePattern': '^_',
+                                       'caughtErrors': 'all',
+                                       'caughtErrorsIgnorePattern': '^_',
+                                       // 'destructuredArrayIgnorePattern': '^_',
+                                       'varsIgnorePattern': '^_',
+                                       'ignoreRestSiblings': true,
+                               },
+                       ],
+                       '@intlify/vue-i18n/no-missing-keys': 'error',
+                       '@intlify/vue-i18n/no-unused-keys': 'warn',
+               },
+
+               settings: {
+                       'vue-i18n': {
+                               localeDir: './src/i18n/lang/*.json',
+                               messageSyntaxVersion: '^11.0.0',
+                       },
+               },
 
 		// files: ['*.vue', '**/*.vue'],
 		languageOptions: {
