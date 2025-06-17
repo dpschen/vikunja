@@ -7,6 +7,9 @@
 
 This is the web frontend for Vikunja, written in Vue.js.
 
+It lives inside the main Vikunja repository. When you build the API one level
+up, the compiled files from this directory are served as the web interface.
+
 Take a look at [our roadmap](https://my.vikunja.cloud/share/UrdhKPqumxDXUbYpEGJLSIyNTwAnbBzVlwdDpRbv/auth) (hosted on Vikunja!) for a list of things we're currently working on!
 
 For general information about the project, refer to the top-level readme of this repo.
