@@ -93,24 +93,35 @@ jobs:
           ./mage-static check:translations
 
   install-deps:
+    name: Install dependencies
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ./.github/actions/setup-frontend
       - name: Determine Cypress cache dir
         id: cypress-dir
         run: echo "dir=$(pnpm exec cypress cache path)" >> "$GITHUB_OUTPUT"
         shell: bash
+      - name: Determine Cypress version
+        id: cypress-version
+        run: |
+          ver=$(pnpm exec cypress version | grep 'Cypress package version:' | awk '{print $4}')
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+        shell: bash
       - name: Cache Cypress
-        uses: actions/cache@v4
+        id: cache-cypress
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
         with:
           path: ${{ steps.cypress-dir.outputs.dir }}
-          key: cypress-${{ runner.os }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+          key: cypress-${{ runner.os }}-${{ steps.cypress-version.outputs.version }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
           restore-keys: |
-            cypress-${{ runner.os }}-
+            cypress-${{ runner.os }}-${{ steps.cypress-version.outputs.version }}-
       - name: Install Cypress
         working-directory: frontend
         run: pnpm exec cypress install
+      - name: Cache summary
+        run: |
+          echo "Cypress cache restored: ${{ steps.cache-cypress.outputs.cache-hit }}"
+        shell: bash
           
   test-migration-smoke:
     runs-on: ubuntu-latest
@@ -331,7 +342,13 @@ jobs:
           name: frontend_dist
           path: ./frontend/dist
       - run: chmod +x ./vikunja
-      - uses: cypress-io/github-action@v6
+      - name: Determine Cypress version
+        id: e2e-cypress-version
+        run: |
+          ver=$(pnpm exec cypress version | grep 'Cypress package version:' | awk '{print $4}')
+          echo "version=$ver" >> "$GITHUB_OUTPUT"
+        shell: bash
+      - uses: cypress-io/github-action@be1bab96b388bbd9ce3887e397d373c8557e15af
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
@@ -351,10 +368,10 @@ jobs:
           record: true
           parallel: true
           install: false
-          cache-key: cypress-${{ runner.os }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+          cache-key: cypress-${{ runner.os }}-${{ steps.e2e-cypress-version.outputs.version }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
           cache-dependency-path: frontend/pnpm-lock.yaml
           restore-keys: |
-            cypress-${{ runner.os }}-
+            cypress-${{ runner.os }}-${{ steps.e2e-cypress-version.outputs.version }}-
           start: |
             pnpm run preview:vikunja
             pnpm run preview

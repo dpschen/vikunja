@@ -12,7 +12,7 @@ runs:
       run: echo "dir=$(pnpm store path)" >> "$GITHUB_OUTPUT"
       shell: bash
     - name: pnpm store cache
-      uses: actions/cache@v4
+      uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4
       with:
         path: ${{ steps.pnpm-store.outputs.dir }}
         key: pnpm-store-${{ runner.os }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
