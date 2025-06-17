@@ -152,8 +152,8 @@ const currentPage = ref(1)
 // We're using debounce to not search on every keypress but with a delay.
 const debounceNewBackgroundSearch = useDebounceFn(newBackgroundSearch, SEARCH_DEBOUNCE)
 
-const backgroundUploadService = ref(new BackgroundUploadService())
-const projectService = ref(new ProjectService())
+const backgroundUploadService = shallowReactive(new BackgroundUploadService())
+const projectService = shallowReactive(new ProjectService())
 const projectStore = useProjectStore()
 const configStore = useConfigStore()
 
@@ -213,7 +213,7 @@ async function uploadBackground() {
 		return
 	}
 
-	const project = await backgroundUploadService.value.create(
+	const project = await backgroundUploadService.create(
 		route.params.projectId,
 		backgroundUploadInput.value?.files[0],
 	)
@@ -223,7 +223,7 @@ async function uploadBackground() {
 }
 
 async function removeBackground() {
-	const project = await projectService.value.removeBackground(currentProject.value)
+	const project = await projectService.removeBackground(currentProject.value)
 	await baseStore.handleSetCurrentProject({project, forceUpdate: true})
 	projectStore.setProject(project)
 	success({message: t('project.background.removeSuccess')})
