@@ -7,6 +7,17 @@ runs:
       with:
         run_install: false
         package_json_file: frontend/package.json
+    - name: Get pnpm store directory
+      id: pnpm-store
+      run: echo "dir=$(pnpm store path)" >> "$GITHUB_OUTPUT"
+      shell: bash
+    - name: pnpm store cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.pnpm-store.outputs.dir }}
+        key: pnpm-store-${{ runner.os }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+        restore-keys: |
+          pnpm-store-${{ runner.os }}-
     - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
       with:
         node-version-file: frontend/.nvmrc

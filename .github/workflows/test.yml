@@ -90,7 +90,27 @@ jobs:
       - name: Check
         run: |
           chmod +x ./mage-static
-          ./mage-static check:translations    
+          ./mage-static check:translations
+
+  install-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: ./.github/actions/setup-frontend
+      - name: Determine Cypress cache dir
+        id: cypress-dir
+        run: echo "dir=$(pnpm exec cypress cache path)" >> "$GITHUB_OUTPUT"
+        shell: bash
+      - name: Cache Cypress
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.cypress-dir.outputs.dir }}
+          key: cypress-${{ runner.os }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+          restore-keys: |
+            cypress-${{ runner.os }}-
+      - name: Install Cypress
+        working-directory: frontend
+        run: pnpm exec cypress install
           
   test-migration-smoke:
     runs-on: ubuntu-latest
@@ -237,6 +257,7 @@ jobs:
   
   frontend-lint:
     runs-on: ubuntu-latest
+    needs: install-deps
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ./.github/actions/setup-frontend
@@ -246,6 +267,7 @@ jobs:
 
   frontend-typecheck:
     runs-on: ubuntu-latest
+    needs: install-deps
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ./.github/actions/setup-frontend
@@ -256,6 +278,7 @@ jobs:
 
   test-frontend-unit:
     runs-on: ubuntu-latest
+    needs: install-deps
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ./.github/actions/setup-frontend
@@ -265,6 +288,7 @@ jobs:
 
   frontend-build:
     runs-on: ubuntu-latest
+    needs: install-deps
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - uses: ./.github/actions/setup-frontend
@@ -282,6 +306,7 @@ jobs:
     needs:
       - api-build
       - frontend-build
+      - install-deps
     strategy:
       # when one test fails, DO NOT cancel the other
       # containers, because this will kill Cypress processes
@@ -327,6 +352,9 @@ jobs:
           parallel: true
           install: false
           cache-key: cypress-${{ runner.os }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
+          cache-dependency-path: frontend/pnpm-lock.yaml
+          restore-keys: |
+            cypress-${{ runner.os }}-
           start: |
             pnpm run preview:vikunja
             pnpm run preview
