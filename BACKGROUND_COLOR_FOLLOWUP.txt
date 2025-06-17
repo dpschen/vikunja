@@ -1,0 +1,3 @@
+- Consider migrating to the CSS Typed OM API for more robust color comparisons.
+- Expose a CSS custom property for the application background and read that instead of walking the DOM.
+- Revisit the unit tests once other modules are TypeScript error free so `pnpm typecheck` passes cleanly.
