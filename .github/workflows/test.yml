@@ -314,10 +314,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_API_URL: http://127.0.0.1:3456/api/v1
-          CYPRESS_TEST_SECRET: averyLongSecretToSe33dtheDB
+          # Test tokens should come from GitHub secrets
+          CYPRESS_TEST_SECRET: ${{ secrets.CYPRESS_TEST_SECRET }}
           CYPRESS_DEFAULT_COMMAND_TIMEOUT: 60000
           CYPRESS_CI_BUILD_ID: '${{ github.workflow }}-${{ github.run_id }}-${{ github.run_attempt }}' # see https://github.com/cypress-io/github-action/issues/431
-          VIKUNJA_SERVICE_TESTINGTOKEN: averyLongSecretToSe33dtheDB
+          VIKUNJA_SERVICE_TESTINGTOKEN: ${{ secrets.VIKUNJA_SERVICE_TESTINGTOKEN }}
           VIKUNJA_LOG_LEVEL: DEBUG
           VIKUNJA_CORS_ENABLE: 1
           VIKUNJA_DATABASE_PATH: memory

@@ -5,7 +5,8 @@ services:
     image: vikunja/api:unstable@sha256:61b77af0f0ed5b0e4c3ee693a79926d8633712ddb245f8212ba5e5321485d330
     environment:
       VIKUNJA_LOG_LEVEL: DEBUG
-      VIKUNJA_SERVICE_TESTINGTOKEN: averyLongSecretToSe33dtheDB
+      # Replace with your own testing token via environment variable
+      VIKUNJA_SERVICE_TESTINGTOKEN: ${VIKUNJA_SERVICE_TESTINGTOKEN:-<testing-token>}
     ports:
       - 3456:3456
   cypress:
@@ -17,4 +18,5 @@ services:
     working_dir: /project
     environment:
       CYPRESS_API_URL: http://api:3456/api/v1
-      CYPRESS_TEST_SECRET: averyLongSecretToSe33dtheDB
+      # Provide the secret via CYPRESS_TEST_SECRET env var when running tests
+      CYPRESS_TEST_SECRET: ${CYPRESS_TEST_SECRET:-<testing-secret>}

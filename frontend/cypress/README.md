@@ -2,10 +2,11 @@
 
 ## Setup
 
-* Enable the [seeder api endpoint](https://vikunja.io/docs/config-options/#testingtoken). You'll then need to add the testingtoken in `cypress.json` or set the `CYPRESS_TEST_SECRET` environment variable.
+* Enable the [seeder api endpoint](https://vikunja.io/docs/config-options/#testingtoken). You'll then need to add the testing token in `cypress.json` or set the `CYPRESS_TEST_SECRET` environment variable.
 * Basic configuration happens in the `cypress.json` file
 * Overridable with [env](https://docs.cypress.io/guides/guides/environment-variables.html#Option-3-CYPRESS)
 * Override base url with `CYPRESS_BASE_URL`
+* **Never commit real tokens**. Provide them through environment variables or an `.env` file which is gitignored.
 
 ## Fixtures
 

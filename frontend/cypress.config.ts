@@ -1,10 +1,12 @@
 import {defineConfig} from 'cypress'
 
 export default defineConfig({
-	env: {
-		API_URL: 'http://localhost:3456/api/v1',
-		TEST_SECRET: 'averyLongSecretToSe33dtheDB',
-	},
+       env: {
+               API_URL: 'http://localhost:3456/api/v1',
+               // Set this token via the CYPRESS_TEST_SECRET env var.
+               // Never commit a real testing token here.
+               TEST_SECRET: process.env.CYPRESS_TEST_SECRET ?? '<testing-secret>',
+       },
 	video: false,
 	retries: {
 		runMode: 2,
