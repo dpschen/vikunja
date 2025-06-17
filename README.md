@@ -46,6 +46,35 @@ All docs can be found on [the Vikunja home page](https://vikunja.io/docs/).
 
 See [the roadmap](https://my.vikunja.cloud/share/QFyzYEmEYfSyQfTOmIRSwLUpkFjboaBqQCnaPmWd/auth) (hosted on Vikunja!) for more!
 
+## Components
+
+The project is split into three main parts:
+
+| Component | Location | Description |
+|-----------|----------|-------------|
+| API | `pkg/` and `main.go` | Go backend providing the REST API and serving the built frontend. |
+| Web frontend | `frontend/` | Vue.js single page application bundled into static files. |
+| Desktop app | `desktop/` | Electron wrapper shipping the frontend for desktop users. |
+
+```
+ +-------+      +-----------+      +------------+
+ |  API  | <--> | Frontend  | <--> |  Desktop   |
+ +-------+      +-----------+      +------------+
+```
+
+## Repository Structure
+
+| Directory | Purpose |
+|-----------|---------|
+| `build/` | Packaging and release helpers. |
+| `contrib/` | Additional tooling and scripts. |
+| `desktop/` | Electron desktop wrapper for Vikunja. |
+| `frontend/` | Web frontend source code. |
+| `pkg/` | Go packages implementing the API. |
+| `rest/` | Example API requests for testing. |
+| `scripts/` | Development and CI helper scripts. |
+| `.github/` | GitHub workflow configuration. |
+
 ## Contributing
 
 Please check out the contribution guidelines on [the website](https://vikunja.io/docs/development/).

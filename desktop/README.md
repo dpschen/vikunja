@@ -4,6 +4,9 @@
 
 The Vikunja frontend all repackaged as an electron app to run as a desktop app!
 
+It uses the built files from `../frontend` and wraps them with Electron so the
+Vikunja web interface can be run as a native application.
+
 ## Dev
 
 As this package does not contain any code, only a thin wrapper around electron, you will need to do this to get the 
