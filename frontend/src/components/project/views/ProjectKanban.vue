@@ -665,7 +665,7 @@ function updateBuckets(value: IBucket[]) {
 
 // TODO: fix type
 function updateBucketPosition(e: { newIndex: number }) {
-	// (2) bucket positon is changed
+       // (2) bucket position is changed
 	dragBucket.value = false
 
 	const bucket = buckets.value[e.newIndex]
