@@ -325,6 +325,8 @@ jobs:
           browser: chrome
           record: true
           parallel: true
+          install: false
+          cache-key: cypress-${{ runner.os }}-${{ hashFiles('frontend/pnpm-lock.yaml') }}
           start: |
             pnpm run preview:vikunja
             pnpm run preview
