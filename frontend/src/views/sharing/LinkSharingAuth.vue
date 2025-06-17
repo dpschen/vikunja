@@ -55,6 +55,8 @@ import {useBaseStore} from '@/stores/base'
 import {useAuthStore} from '@/stores/auth'
 import {useRedirectToLastVisited} from '@/composables/useRedirectToLastVisited'
 import type {IProject} from '@/modelTypes/IProject.ts'
+import {getErrorText} from '@/message'
+import type {AxiosError} from 'axios'
 
 const {t} = useI18n({useScope: 'global'})
 useTitle(t('sharing.authenticating'))
@@ -115,9 +117,7 @@ function useAuth() {
 			return
 		}
 
-		// TODO: no password
-
-		loading.value = true
+                loading.value = true
 
 		try {
 			const {project_id: projectId} = await authStore.linkShareAuth({
@@ -130,24 +130,17 @@ function useAuth() {
 			baseStore.setLogoVisible(logoVisible)
 
 			return redirectToProject(projectId)
-		} catch (e) {
-			if (e?.response?.data?.code === 13001) {
-				authenticateWithPassword.value = true
-				return
-			}
+                } catch (e) {
+                        const err = e as AxiosError<{ code?: number; message?: string }>
+                        if (err?.response?.data?.code === 13001) {
+                                authenticateWithPassword.value = true
+                                return
+                        }
 
-			// TODO: Put this logic in a global errorMessage handler method which checks all auth codes
-			let err = t('sharing.error')
-			if (e?.response?.data?.message) {
-				err = e.response.data.message
-			}
-			if (e?.response?.data?.code === 13002) {
-				err = t('sharing.invalidPassword')
-			}
-			errorMessage.value = err
-		} finally {
-			loading.value = false
-		}
+                        errorMessage.value = getErrorText(err)
+                } finally {
+                        loading.value = false
+                }
 	}
 
 	authenticate()
