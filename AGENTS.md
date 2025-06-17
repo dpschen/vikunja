@@ -17,10 +17,10 @@ These instructions summarize the development guidelines from the official Vikunj
 	- Lint with `pnpm lint` and run TypeScript checks with `pnpm typecheck`.
 	- Run frontend unit tests with `pnpm test:unit`.
 2. **API**:
-	- Requires Go (use version from `go.mod`) and Mage.
-	- If the frontend bundle is missing, build it or create a dummy file with `mkdir -p frontend/dist && touch frontend/dist/index.html`.
-	- Build with `mage build`.
-	- Lint with `mage lint` and run `mage check:translations` when translation files change.
+      - Requires Go (use version from `go.mod`) and Mage.
+      - If the frontend bundle is missing, set `VIKUNJA_FAKE_FRONTEND=1` to let Mage create a placeholder automatically. This placeholder is for development only and should not be shipped.
+      - Build with `mage build`.
+        - Lint with `mage lint` and run `mage check:translations` when translation files change.
 3. Cross‑compile with `mage release` or `mage release:{linux|windows|darwin}`.
 
 ## Testing

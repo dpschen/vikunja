@@ -42,6 +42,12 @@ try it on [try.vikunja.io](https://try.vikunja.io)!
 
 All docs can be found on [the Vikunja home page](https://vikunja.io/docs/).
 
+When building the API without running the frontend build, set the
+`VIKUNJA_FAKE_FRONTEND` environment variable to `1` and Mage will
+generate a placeholder `frontend/dist/index.html` automatically. This
+placeholder is intended only for development or CI and should never be
+shipped in production.
+
 ### Roadmap
 
 See [the roadmap](https://my.vikunja.cloud/share/QFyzYEmEYfSyQfTOmIRSwLUpkFjboaBqQCnaPmWd/auth) (hosted on Vikunja!) for more!
