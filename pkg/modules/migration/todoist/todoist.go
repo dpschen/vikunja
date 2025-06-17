@@ -408,18 +408,24 @@ func convertTodoistToVikunja(sync *sync, doneItems map[string]*doneItem) (fullVi
 		delete(tasks, i.ID)
 	}
 
-	// Task Notes -> Task Descriptions
-	// FIXME: Should be comments
+	// Task Notes -> Task Comments
 	for _, n := range sync.Notes {
-		if _, exists := tasks[n.ItemID]; !exists {
+		task, exists := tasks[n.ItemID]
+		if !exists {
 			log.Debugf("[Todoist Migration] Could not find task %s for note %s", n.ItemID, n.ID)
 			continue
 		}
 
-		if tasks[n.ItemID].Description != "" {
-			tasks[n.ItemID].Description += "\n"
+		comment := &models.TaskComment{
+			Comment: n.Content,
+			Created: n.Posted.In(config.GetTimeZone()),
+			Updated: n.Posted.In(config.GetTimeZone()),
 		}
-		tasks[n.ItemID].Description += n.Content
+
+		if task.Comments == nil {
+			task.Comments = []*models.TaskComment{}
+		}
+		task.Comments = append(task.Comments, comment)
 
 		if n.FileAttachment == nil {
 			continue
@@ -433,7 +439,7 @@ func convertTodoistToVikunja(sync *sync, doneItems map[string]*doneItem) (fullVi
 				return nil, err
 			}
 
-			tasks[n.ItemID].Attachments = append(tasks[n.ItemID].Attachments, &models.TaskAttachment{
+			task.Attachments = append(task.Attachments, &models.TaskAttachment{
 				File: &files.File{
 					Name:    n.FileAttachment.FileName,
 					Mime:    n.FileAttachment.FileType,
