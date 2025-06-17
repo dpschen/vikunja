@@ -389,23 +389,23 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 			Tasks: []*models.TaskWithComments{
 				{
 					Task: models.Task{
-						Title:       "Task400000000",
-						Description: "Lorem Ipsum dolor sit amet",
-						Done:        false,
-						Created:     time1,
+						Title:   "Task400000000",
+						Done:    false,
+						Created: time1,
 						Reminders: []*models.TaskReminder{
 							{Reminder: time.Date(2020, time.June, 15, 23, 59, 0, 0, time.UTC).In(config.GetTimeZone())},
 							{Reminder: time.Date(2020, time.June, 16, 7, 0, 0, 0, time.UTC).In(config.GetTimeZone())},
 						},
 					},
+					Comments: []*models.TaskComment{{Comment: "Lorem Ipsum dolor sit amet", Created: time1, Updated: time1}},
 				},
 				{
 					Task: models.Task{
-						Title:       "Task400000001",
-						Description: "Lorem Ipsum dolor sit amet",
-						Done:        false,
-						Created:     time1,
+						Title:   "Task400000001",
+						Done:    false,
+						Created: time1,
 					},
+					Comments: []*models.TaskComment{{Comment: "Lorem Ipsum dolor sit amet", Created: time1, Updated: time1}},
 				},
 				{
 					Task: models.Task{
@@ -419,17 +419,17 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 				},
 				{
 					Task: models.Task{
-						Title:       "Task400000003",
-						Description: "Lorem Ipsum dolor sit amet",
-						Done:        true,
-						DueDate:     dueTime,
-						Created:     time1,
-						DoneAt:      time3,
-						Labels:      vikunjaLabels,
+						Title:   "Task400000003",
+						Done:    true,
+						DueDate: dueTime,
+						Created: time1,
+						DoneAt:  time3,
+						Labels:  vikunjaLabels,
 						Reminders: []*models.TaskReminder{
 							{Reminder: time.Date(2020, time.June, 15, 7, 0, 0, 0, time.UTC).In(config.GetTimeZone())},
 						},
 					},
+					Comments: []*models.TaskComment{{Comment: "Lorem Ipsum dolor sit amet", Created: time1, Updated: time1}},
 				},
 				{
 					Task: models.Task{
@@ -545,19 +545,18 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 				},
 				{
 					Task: models.Task{
-						Title:       "Task400000010",
-						Description: "Lorem Ipsum dolor sit amet",
-						Done:        true,
-						Created:     time1,
-						DoneAt:      time3,
+						Title:   "Task400000010",
+						Done:    true,
+						Created: time1,
+						DoneAt:  time3,
 					},
+					Comments: []*models.TaskComment{{Comment: "Lorem Ipsum dolor sit amet", Created: time1, Updated: time1}},
 				},
 				{
 					Task: models.Task{
-						Title:       "Task400000101",
-						Description: "Lorem Ipsum dolor sit amet",
-						Done:        false,
-						Created:     time1,
+						Title:   "Task400000101",
+						Done:    false,
+						Created: time1,
 						Attachments: []*models.TaskAttachment{
 							{
 								File: &files.File{
@@ -571,6 +570,7 @@ func TestConvertTodoistToVikunja(t *testing.T) {
 							},
 						},
 					},
+					Comments: []*models.TaskComment{{Comment: "Lorem Ipsum dolor sit amet", Created: time1, Updated: time1}},
 				},
 				{
 					Task: models.Task{
