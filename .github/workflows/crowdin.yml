@@ -37,7 +37,7 @@ jobs:
           find pkg/i18n/lang frontend/src/i18n/lang -type f -name "*.json" -exec sudo chmod 666 {} \;
       - name: Fix exported files
         run: |
-          node contrib/clean-translations.js
+          node scripts/clean-translations.js
       - name: Check for changes
         id: check_changes
         run: |

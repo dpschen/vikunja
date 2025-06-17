@@ -40,8 +40,8 @@
     "test:unit": "vitest --dir ./src",
     "typecheck": "vue-tsc --build --force",
     "fonts:update": "pnpm fonts:download && pnpm fonts:subset",
-    "fonts:download": "./scripts/fonts-download.sh",
-    "fonts:subset": "./scripts/fonts-subset.sh",
+    "fonts:download": "../scripts/frontend/fonts-download.sh",
+    "fonts:subset": "../scripts/frontend/fonts-subset.sh",
     "story:dev": "histoire dev",
     "story:build": "histoire build",
     "story:preview": "histoire preview"

@@ -20,6 +20,7 @@ I'm also offering [a hosted version of Vikunja](https://vikunja.cloud/) if you w
 - [Features](#features)
 - [Docs](#docs)
 	- [Roadmap](#roadmap)
+- [Scripts](#scripts)
 - [Contributing](#contributing)
 - [License](#license)
 	- [Unsplash Images](#unsplash-images)
@@ -42,6 +43,25 @@ try it on [try.vikunja.io](https://try.vikunja.io)!
 * [Testing](https://vikunja.io/docs/testing/)
 
 All docs can be found on [the Vikunja home page](https://vikunja.io/docs/).
+
+## Scripts
+
+Helper scripts live in the [`scripts/`](scripts/) directory. They are useful for
+development and packaging tasks:
+
+| Script | Purpose |
+| ------ | ------- |
+| `after-install.sh` | postinstall script used by `nfpm` |
+| `clean-translations.js` | fixes exported translation files |
+| `fonts-download.sh` | downloads the original fonts (in `scripts/frontend/`) |
+| `fonts-subset.sh` | creates woff2 subsets of the fonts (in `scripts/frontend/`) |
+| `deploy-preview-netlify.mjs` | posts preview URLs for pull requests (in `scripts/frontend/`) |
+
+Run these scripts from the repository root:
+
+```bash
+./scripts/frontend/fonts-download.sh
+```
 
 ### Roadmap
 
