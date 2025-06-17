@@ -22,4 +22,4 @@ contents:
   - src: vikunja.service
     dst: /usr/lib/systemd/system/vikunja.service
 scripts:
-  postinstall: ./build/after-install.sh
+  postinstall: ./scripts/after-install.sh
