@@ -1,0 +1,36 @@
+name: Site Monitor
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+      timezone: 'UTC'
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    name: Lighthouse audits
+    runs-on: ubuntu-latest
+    env:
+      DO_NOT_TRACK: '1'
+    steps:
+      - name: Run Lighthouse
+        uses: treosh/lighthouse-ci-action@72f881228236981b625ed765b928efb1786a1f55 # v11
+        with:
+          urls: https://try.vikunja.io/
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report
+          path: .lighthouseci
+
+  uptime:
+    name: Uptime check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check uptime
+        uses: Jtalk/url-health-check-action@b716ccb6645355dd9fcce8002ce460e5474f7f00 # v1.8
+        with:
+          url: https://try.vikunja.io/api/v1/info
+          expected-status: '200'
+          max-attempts: 3
+          retry-delay: 5s
