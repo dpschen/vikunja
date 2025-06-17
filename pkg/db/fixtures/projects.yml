@@ -1,5 +1,5 @@
--
-  id: 1
+- id: 1
+  uid: 01JXY12Q9E0H4WPS8YRY1BWFQ6
   title: Test1
   description: Lorem Ipsum
   identifier: test1
@@ -7,8 +7,8 @@
   position: 3
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 2
+- id: 2
+  uid: 01JXY12Q9E16S98YH9TMG6WCB6
   title: Test2
   description: Lorem Ipsum
   identifier: test2
@@ -16,8 +16,8 @@
   position: 2
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 3
+- id: 3
+  uid: 01JXY12Q9E0HSWBY0VBEQ8SS7B
   title: Test3
   description: Lorem Ipsum
   identifier: test3
@@ -25,8 +25,8 @@
   position: 1
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 4
+- id: 4
+  uid: 01JXY12Q9E1T8F53JPGWD86HEE
   title: Test4
   description: Lorem Ipsum
   identifier: test4
@@ -34,8 +34,8 @@
   position: 4
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 5
+- id: 5
+  uid: 01JXY12Q9E167WG7XRNBBMGVE1
   title: Test5
   description: Lorem Ipsum
   identifier: test5
@@ -43,8 +43,8 @@
   position: 5
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 6
+- id: 6
+  uid: 01JXY12Q9E1KTGPH550FWGBP91
   title: Test6
   description: Lorem Ipsum
   identifier: test6
@@ -52,8 +52,8 @@
   position: 6
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 7
+- id: 7
+  uid: 01JXY12Q9E05TQ791Z8P3D771B
   title: Test7
   description: Lorem Ipsum
   identifier: test7
@@ -61,8 +61,8 @@
   position: 7
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 8
+- id: 8
+  uid: 01JXY12Q9E1WQRSBK3M31TG0VK
   title: Test8
   description: Lorem Ipsum
   identifier: test8
@@ -70,8 +70,8 @@
   position: 8
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 9
+- id: 9
+  uid: 01JXY12Q9E025AXZDGR199G6QS
   title: Test9
   description: Lorem Ipsum
   identifier: test9
@@ -79,8 +79,8 @@
   position: 9
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 10
+- id: 10
+  uid: 01JXY12Q9E0M4A8YGF0Y413K1N
   title: Test10
   description: Lorem Ipsum
   identifier: test10
@@ -88,8 +88,8 @@
   position: 10
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 11
+- id: 11
+  uid: 01JXY12Q9E1Y23CE61VM5NY3B3
   title: Test11
   description: Lorem Ipsum
   identifier: test11
@@ -97,8 +97,8 @@
   position: 11
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 12
+- id: 12
+  uid: 01JXY12Q9E0SSS0BMK5GWXMDJ6
   title: Test12
   description: Lorem Ipsum
   identifier: test12
@@ -107,8 +107,8 @@
   parent_project_id: 27
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 13
+- id: 13
+  uid: 01JXY12Q9E0F4BS7SC8JTTTJEB
   title: Test13
   description: Lorem Ipsum
   identifier: test13
@@ -117,8 +117,8 @@
   parent_project_id: 28
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 14
+- id: 14
+  uid: 01JXY12Q9E03GDX549N8GPDZDN
   title: Test14
   description: Lorem Ipsum
   identifier: test14
@@ -127,8 +127,8 @@
   parent_project_id: 29
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 15
+- id: 15
+  uid: 01JXY12Q9E1FVB3WMJ15440ARF
   title: Test15
   description: Lorem Ipsum
   identifier: test15
@@ -137,8 +137,8 @@
   parent_project_id: 32
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 16
+- id: 16
+  uid: 01JXY12Q9E1BHK4DVFZT8PMCQJ
   title: Test16
   description: Lorem Ipsum
   identifier: test16
@@ -147,8 +147,8 @@
   parent_project_id: 33
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 17
+- id: 17
+  uid: 01JXY12Q9E14Z98YAHS6VAVZ2M
   title: Test17
   description: Lorem Ipsum
   identifier: test17
@@ -157,10 +157,8 @@
   parent_project_id: 34
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
-# This project is owned by user 7, and several other users have access to it via different methods.
-# It is used to test the projectUsers method.
--
-  id: 18
+- id: 18
+  uid: 01JXY12Q9E09J217W0BR5MT431
   title: Test18
   description: Lorem Ipsum
   identifier: test18
@@ -168,8 +166,8 @@
   position: 18
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 19
+- id: 19
+  uid: 01JXY12Q9E1BBWW1B3ZBQFTSS8
   title: Test19
   description: Lorem Ipsum
   identifier: test19
@@ -178,9 +176,8 @@
   parent_project_id: 29
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
-# User 1 does not have access to this project
--
-  id: 20
+- id: 20
+  uid: 01JXY12Q9E0H34ZRD13WZXH44E
   title: Test20
   description: Lorem Ipsum
   identifier: test20
@@ -188,8 +185,8 @@
   position: 20
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 21
+- id: 21
+  uid: 01JXY12Q9E0P48TN2YWJ1MMAH0
   title: Test21 archived through parent list
   description: Lorem Ipsum
   identifier: test21
@@ -198,8 +195,8 @@
   parent_project_id: 22
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 22
+- id: 22
+  uid: 01JXY12Q9E0Y89FWPH4HF3Y7V3
   title: Test22 archived individually
   description: Lorem Ipsum
   identifier: test22
@@ -208,8 +205,8 @@
   position: 22
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 23
+- id: 23
+  uid: 01JXY12Q9E0MGSP6Y39GAVYS5Y
   title: Test23
   description: Lorem Ipsum
   identifier: test23
@@ -217,8 +214,8 @@
   position: 23
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 24
+- id: 24
+  uid: 01JXY12Q9E1DZKT0VFGACEQAJ4
   title: Test24
   description: Lorem Ipsum
   identifier: test6
@@ -226,80 +223,80 @@
   position: 7
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 25
+- id: 25
+  uid: 01JXY12Q9E08JRBB29CQPNXEFJ
   title: Test25
   owner_id: 6
   parent_project_id: 12
   position: 25
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 26
+- id: 26
+  uid: 01JXY12Q9E1JR7CCXX572T0TEH
   title: Test26
   owner_id: 6
   parent_project_id: 25
   position: 26
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 27
+- id: 27
+  uid: 01JXY12Q9E04S1K1KKA004C2XK
   title: Test27
   owner_id: 6
   position: 2700
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 28
+- id: 28
+  uid: 01JXY12Q9E164C3P5KSXYXXXJ7
   title: Test28
   owner_id: 6
   position: 2800
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 29
+- id: 29
+  uid: 01JXY12Q9E0EAPGEBTKDV0QVMP
   title: Test29
   owner_id: 6
   position: 2900
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 30
+- id: 30
+  uid: 01JXY12Q9E0CJ2ZMHC1B6M8D65
   title: Test30
   owner_id: 6
   position: 3000
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 31
+- id: 31
+  uid: 01JXY12Q9E0VB6DDNSA665YX8S
   title: Test31
   owner_id: 6
   position: 3100
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 32
+- id: 32
+  uid: 01JXY12Q9E1Z8A15NMACR5C0WT
   title: Test32
   owner_id: 6
   position: 3200
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 33
+- id: 33
+  uid: 01JXY12Q9E1G0M8NQQQCF0JXSR
   title: Test33
   owner_id: 6
   position: 3300
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 34
+- id: 34
+  uid: 01JXY12Q9E18EYB0495KXS20Y8
   title: Test34
   owner_id: 6
   position: 3400
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 35
+- id: 35
+  uid: 01JXY12Q9E09PY0P75RJGHWCB6
   title: Test35 with background
   description: Lorem Ipsum
   identifier: test6
@@ -308,8 +305,8 @@
   position: 8
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 36
+- id: 36
+  uid: 01JXY12Q9E1AMBP9S6SYMFVBX2
   title: Project 36 for Caldav tests
   description: Lorem Ipsum
   identifier: test36
@@ -317,8 +314,8 @@
   position: 1
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 37
+- id: 37
+  uid: 01JXY12Q9E162KZEDP8NMTVKHA
   title: Project 37
   description: Lorem Ipsum
   identifier: test37
@@ -326,8 +323,8 @@
   position: 1
   updated: 2018-12-02 15:13:12
   created: 2018-12-01 15:13:12
--
-  id: 38
+- id: 38
+  uid: 01JXY12Q9E0ZPDXFXNCYHM9YKV
   title: Project 38 for Caldav tests
   description: Lorem Ipsum
   identifier: test38

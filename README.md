@@ -20,6 +20,7 @@ I'm also offering [a hosted version of Vikunja](https://vikunja.cloud/) if you w
 * [Features](#features)
 * [Docs](#docs)
 * [Roadmap](#roadmap)
+* [UID migration](#uid-migration)
 * [Contributing](#contributing)
 * [License](#license)
 
@@ -45,6 +46,16 @@ All docs can be found on [the Vikunja home page](https://vikunja.io/docs/).
 ### Roadmap
 
 See [the roadmap](https://my.vikunja.cloud/share/QFyzYEmEYfSyQfTOmIRSwLUpkFjboaBqQCnaPmWd/auth) (hosted on Vikunja!) for more!
+
+### UID migration
+
+Starting with `20250616230622`, Vikunja stores opaque ULID strings for
+projects and teams. When upgrading from earlier versions simply run the
+database migrations and the new columns will be populated automatically.
+Both numeric `id` and `uid` are returned in API responses. Use the stable
+`uid` value in URLs and stored references, while numeric IDs may still be used
+for internal links and backward compatibility. The web frontend from version
+`2025.6` onwards understands these identifiers automatically.
 
 ## Contributing
 

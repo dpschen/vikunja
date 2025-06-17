@@ -23,6 +23,7 @@ import (
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/events"
 	"code.vikunja.io/api/pkg/user"
+	"code.vikunja.io/api/pkg/utils"
 	"code.vikunja.io/api/pkg/web"
 
 	"xorm.io/builder"
@@ -33,6 +34,8 @@ import (
 type Team struct {
 	// The unique, numeric id of this team.
 	ID int64 `xorm:"bigint autoincr not null unique pk" json:"id" param:"team"`
+	// An opaque identifier for this team.
+	UID string `xorm:"varchar(26) not null unique" json:"uid" valid:"runelength(26|26);regexp(^[0-9A-HJKMNP-TV-Z]{26}$)" minLength:"26" maxLength:"26"`
 	// The name of this team.
 	Name string `xorm:"varchar(250) not null" json:"name" valid:"required,runelength(1|250)" minLength:"1" maxLength:"250"`
 	// The team's description.
@@ -202,6 +205,9 @@ func (t *Team) CreateNewTeam(s *xorm.Session, a web.Auth, firstUserShouldBeAdmin
 	t.ID = 0
 	t.CreatedByID = doer.ID
 	t.CreatedBy = doer
+	if t.UID == "" {
+		t.UID = utils.NewULID()
+	}
 
 	_, err = s.Insert(t)
 	if err != nil {
