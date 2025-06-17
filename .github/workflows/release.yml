@@ -96,6 +96,7 @@ jobs:
         env:
           RELEASE_VERSION: ${{ steps.ghd.outputs.describe }}
           XGO_OUT_NAME: vikunja-${{ github.ref_type == 'tag' && steps.ghd.outputs.describe || 'unstable' }}
+          VIKUNJA_FAKE_FRONTEND: 1
         run: |
           export PATH=$PATH:$GOPATH/bin
           ./mage-static release
@@ -151,6 +152,7 @@ jobs:
       - name: Prepare
         env:
           RELEASE_VERSION: ${{ steps.ghd.outputs.describe }}
+          VIKUNJA_FAKE_FRONTEND: 1
         run: |
           chmod +x ./mage-static
           ./mage-static release:prepare-nfpm-config

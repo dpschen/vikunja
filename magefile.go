@@ -27,6 +27,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"math"
 	"os"
 	"os/exec"
@@ -45,7 +46,29 @@ import (
 const (
 	PACKAGE = `code.vikunja.io/api`
 	DIST    = `dist`
+	// FakeFrontendEnv controls auto creation of a dummy frontend
+	// when the actual bundle is missing. Exported so tests and
+	// external tools can reference it.
+	FakeFrontendEnv = "VIKUNJA_FAKE_FRONTEND"
 )
+
+// placeholderHTML is written to frontend/dist/index.html when the real
+// bundle is missing and FakeFrontendEnv is set. It exists only to allow
+// the Go build to succeed and should never be shipped in production.
+const placeholderHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Vikunja</title>
+</head>
+<body>
+    <h1>Vikunja frontend placeholder</h1>
+    <p>The frontend was not built. Do not ship this file.</p>
+</body>
+</html>
+`
 
 var (
 	Goflags = []string{
@@ -199,6 +222,36 @@ func setGoFiles() {
 			GoFiles = append(GoFiles, RootPath+strings.TrimLeft(f, "."))
 		}
 	}
+}
+
+// ensureFrontendDistIndex verifies frontend/dist/index.html exists. If it does
+// not and the environment variable named by FakeFrontendEnv is set to "1" or
+// "true", a placeholder is created so the Go build succeeds. The returned
+// boolean indicates whether the placeholder was generated.
+func ensureFrontendDistIndex() (bool, error) {
+	p := filepath.Join(RootPath, "frontend", "dist", "index.html")
+	if _, err := os.Stat(p); err == nil {
+		return false, nil
+	} else if !os.IsNotExist(err) {
+		return false, err
+	}
+
+	v, ok := os.LookupEnv(FakeFrontendEnv)
+	if !ok || !(v == "1" || strings.ToLower(v) == "true") {
+		abs, _ := filepath.Abs(p)
+		return false, fmt.Errorf("%s not found; build the frontend or set %s=1", abs, FakeFrontendEnv)
+	}
+
+	if err := os.MkdirAll(filepath.Dir(p), 0o755); err != nil {
+		return false, fmt.Errorf("creating frontend dist directory: %w", err)
+	}
+
+	if err := os.WriteFile(p, []byte(placeholderHTML), 0o644); err != nil {
+		return false, fmt.Errorf("creating placeholder index.html: %w", err)
+	}
+
+	log.Println("Created placeholder", p)
+	return true, nil
 }
 
 // Some variables can always get initialized, so we do just that.
@@ -604,11 +657,19 @@ func checkGolangCiLintInstalled() {
 
 func (Check) Golangci() {
 	checkGolangCiLintInstalled()
+	if _, err := ensureFrontendDistIndex(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	runAndStreamOutput("golangci-lint", "run")
 }
 
 func (Check) GolangciFix() {
 	checkGolangCiLintInstalled()
+	if _, err := ensureFrontendDistIndex(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	runAndStreamOutput("golangci-lint", "run", "--fix")
 }
 
@@ -645,7 +706,15 @@ func (Build) Clean() error {
 // Builds a vikunja binary, ready to run
 func (Build) Build() {
 	mg.Deps(initVars)
+	created, err := ensureFrontendDistIndex()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	runAndStreamOutput("go", "build", Goflags[0], "-tags", Tags, "-ldflags", "-s -w "+Ldflags, "-o", Executable)
+	if created {
+		_ = os.Remove(filepath.Join(RootPath, "frontend", "dist", "index.html"))
+	}
 }
 
 func (Build) SaveVersionToFile() error {
@@ -724,6 +793,10 @@ func prepareXgo() {
 func runXgo(targets string) error {
 	mg.Deps(initVars)
 	checkAndInstallGoTool("xgo", "src.techknowlogick.com/xgo")
+	created, err := ensureFrontendDistIndex()
+	if err != nil {
+		return err
+	}
 
 	extraLdflags := `-linkmode external -extldflags "-static" `
 
@@ -752,6 +825,9 @@ func runXgo(targets string) error {
 
 			return moveFile(path, RootPath+"/"+DIST+"/binaries/"+info.Name())
 		})
+	}
+	if created {
+		_ = os.Remove(filepath.Join(RootPath, "frontend", "dist", "index.html"))
 	}
 	return nil
 }
