@@ -31,11 +31,37 @@ withDefaults(defineProps<{
 		height: 150px;
 
 		&.is-loading::after {
-			width: 3rem;
-			height: 3rem;
-			top: calc(50% - 1.5rem);
-			left: calc(50% - 1.5rem);
-			border-width: 3px;
+		width: 3rem;
+		height: 3rem;
+		top: calc(50% - 1.5rem);
+		left: calc(50% - 1.5rem);
+		border-width: 3px;
+		}
+		}
+
+	&.is-loading {
+		position: relative;
+		pointer-events: none;
+		opacity: 0.5;
+
+		&::after {
+		@include loader;
+		position: absolute;
+		top: calc(50% - 2.5rem);
+		left: calc(50% - 2.5rem);
+		width: 5rem;
+		height: 5rem;
+		border-width: 0.25rem;
+		}
+
+		&.is-loading-small {
+		&::after {
+		width: 1.5rem;
+		height: 1.5rem;
+		top: calc(50% - .75rem);
+		left: calc(50% - .75rem);
+		border-width: 2px;
+		}
 		}
 	}
 }

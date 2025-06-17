@@ -38,11 +38,13 @@ import PoweredByLink from './PoweredByLink.vue'
 import {useProjectStore} from '@/stores/projects'
 import {useLabelStore} from '@/stores/labels'
 import {PROJECT_VIEW_KINDS} from '@/modelTypes/IProjectView'
+import {useProvideHasBackground} from '@/composables/useHasBackground'
 
 const baseStore = useBaseStore()
 const currentProject = computed(() => baseStore.currentProject)
 const background = computed(() => baseStore.background)
 const logoVisible = computed(() => baseStore.logoVisible)
+useProvideHasBackground()
 
 const projectStore = useProjectStore()
 projectStore.loadAllProjects()

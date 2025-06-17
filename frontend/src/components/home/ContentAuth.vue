@@ -81,6 +81,7 @@ import {useProjectStore} from '@/stores/projects'
 
 import {useRouteWithModal} from '@/composables/useRouteWithModal'
 import {useRenewTokenOnFocus} from '@/composables/useRenewTokenOnFocus'
+import {useProvideHasBackground} from '@/composables/useHasBackground'
 
 const {routeWithModal, currentModal, closeModal} = useRouteWithModal()
 
@@ -88,6 +89,7 @@ const baseStore = useBaseStore()
 const background = computed(() => baseStore.background)
 const blurHash = computed(() => baseStore.blurHash)
 const menuActive = computed(() => baseStore.menuActive)
+useProvideHasBackground()
 
 function showKeyboardShortcuts() {
 	baseStore.setKeyboardShortcutsActive(true)

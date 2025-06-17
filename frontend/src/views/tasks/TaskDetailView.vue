@@ -1,6 +1,7 @@
 <template>
 	<div
 		class="loader-container task-view-container"
+		:data-has-background="hasBackground ? true : null"
 		:class="{
 			'is-loading': taskService.loading || !visible,
 			'is-modal': isModal,
@@ -641,6 +642,7 @@ import {useAuthStore} from '@/stores/auth'
 import {useBaseStore} from '@/stores/base'
 
 import {useTitle} from '@/composables/useTitle'
+import {useHasBackground} from '@/composables/useHasBackground'
 
 import {success} from '@/message'
 import type {Action as MessageAction} from '@/message'
@@ -664,6 +666,7 @@ const taskStore = useTaskStore()
 const kanbanStore = useKanbanStore()
 const authStore = useAuthStore()
 const baseStore = useBaseStore()
+const { hasBackground } = useHasBackground() || { hasBackground: false }
 
 const task = ref<ITask>(new TaskModel())
 const taskTitle = computed(() => task.value.title)
@@ -1171,4 +1174,9 @@ h3 .button {
 	margin: .5rem 0;
 	display: inline-block;
 }
+
+.link-share-container:not([data-has-background]) .task-view {
+	background: transparent;
+}
 </style>
+

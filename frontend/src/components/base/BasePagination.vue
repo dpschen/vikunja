@@ -3,6 +3,7 @@
 		v-if="totalPages > 1"
 		aria-label="pagination"
 		class="pagination is-centered p-4"
+		:data-has-background="hasBackground ? true : null"
 		role="navigation"
 	>
 		<slot
@@ -41,6 +42,7 @@
 
 <script lang="ts" setup>
 import {computed} from 'vue'
+import {useHasBackground} from '@/composables/useHasBackground'
 
 const props = defineProps<{
 	totalPages: number,
@@ -73,6 +75,7 @@ function createPagination(totalPages: number, currentPage: number) {
 }
 
 const pages = computed(() => createPagination(props.totalPages, props.currentPage))
+const { hasBackground } = useHasBackground() || { hasBackground: false }
 </script>
 
 <style lang="scss" scoped>
@@ -93,5 +96,10 @@ const pages = computed(() => createPagination(props.totalPages, props.currentPag
 		margin-top: 0;
 	}
 }
+	
+
+[data-has-background] .pagination-link:not(.is-current) {
+	background: var(--grey-100);
+}
 </style>
-  
+	

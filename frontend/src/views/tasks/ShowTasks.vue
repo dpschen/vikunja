@@ -245,4 +245,17 @@ watchEffect(() => setTitle(pageTitle.value))
 	margin: 3rem auto 0;
 	display: block;
 }
+
+.spinner.is-loading {
+	pointer-events: none;
+
+	&::after {
+		@include loader;
+		width: 2rem;
+		height: 2rem;
+		margin-left: calc(50% - 1rem);
+		margin-top: 1rem;
+		border-width: 0.25rem;
+	}
+}
 </style>
