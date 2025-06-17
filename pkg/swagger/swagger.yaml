@@ -470,6 +470,10 @@ definitions:
         maxLength: 250
         minLength: 1
         type: string
+      uid:
+        description: An opaque identifier for this project.
+        type: string
+        required: true
       updated:
         description: A timestamp when this project was last updated. You cannot change
           this value.
@@ -1042,6 +1046,11 @@ definitions:
         maxLength: 250
         minLength: 1
         type: string
+      uid:
+        description: An opaque identifier for this team.
+        type: string
+        required: true
+        required: true
       updated:
         description: A timestamp when this relation was last updated. You cannot change
           this value.
@@ -1159,6 +1168,9 @@ definitions:
         type: string
       right:
         $ref: '#/definitions/models.Right'
+      uid:
+        description: An opaque identifier for this team.
+        type: string
       updated:
         description: A timestamp when this relation was last updated. You cannot change
           this value.

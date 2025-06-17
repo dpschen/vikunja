@@ -195,10 +195,36 @@ func CreateTypesenseCollections() error {
 		},
 	}
 
+	projectSchema := &api.CollectionSchema{
+		Name: "projects",
+		Fields: []api.Field{
+			{Name: "id", Type: "string", Sort: pointer.True()},
+			{Name: "title", Type: "string", Sort: pointer.True()},
+			{Name: "uid", Type: "string", Sort: pointer.True()},
+		},
+	}
+
+	teamSchema := &api.CollectionSchema{
+		Name: "teams",
+		Fields: []api.Field{
+			{Name: "id", Type: "string", Sort: pointer.True()},
+			{Name: "name", Type: "string", Sort: pointer.True()},
+			{Name: "uid", Type: "string", Sort: pointer.True()},
+		},
+	}
+
 	// delete any collection which might exist
 	_, _ = typesenseClient.Collection("tasks").Delete(context.Background())
+	_, _ = typesenseClient.Collection("projects").Delete(context.Background())
+	_, _ = typesenseClient.Collection("teams").Delete(context.Background())
 
-	_, err := typesenseClient.Collections().Create(context.Background(), taskSchema)
+	if _, err := typesenseClient.Collections().Create(context.Background(), taskSchema); err != nil {
+		return err
+	}
+	if _, err := typesenseClient.Collections().Create(context.Background(), projectSchema); err != nil {
+		return err
+	}
+	_, err := typesenseClient.Collections().Create(context.Background(), teamSchema)
 	return err
 }
 
@@ -245,6 +271,58 @@ func ReindexAllTasks() (err error) {
 	}
 
 	return
+}
+
+func ReindexAllProjects() error {
+	if !config.TypesenseEnabled.GetBool() {
+		return nil
+	}
+
+	s := db.NewSession()
+	defer s.Close()
+
+	projects := make(map[int64]*Project)
+	if err := s.Find(&projects); err != nil {
+		return err
+	}
+
+	docs := []interface{}{}
+	for _, p := range projects {
+		docs = append(docs, map[string]interface{}{
+			"id":    fmt.Sprintf("%d", p.ID),
+			"title": p.Title,
+			"uid":   p.UID,
+		})
+	}
+
+	_, err := typesenseClient.Collection("projects").Documents().Import(context.Background(), docs, &api.ImportDocumentsParams{Action: pointer.String("upsert")})
+	return err
+}
+
+func ReindexAllTeams() error {
+	if !config.TypesenseEnabled.GetBool() {
+		return nil
+	}
+
+	s := db.NewSession()
+	defer s.Close()
+
+	teams := make(map[int64]*Team)
+	if err := s.Find(&teams); err != nil {
+		return err
+	}
+
+	docs := []interface{}{}
+	for _, t := range teams {
+		docs = append(docs, map[string]interface{}{
+			"id":   fmt.Sprintf("%d", t.ID),
+			"name": t.Name,
+			"uid":  t.UID,
+		})
+	}
+
+	_, err := typesenseClient.Collection("teams").Documents().Import(context.Background(), docs, &api.ImportDocumentsParams{Action: pointer.String("upsert")})
+	return err
 }
 
 func reindexTasksInTypesense(s *xorm.Session, tasks map[int64]*Task) (err error) {

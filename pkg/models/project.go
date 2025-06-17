@@ -39,6 +39,8 @@ import (
 type Project struct {
 	// The unique, numeric id of this project.
 	ID int64 `xorm:"bigint autoincr not null unique pk" json:"id" param:"project"`
+	// An opaque identifier for this project.
+	UID string `xorm:"varchar(26) not null unique" json:"uid" valid:"runelength(26|26);regexp(^[0-9A-HJKMNP-TV-Z]{26}$)" minLength:"26" maxLength:"26"`
 	// The title of the project. You'll see this in the overview.
 	Title string `xorm:"varchar(250) not null" json:"title" valid:"required,runelength(1|250)" minLength:"1" maxLength:"250"`
 	// The description of the project.
@@ -870,6 +872,9 @@ func CreateProject(s *xorm.Session, project *Project, auth web.Auth, createBackl
 	project.ID = 0
 	project.OwnerID = doer.ID
 	project.Owner = doer
+	if project.UID == "" {
+		project.UID = utils.NewULID()
+	}
 
 	err = checkProjectBeforeUpdateOrDelete(s, project)
 	if err != nil {

@@ -8310,6 +8310,11 @@ const docTemplate = `{
                     "maxLength": 250,
                     "minLength": 1
                 },
+                "uid": {
+                    "description": "An opaque identifier for this project.",
+                    "type": "string",
+                    "required": true
+                },
                 "updated": {
                     "description": "A timestamp when this project was last updated. You cannot change this value.",
                     "type": "string"
@@ -9050,6 +9055,11 @@ const docTemplate = `{
                     "maxLength": 250,
                     "minLength": 1
                 },
+                "uid": {
+                    "description": "An opaque identifier for this team.",
+                    "type": "string",
+                    "required": true
+                },
                 "updated": {
                     "description": "A timestamp when this relation was last updated. You cannot change this value.",
                     "type": "string"
@@ -9195,6 +9205,11 @@ const docTemplate = `{
                 },
                 "right": {
                     "$ref": "#/definitions/models.Right"
+                },
+                "uid": {
+                    "description": "An opaque identifier for this team.",
+                    "type": "string",
+                    "required": true
                 },
                 "updated": {
                     "description": "A timestamp when this relation was last updated. You cannot change this value.",

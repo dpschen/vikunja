@@ -77,6 +77,7 @@ func TestProject(t *testing.T) {
 			assert.Contains(t, rec.Body.String(), `"owner":{"id":1,"name":"","username":"user1",`)
 			assert.NotContains(t, rec.Body.String(), `"owner":{"id":2,"name":"","username":"user2",`)
 			assert.NotContains(t, rec.Body.String(), `"tasks":`)
+			assert.Contains(t, rec.Body.String(), `"uid":`)
 			assert.Equal(t, "2", rec.Result().Header.Get("x-max-right")) // User 1 is owner, so they should have admin rights.
 		})
 		t.Run("Nonexisting", func(t *testing.T) {

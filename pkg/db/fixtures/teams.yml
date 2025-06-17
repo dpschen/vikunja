@@ -1,41 +1,53 @@
 - id: 1
+  uid: 01JXY133YJ0KTDVW5GGQ2F7B7N
   name: testteam1
   description: Lorem Ipsum
   created_by_id: 1
 - id: 2
+  uid: 01JXY133YJ1KZPXW0XV3E0S3N7
   name: testteam2_read_only_on_project6
   created_by_id: 1
 - id: 3
+  uid: 01JXY133YJ10TCYB6PEZ0VRQFN
   name: testteam3_write_on_project7
   created_by_id: 1
 - id: 4
+  uid: 01JXY133YJ1DQYM9Q64AFX7S77
   name: testteam4_admin_on_project8
   created_by_id: 1
 - id: 8
+  uid: 01JXY133YK0CRQF7J0AQ6V5FEJ
   name: testteam8
   created_by_id: 7
 - id: 9
+  uid: 01JXY133YK1XP752XMYRCXMXEF
   name: testteam9
   created_by_id: 7
 - id: 10
+  uid: 01JXY133YK194F6YNMQ3W2QXMJ
   name: testteam10
   created_by_id: 7
 - id: 11
+  uid: 01JXY133YK02D0815Y8X7TYY34
   name: testteam11
   created_by_id: 7
 - id: 12
+  uid: 01JXY133YK070A17P7CWS2K26B
   name: testteam12
   created_by_id: 7
 - id: 13
+  uid: 01JXY133YK1XMJXWJRTGRE4G6N
   name: testteam13
   created_by_id: 7
   is_public: true
 - id: 14
+  uid: 01JXY133YK1FWDADBZ1BW4NZEY
   name: testteam14
   created_by_id: 7
   external_id: 14
   issuer: "https://some.issuer"
 - id: 15
+  uid: 01JXY133YK02ZPJ5MXSMJQM5F2
   name: testteam15
   created_by_id: 7
   external_id: 15
