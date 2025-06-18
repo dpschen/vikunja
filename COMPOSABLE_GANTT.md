@@ -78,6 +78,12 @@ A technical design doc (API spec + architecture diagram).
 A starter codebase scaffolded per above.
 
 Documentation site prototype with demos.
+## Key Research Takeaways
+
+- **Headless UI patterns** – "Built-in focus management, keyboard navigation, screen‑reader support, aria-attribute handling, and optional portals/transitions."【F:COMPOSABLE_GANTT.md†L103-L110】
+- **VueUse conventions** – "Prefer ref over reactive" and "Use configurableWindow, isSupported flags, and tryOnUnmounted" for clean, SSR-aware composables.【F:COMPOSABLE_GANTT.md†L115-L147】
+- **Accessibility strategies** – "Use focus/keyboard patterns (arrow keys to navigate bars, ESC to cancel drag)."【F:COMPOSABLE_GANTT.md†L355-L355】
+
 ChatGPT said:
 Here’s a refined survey of best practices from each codebase/guide:
 
