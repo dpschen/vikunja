@@ -9,3 +9,5 @@ This phase focuses on exploring best practices for headless component design and
 
 ## Task
 - Expand this document with deeper research from `COMPOSABLE_GANTT.md` and other sources, detailing specific takeaways and references for each bullet point.
+
+Back to [index](index.md)

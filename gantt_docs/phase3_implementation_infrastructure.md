@@ -9,3 +9,5 @@
 
 ## Task
 - Expand on build tools, directory conventions, and accessibility patterns using `COMPOSABLE_GANTT.md` and additional references.
+
+Back to [index](index.md)
