@@ -38,3 +38,9 @@ This documents troubleshooting steps when running Cypress locally.
 
 If Chrome is missing, the command will fail. After the run, stop the API and preview processes with `kill %1`.
 If the test fails, check `/tmp/cypress.log` for details.
+
+## Ensure a fresh binary cache
+
+```bash
+npx --no-install cypress cache clear
+```
