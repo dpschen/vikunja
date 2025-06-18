@@ -8,3 +8,5 @@ As suggested by the concept and `COMPOSABLE_GANTT.md`:
 
 ## Task
 - Create an expanded documentation plan referencing `COMPOSABLE_GANTT.md` and existing Storybook/VitePress setups.
+
+Back to [index](index.md)

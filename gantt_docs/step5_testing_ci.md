@@ -8,3 +8,5 @@ Implementation also calls for automated checks:
 
 ## Task
 - Provide a full CI configuration outline using `COMPOSABLE_GANTT.md` as a starting point and referencing common GitHub Actions patterns.
+
+Back to [index](index.md)
