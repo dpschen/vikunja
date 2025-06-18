@@ -1,6 +1,6 @@
 Goal: Design and build a fully headless, composable Gantt-chart library for Vue 3—drawing inspiration from VueUse and Reka UI—that reproduces all core features of vue-ganttastic with a fresh, ergonomic API.
 
-Phase 1: Landscape & Style Research
+## Phase 1: Landscape & Style Research
 
 Survey “headless” component best practices—study Headless UI’s unstyled primitives and accessibility model 
 headlessui.com
@@ -19,7 +19,7 @@ github.com
 github.com
 .
 
-Phase 2: API & Architecture Design
+## Phase 2: API & Architecture Design
 
 Draft a composable API—e.g. useGantt(options), <GanttChart>, <GanttRow> hooks and renderless primitives.
 
@@ -29,7 +29,7 @@ Define headless primitives—time-scale generator, bar manager, pointer events, 
 
 Plan TypeScript definitions and JSDoc for full IDE support.
 
-Phase 3: Implementation & Infrastructure
+## Phase 3: Implementation & Infrastructure
 
 Tooling: Vite + TypeScript + Vue 3 + Vitest + Playwright.
 
@@ -47,7 +47,7 @@ Styling: unstyled output, class passthrough, data-state attributes for CSS targe
 reka-ui.com
 .
 
-Phase 4: Testing & Quality
+## Phase 4: Testing & Quality
 
 Unit tests for composables (Vitest).
 
@@ -59,7 +59,7 @@ vuejs.org
 
 CI/CD: GitHub Actions for build, test, publish.
 
-Phase 5: Documentation & Distribution
+## Phase 5: Documentation & Distribution
 
 Interactive docs with live examples (VitePress + VueUse demos style).
 
