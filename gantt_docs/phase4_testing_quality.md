@@ -9,3 +9,5 @@ Testing and quality assurance goals from `COMPOSABLE_GANTT.md`:
 
 ## Task
 - Build out a complete testing strategy referencing `COMPOSABLE_GANTT.md` and other resources on Vue testing best practices.
+
+Back to [index](index.md)

@@ -9,3 +9,5 @@ The final phase covers how to document and ship the library. Notes from `COMPOSA
 
 ## Task
 - Elaborate on distribution workflow and documentation site structure using information from `COMPOSABLE_GANTT.md` and related resources.
+
+Back to [index](index.md)
