@@ -67,6 +67,8 @@ Storybook stories for each primitive and composite.
 
 Package to npm with proper exports, side-effect-free entrypoints, type declarations.
 
+Generate TypeScript `.d.ts` files and bundle them with the library.
+
 Release plan: semantic versioning, CHANGELOG, migration guide from vue-ganttastic.
 
 Deliverable:
