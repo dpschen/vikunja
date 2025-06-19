@@ -46,6 +46,7 @@ headlessui.com
 Styling: unstyled output, class passthrough, data-state attributes for CSS targeting—as Reka UI recommends 
 reka-ui.com
 .
+Localization: reuse Vikunja's pkg/translation pattern with language JSON files and t()/tp() helpers for strings.
 
 ## Phase 4: Testing & Quality
 
