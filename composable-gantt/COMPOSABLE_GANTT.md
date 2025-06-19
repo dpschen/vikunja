@@ -56,6 +56,7 @@ headlessui.com
 Styling: unstyled output, class passthrough, data-state attributes for CSS targeting—as Reka UI recommends
 reka-ui.com
 .
+Localization: reuse Vikunja's pkg/translation pattern with language JSON files and t()/tp() helpers for strings.
 
 ### Success Criteria
 - Repository scaffold builds successfully using Vite and Vitest.
