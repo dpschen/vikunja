@@ -49,3 +49,35 @@ pnpm run build
 ```shell
 pnpm run lint
 ```
+
+## Project structure
+
+```
+src
+├── assets/        # static assets
+├── components/    # reusable Vue components
+│   ├── base/
+│   ├── date/
+│   └── ...
+├── composables/   # shared composable functions
+├── constants/     # constant values
+├── directives/    # custom directives
+├── helpers/       # utility helpers
+├── models/        # domain models
+├── services/      # API wrappers
+├── stores/        # Pinia stores
+├── views/         # route views
+├── router/        # vue-router setup
+└── ...
+```
+
+## Tooling
+
+This frontend uses [Vite](https://vitejs.dev/) for the build
+pipeline and [Vitest](https://vitest.dev/) for unit tests.
+
+```shell
+pnpm run dev      # start Vite dev server
+pnpm run build    # create production bundle
+pnpm test:unit    # run Vitest unit tests
+```
