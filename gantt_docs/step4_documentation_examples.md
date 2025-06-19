@@ -8,3 +8,7 @@ As suggested by the concept and `COMPOSABLE_GANTT.md`:
 
 ## Task
 - Create an expanded documentation plan referencing `COMPOSABLE_GANTT.md` and existing Storybook/VitePress setups.
+- [ ] Outline Storybook stories to include
+- [ ] Draft VitePress documentation pages
+- [ ] Provide example integrations for common use cases
+- [ ] Link design rationale from the concept document

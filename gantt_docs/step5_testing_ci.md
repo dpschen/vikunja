@@ -8,3 +8,7 @@ Implementation also calls for automated checks:
 
 ## Task
 - Provide a full CI configuration outline using `COMPOSABLE_GANTT.md` as a starting point and referencing common GitHub Actions patterns.
+- [ ] List lint, test, and build job steps
+- [ ] Include example workflow YAML
+- [ ] Mention test coverage reporting
+- [ ] Show how to add status badges

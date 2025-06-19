@@ -9,5 +9,9 @@
 
 ## Task
 - Expand on build tools, directory conventions, and accessibility patterns using `COMPOSABLE_GANTT.md` and additional references.
+- [ ] Detail Vite, TypeScript, and testing tool configuration
+- [ ] Provide a sample directory layout
+- [ ] Describe ARIA roles and keyboard navigation patterns
+- [ ] Include example configuration snippets
 
 Back to [index](index.md)

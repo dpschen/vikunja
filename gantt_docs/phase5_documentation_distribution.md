@@ -60,5 +60,9 @@ export default defineConfig({
 
 ## Task
 - Elaborate on distribution workflow and documentation site structure using information from `COMPOSABLE_GANTT.md` and related resources.
+- [ ] Outline VitePress documentation sections
+- [ ] Summarize npm release steps and versioning
+- [ ] Provide CHANGELOG and migration guide templates
+- [ ] Reference Storybook and example demos
 
 Back to [index](index.md)

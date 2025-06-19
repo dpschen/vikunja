@@ -8,3 +8,7 @@ From the implementation concept derived from `COMPOSABLE_GANTT.md`:
 
 ## Task
 - Extend this setup guide with concrete initialization commands and folder layouts, citing `COMPOSABLE_GANTT.md` along with other setup best practices.
+- [ ] List commands to bootstrap the project
+- [ ] Show recommended folder structure
+- [ ] Reference configuration from `COMPOSABLE_GANTT.md`
+- [ ] Mention styling guidelines for integrators

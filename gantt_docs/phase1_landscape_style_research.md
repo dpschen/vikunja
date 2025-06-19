@@ -40,5 +40,10 @@ rendering and behavior.
 
 ## Task
 - Expand this document with deeper research from `COMPOSABLE_GANTT.md` and other sources, detailing specific takeaways and references for each bullet point.
+- [ ] Document findings from Headless UI
+- [ ] Summarize VueUse guidelines
+- [ ] Outline Reka UI class passthrough patterns
+- [ ] Describe vue-ganttastic slot usage
+- [ ] Provide references to each source
 
 Back to [index](index.md)

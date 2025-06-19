@@ -9,5 +9,9 @@ In this phase the project defines the core composables and renderless components
 
 ## Task
 - Produce a more detailed design document using `COMPOSABLE_GANTT.md` as the primary reference, expanding on component APIs and architectural diagrams.
+- [ ] Outline core composable functions and renderless components
+- [ ] Document props, slots, and emitted events
+- [ ] Include architecture diagrams for data flow and interactions
+- [ ] Provide TypeScript definition examples
 
 Back to [index](index.md)

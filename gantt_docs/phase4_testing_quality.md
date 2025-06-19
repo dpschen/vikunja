@@ -56,5 +56,9 @@ test('bars can be dragged', async ({ page }) => {
 
 ## Task
 - Build out a complete testing strategy referencing `COMPOSABLE_GANTT.md` and other resources on Vue testing best practices.
+- [ ] Define unit and end-to-end test requirements
+- [ ] Document linting and formatting checks
+- [ ] Outline GitHub Actions workflow steps
+- [ ] Include tips for mocking and headless browser usage
 
 Back to [index](index.md)
