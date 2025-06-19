@@ -14,10 +14,15 @@ Review Reka UI’s styling approach—unstyled primitives, class-through APIs, W
 reka-ui.com
 .
 
-Inspect vue-ganttastic internals—API surface (<g-gantt-chart>, <g-gantt-row>), TypeScript types, event handlers, slot usage, chart/bar configuration, date handling 
+Inspect vue-ganttastic internals—API surface (<g-gantt-chart>, <g-gantt-row>), TypeScript types, event handlers, slot usage, chart/bar configuration, date handling
 github.com
 github.com
 .
+
+### Success Criteria
+- Comparison of Headless UI, VueUse and Reka UI captured in a concise research report.
+- Analysis of vue-ganttastic’s API and styling documented with key takeaways.
+- Clear design direction recorded for the upcoming phases.
 
 ## Phase 2: API & Architecture Design
 
@@ -28,6 +33,11 @@ Specify prop and slot conventions—option objects for start/end dates, precisio
 Define headless primitives—time-scale generator, bar manager, pointer events, keyboard interactions, accessibility states.
 
 Plan TypeScript definitions and JSDoc for full IDE support.
+
+### Success Criteria
+- API specification and architecture diagram reviewed and agreed upon.
+- Initial TypeScript interfaces drafted and verified in a prototype.
+- Example snippets compile using the proposed API.
 
 ## Phase 3: Implementation & Infrastructure
 
@@ -43,9 +53,14 @@ Accessibility: add aria- roles/states, keyboard navigation, focus management per
 headlessui.com
 .
 
-Styling: unstyled output, class passthrough, data-state attributes for CSS targeting—as Reka UI recommends 
+Styling: unstyled output, class passthrough, data-state attributes for CSS targeting—as Reka UI recommends
 reka-ui.com
 .
+
+### Success Criteria
+- Repository scaffold builds successfully using Vite and Vitest.
+- Core composables and components compile without lint errors.
+- CI pipeline runs linting and unit tests on each push.
 
 ## Phase 4: Testing & Quality
 
@@ -58,6 +73,11 @@ vuejs.org
 .
 
 CI/CD: GitHub Actions for build, test, publish.
+
+### Success Criteria
+- Unit and E2E tests cover all major features and pass consistently.
+- Linting and formatting tasks run clean in the CI pipeline.
+- Test coverage meets the agreed threshold.
 
 ## Phase 5: Documentation & Distribution
 
@@ -80,6 +100,11 @@ A technical design doc (API spec + architecture diagram).
 A starter codebase scaffolded per above.
 
 Documentation site prototype with demos.
+
+### Success Criteria
+- Documentation site showcases every primitive with interactive examples.
+- Package published to npm under semantic versioning.
+- CHANGELOG and migration guide available for the initial release.
 ChatGPT said:
 Here’s a refined survey of best practices from each codebase/guide:
 
