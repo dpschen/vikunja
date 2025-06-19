@@ -49,3 +49,17 @@ pnpm run build
 ```shell
 pnpm run lint
 ```
+
+### Unit tests
+
+Run unit tests once:
+
+```shell
+pnpm run test:unit
+```
+
+For watch mode during development use:
+
+```shell
+pnpm run test:unit:dev
+```
