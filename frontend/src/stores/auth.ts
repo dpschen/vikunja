@@ -50,8 +50,8 @@ function redirectToSpecifiedProvider() {
 	}
 }
 
-function getLoggedInVia(): string | null {
-	return localStorage.getItem('loggedInViaProvider')
+export function getLoggedInVia(): string | null {
+        return localStorage.getItem('loggedInViaProvider')
 }
 
 function setLoggedInVia(provider: string | null): void {
@@ -75,7 +75,9 @@ export const useAuthStore = defineStore('auth', () => {
 	
 	const lastUserInfoRefresh = ref<Date | null>(null)
 	const isLoading = ref(false)
-	const isLoadingGeneralSettings = ref(false)
+       const isLoadingGeneralSettings = ref(false)
+
+       const loggedInVia = computed(() => getLoggedInVia())
 
 	const authUser = computed(() => {
 		return authenticated.value && (
@@ -453,7 +455,8 @@ export const useAuthStore = defineStore('auth', () => {
 
 		authUser,
 		authLinkShare,
-		userDisplayName,
+               userDisplayName,
+               loggedInVia,
 
 		isLoading: readonly(isLoading),
 		setIsLoading,
