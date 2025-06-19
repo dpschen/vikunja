@@ -24,35 +24,48 @@ export interface GanttFilters {
 	showTasksWithoutDates: boolean
 }
 
-const DEFAULT_SHOW_TASKS_WITHOUT_DATES = false
+export const DEFAULT_SHOW_TASKS_WITHOUT_DATES = false
 
 const DEFAULT_DATEFROM_DAY_OFFSET = -15
 const DEFAULT_DATETO_DAY_OFFSET = +55
 
 const now = new Date()
 
-function getDefaultDateFrom() {
-	return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATEFROM_DAY_OFFSET).toISOString()
+export function getDefaultDateFrom() {
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATEFROM_DAY_OFFSET).toISOString()
 }
 
-function getDefaultDateTo() {
+export function getDefaultDateTo() {
         return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATETO_DAY_OFFSET).toISOString()
 }
 
-const ganttRouteParamsSchema = object({
+export const ganttRouteParamsSchema = object({
        projectId: coerce.number().int(),
        viewId: coerce.number().int(),
 })
 
-const ganttRouteQuerySchema = object({
+export const ganttRouteQuerySchema = object({
        dateFrom: preprocess((v: unknown) => parseDateProp(v as string | undefined), string().default(getDefaultDateFrom())),
        dateTo: preprocess((v: unknown) => parseDateProp(v as string | undefined), string().default(getDefaultDateTo())),
-       showTasksWithoutDates: preprocess((v: unknown) => parseBooleanProp(v as string), boolean().default(DEFAULT_SHOW_TASKS_WITHOUT_DATES)),
+       showTasksWithoutDates: preprocess((v: unknown) => {
+               const str = v as string | undefined
+               if (str === 'true' || str === '1') return true
+               if (str === 'false' || str === '0') return false
+               return undefined
+       }, boolean().default(DEFAULT_SHOW_TASKS_WITHOUT_DATES)),
 })
 
-function ganttRouteToFilters(route: Partial<RouteLocationNormalized>): GanttFilters {
-       const params = ganttRouteParamsSchema.parse(route.params ?? {})
-       const query = ganttRouteQuerySchema.parse(route.query ?? {})
+export function ganttRouteToFilters(route: Partial<RouteLocationNormalized>): GanttFilters {
+       const paramsResult = ganttRouteParamsSchema.safeParse(route.params ?? {})
+       const params = paramsResult.success ? paramsResult.data : {projectId: 0, viewId: 0}
+
+       const queryResult = ganttRouteQuerySchema.safeParse(route.query ?? {})
+       const query = queryResult.success ? queryResult.data : {
+               dateFrom: getDefaultDateFrom(),
+               dateTo: getDefaultDateTo(),
+               showTasksWithoutDates: DEFAULT_SHOW_TASKS_WITHOUT_DATES,
+       }
+
        return {
                projectId: params.projectId,
                viewId: params.viewId,
@@ -62,14 +75,14 @@ function ganttRouteToFilters(route: Partial<RouteLocationNormalized>): GanttFilt
        }
 }
 
-function ganttGetDefaultFilters(route: Partial<RouteLocationNormalized>): GanttFilters {
+export function ganttGetDefaultFilters(route: Partial<RouteLocationNormalized>): GanttFilters {
 	return ganttRouteToFilters({params: {
 		projectId: route.params?.projectId as string,
 		viewId: route.params?.viewId as string,
 	}})
 }
 
-function ganttFiltersToRoute(filters: GanttFilters): RouteLocationRaw {
+export function ganttFiltersToRoute(filters: GanttFilters): RouteLocationRaw {
        const params = ganttRouteParamsSchema.parse({
                projectId: filters.projectId,
                viewId: filters.viewId,
@@ -101,7 +114,7 @@ function ganttFiltersToRoute(filters: GanttFilters): RouteLocationRaw {
        }
 }
 
-function ganttFiltersToApiParams(filters: GanttFilters): TaskFilterParams {
+export function ganttFiltersToApiParams(filters: GanttFilters): TaskFilterParams {
        return {
                ...getDefaultTaskFilterParams(),
                sort_by: ['start_date', 'done', 'id'],
