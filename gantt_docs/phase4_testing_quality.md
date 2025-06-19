@@ -6,6 +6,7 @@ Testing and quality assurance goals from `COMPOSABLE_GANTT.md`:
 - End-to-end tests for interactive behavior using Playwright.
 - Apply ESLint, Prettier, and TypeScript rules following the Vue style guide.
 - Configure GitHub Actions for build, test, and publishing workflows.
+- Target at least **80% unit-test coverage** using Vitest's coverage reports.
 
 ## Example configuration
 
