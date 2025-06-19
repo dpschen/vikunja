@@ -9,5 +9,8 @@
 
 ## Task
 - Expand on build tools, directory conventions, and accessibility patterns using `COMPOSABLE_GANTT.md` and additional references.
+- [ ] Build tool configuration overview
+- [ ] Recommended directory layout
+- [ ] Accessibility checklist for primitives
 
 Back to [index](index.md)

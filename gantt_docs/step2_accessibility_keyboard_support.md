@@ -8,5 +8,8 @@ Based on the concept and `COMPOSABLE_GANTT.md`:
 
 ## Task
 - Develop a comprehensive accessibility guide referencing `COMPOSABLE_GANTT.md` and WAI-ARIA resources, covering all keyboard interactions and ARIA roles.
+- [ ] ARIA role mapping table
+- [ ] Keyboard interaction matrix
+- [ ] Focus management examples
 
 Back to [index](index.md)

@@ -56,5 +56,8 @@ test('bars can be dragged', async ({ page }) => {
 
 ## Task
 - Build out a complete testing strategy referencing `COMPOSABLE_GANTT.md` and other resources on Vue testing best practices.
+- [ ] Vitest unit test examples
+- [ ] Playwright scenario samples
+- [ ] GitHub Actions workflow snippet
 
 Back to [index](index.md)
