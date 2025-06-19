@@ -3,7 +3,6 @@ import type {RouteLocationNormalized, RouteLocationRaw} from 'vue-router'
 
 import {isoToKebabDate} from '@/helpers/time/isoToKebabDate'
 import {parseDateProp} from '@/helpers/time/parseDateProp'
-import {parseBooleanProp} from '@/helpers/time/parseBooleanProp'
 import {object, coerce, preprocess, string, boolean} from 'zod'
 import {useRouteFilters} from '@/composables/useRouteFilters'
 import {useGanttTaskList} from './useGanttTaskList'
@@ -29,14 +28,14 @@ export const DEFAULT_SHOW_TASKS_WITHOUT_DATES = false
 const DEFAULT_DATEFROM_DAY_OFFSET = -15
 const DEFAULT_DATETO_DAY_OFFSET = +55
 
-const now = new Date()
-
 export function getDefaultDateFrom() {
-        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATEFROM_DAY_OFFSET).toISOString()
+       const now = new Date()
+       return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATEFROM_DAY_OFFSET).toISOString()
 }
 
 export function getDefaultDateTo() {
-        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATETO_DAY_OFFSET).toISOString()
+       const now = new Date()
+       return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATETO_DAY_OFFSET).toISOString()
 }
 
 export const ganttRouteParamsSchema = object({
