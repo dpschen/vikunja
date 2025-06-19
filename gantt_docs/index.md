@@ -15,3 +15,4 @@ This directory hosts summary documents for each project phase and implementation
 - [Step 3: Customization & Extensibility](step3_customization_extensibility.md)
 - [Step 4: Documentation & Examples](step4_documentation_examples.md)
 - [Step 5: Testing & CI](step5_testing_ci.md)
+- [Layered Architecture Code Examples](layer_code_examples.md)
