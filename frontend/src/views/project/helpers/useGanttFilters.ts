@@ -4,14 +4,15 @@ import type {RouteLocationNormalized, RouteLocationRaw} from 'vue-router'
 import {isoToKebabDate} from '@/helpers/time/isoToKebabDate'
 import {parseDateProp} from '@/helpers/time/parseDateProp'
 import {parseBooleanProp} from '@/helpers/time/parseBooleanProp'
+import {object, coerce, preprocess, string, boolean} from 'zod'
 import {useRouteFilters} from '@/composables/useRouteFilters'
 import {useGanttTaskList} from './useGanttTaskList'
 
 import type {IProject} from '@/modelTypes/IProject'
 import type {TaskFilterParams} from '@/services/taskCollection'
+import {getDefaultTaskFilterParams} from '@/services/taskCollection'
 
 import type {DateISO} from '@/types/DateISO'
-import type {DateKebab} from '@/types/DateKebab'
 import type {IProjectView} from '@/modelTypes/IProjectView'
 
 // convenient internal filter object
@@ -35,19 +36,30 @@ function getDefaultDateFrom() {
 }
 
 function getDefaultDateTo() {
-	return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATETO_DAY_OFFSET).toISOString()
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate() + DEFAULT_DATETO_DAY_OFFSET).toISOString()
 }
 
-// FIXME: use zod for this
+const ganttRouteParamsSchema = object({
+       projectId: coerce.number().int(),
+       viewId: coerce.number().int(),
+})
+
+const ganttRouteQuerySchema = object({
+       dateFrom: preprocess((v: unknown) => parseDateProp(v as string | undefined), string().default(getDefaultDateFrom())),
+       dateTo: preprocess((v: unknown) => parseDateProp(v as string | undefined), string().default(getDefaultDateTo())),
+       showTasksWithoutDates: preprocess((v: unknown) => parseBooleanProp(v as string), boolean().default(DEFAULT_SHOW_TASKS_WITHOUT_DATES)),
+})
+
 function ganttRouteToFilters(route: Partial<RouteLocationNormalized>): GanttFilters {
-	const ganttRoute = route
-	return {
-		projectId: Number(ganttRoute.params?.projectId),
-		viewId: Number(ganttRoute.params?.viewId),
-		dateFrom: parseDateProp(ganttRoute.query?.dateFrom as DateKebab) || getDefaultDateFrom(),
-		dateTo: parseDateProp(ganttRoute.query?.dateTo as DateKebab) || getDefaultDateTo(),
-		showTasksWithoutDates: parseBooleanProp(ganttRoute.query?.showTasksWithoutDates as string) || DEFAULT_SHOW_TASKS_WITHOUT_DATES,
-	}
+       const params = ganttRouteParamsSchema.parse(route.params ?? {})
+       const query = ganttRouteQuerySchema.parse(route.query ?? {})
+       return {
+               projectId: params.projectId,
+               viewId: params.viewId,
+               dateFrom: query.dateFrom,
+               dateTo: query.dateTo,
+               showTasksWithoutDates: query.showTasksWithoutDates,
+       }
 }
 
 function ganttGetDefaultFilters(route: Partial<RouteLocationNormalized>): GanttFilters {
@@ -57,40 +69,46 @@ function ganttGetDefaultFilters(route: Partial<RouteLocationNormalized>): GanttF
 	}})
 }
 
-// FIXME: use zod for this
 function ganttFiltersToRoute(filters: GanttFilters): RouteLocationRaw {
-	let query: Record<string, string> = {}
-	if (
-		filters.dateFrom !== getDefaultDateFrom() ||
-		filters.dateTo !== getDefaultDateTo()
-	) {
-		query = {
-			dateFrom: isoToKebabDate(filters.dateFrom),
-			dateTo: isoToKebabDate(filters.dateTo),
-		}
-	}
+       const params = ganttRouteParamsSchema.parse({
+               projectId: filters.projectId,
+               viewId: filters.viewId,
+       })
 
-	if (filters.showTasksWithoutDates) {
-		query.showTasksWithoutDates = String(filters.showTasksWithoutDates)
-	}
+       const queryObj = ganttRouteQuerySchema.parse({
+               dateFrom: isoToKebabDate(filters.dateFrom),
+               dateTo: isoToKebabDate(filters.dateTo),
+               showTasksWithoutDates: String(filters.showTasksWithoutDates),
+       })
 
-	return {
-		name: 'project.view',
-		params: {
-			projectId: filters.projectId,
-			viewId: filters.viewId,
-		},
-		query,
-	}
+       const query: Record<string, string> = {}
+       if (
+               queryObj.dateFrom !== getDefaultDateFrom() ||
+               queryObj.dateTo !== getDefaultDateTo()
+       ) {
+               query.dateFrom = isoToKebabDate(filters.dateFrom)
+               query.dateTo = isoToKebabDate(filters.dateTo)
+       }
+
+       if (queryObj.showTasksWithoutDates) {
+               query.showTasksWithoutDates = String(queryObj.showTasksWithoutDates)
+       }
+
+       return {
+               name: 'project.view',
+               params,
+               query,
+       }
 }
 
 function ganttFiltersToApiParams(filters: GanttFilters): TaskFilterParams {
-	return {
-		sort_by: ['start_date', 'done', 'id'],
-		order_by: ['asc', 'asc', 'desc'],
-		filter: 'start_date >= "' + isoToKebabDate(filters.dateFrom) + '" && start_date <= "' + isoToKebabDate(filters.dateTo) + '"',
-		filter_include_nulls: filters.showTasksWithoutDates,
-	}
+       return {
+               ...getDefaultTaskFilterParams(),
+               sort_by: ['start_date', 'done', 'id'],
+               order_by: ['asc', 'asc', 'desc'],
+               filter: 'start_date >= "' + isoToKebabDate(filters.dateFrom) + '" && start_date <= "' + isoToKebabDate(filters.dateTo) + '"',
+               filter_include_nulls: filters.showTasksWithoutDates,
+       }
 }
 
 export type UseGanttFiltersReturn =
