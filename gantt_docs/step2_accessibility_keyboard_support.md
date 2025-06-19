@@ -8,6 +8,9 @@ Based on the concept and `COMPOSABLE_GANTT.md`:
 
 ## Task
 - Develop a comprehensive accessibility guide referencing `COMPOSABLE_GANTT.md` and WAI-ARIA resources, covering all keyboard interactions and ARIA roles.
+- [ ] ARIA role mapping table
+- [ ] Keyboard interaction matrix
+- [ ] Focus management examples
 
 ## Testing with VoiceOver or NVDA
 - On macOS, enable VoiceOver with `Cmd-F5` and use Control+Option+arrow keys to navigate the grid. Ensure row, column and selection information is announced.

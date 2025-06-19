@@ -40,5 +40,8 @@ rendering and behavior.
 
 ## Task
 - Expand this document with deeper research from `COMPOSABLE_GANTT.md` and other sources, detailing specific takeaways and references for each bullet point.
+- [ ] Research summary covering headless libraries
+- [ ] Styling comparison notes
+- [ ] Reference links for further reading
 
 Back to [index](index.md)

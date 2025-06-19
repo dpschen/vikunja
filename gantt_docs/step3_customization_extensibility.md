@@ -8,5 +8,8 @@ This step ensures that users can extend the library. Notes from `COMPOSABLE_GANT
 
 ## Task
 - Write an extended customization guide referencing `COMPOSABLE_GANTT.md` and other libraries that support composable customization.
+- [ ] Configurable options reference
+- [ ] Tailwind wrapper example
+- [ ] Customization demo
 
 Back to [index](index.md)

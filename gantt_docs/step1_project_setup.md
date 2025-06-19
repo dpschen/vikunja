@@ -8,5 +8,8 @@ From the implementation concept derived from `COMPOSABLE_GANTT.md`:
 
 ## Task
 - Extend this setup guide with concrete initialization commands and folder layouts, citing `COMPOSABLE_GANTT.md` along with other setup best practices.
+- [ ] Vite initialization steps
+- [ ] Directory scaffold diagram
+- [ ] Minimal usage example
 
 Back to [index](index.md)

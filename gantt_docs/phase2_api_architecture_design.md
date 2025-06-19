@@ -9,5 +9,8 @@ In this phase the project defines the core composables and renderless components
 
 ## Task
 - Produce a more detailed design document using `COMPOSABLE_GANTT.md` as the primary reference, expanding on component APIs and architectural diagrams.
+- [ ] API specification with props and events
+- [ ] Component and slot diagrams
+- [ ] Typed interface definitions
 
 Back to [index](index.md)
