@@ -26,7 +26,7 @@
 				v-if="isExternalUser"
 				class="help"
 			>
-				{{ $t('user.settings.general.externalUserNameChange', {provider: authStore.info.authProvider}) }}
+				{{ $t('user.settings.general.externalUserNameChange', {provider: loginProvider}) }}
 			</p>
 		</div>
 		<div class="field">
@@ -252,7 +252,7 @@ export default {name: 'UserSettingsGeneral'}
 </script>
 
 <script setup lang="ts">
-import {computed, watch, ref} from 'vue'
+import {computed, watch, ref, type Ref} from 'vue'
 import {useI18n} from 'vue-i18n'
 
 import {PrefixMode} from '@/modules/parseTaskText'
@@ -267,8 +267,9 @@ import {AuthenticatedHTTPFactory} from '@/helpers/fetcher'
 import {useTitle} from '@/composables/useTitle'
 
 import {useProjectStore} from '@/stores/projects'
-import {useAuthStore} from '@/stores/auth'
+import {useAuthStore, getLoggedInVia} from '@/stores/auth'
 import type {IUserSettings} from '@/modelTypes/IUserSettings'
+import type {IProject} from '@/modelTypes/IProject'
 import {isSavedFilter} from '@/services/savedFilter'
 import {DEFAULT_PROJECT_VIEW_SETTINGS} from '@/modelTypes/IProjectView'
 import {PRIORITIES} from '@/constants/priorities'
@@ -285,6 +286,7 @@ const colorSchemeSettings = computed(() => ({
 }))
 
 const authStore = useAuthStore()
+const loginProvider = computed(() => getLoggedInVia())
 
 const settings = ref<IUserSettings>({
 	...authStore.settings,
@@ -309,8 +311,8 @@ function useAvailableTimezones(settingsRef: Ref<IUserSettings>) {
 		.then(r => {
 			if (r.data) {
 				// Transform timezones into objects with value/label pairs
-				availableTimezones.value = r.data
-					.sort((a, b) => a.localeCompare(b))
+                               availableTimezones.value = r.data
+                                       .sort((a: string, b: string) => a.localeCompare(b))
 					.map((tz: string) => ({
 						value: tz,
 						label: tz.replace(/_/g, ' '),
@@ -369,7 +371,7 @@ const availableLanguageOptions = ref(
 		.sort((a, b) => a.title.localeCompare(b.title)),
 )
 
-const isExternalUser = computed(() => !authStore.info.isLocalUser)
+const isExternalUser = computed(() => !authStore.info?.isLocalUser)
 
 watch(
 	() => authStore.settings,
@@ -384,25 +386,29 @@ watch(
 )
 
 const projectStore = useProjectStore()
-const defaultProject = computed({
-	get: () => projectStore.projects[settings.value.defaultProjectId],
-	set(l) {
-		settings.value.defaultProjectId = l ? l.id : DEFAULT_PROJECT_ID
-	},
+const defaultProject = computed<IProject>({
+       get: () => projectStore.projects[(settings.value.defaultProjectId ?? DEFAULT_PROJECT_ID) as IProject['id']] as IProject,
+       set(l: IProject | undefined) {
+               settings.value.defaultProjectId = l ? l.id : DEFAULT_PROJECT_ID
+       },
 })
-const filterUsedInOverview = computed({
-	get: () => projectStore.projects[settings.value.frontendSettings.filterIdUsedOnOverview],
-	set(l) {
-		settings.value.frontendSettings.filterIdUsedOnOverview = l ? l.id : null
-	},
+const filterUsedInOverview = computed<IProject | undefined>({
+       get: () =>
+               settings.value.frontendSettings.filterIdUsedOnOverview === null
+                       ? undefined
+                       : projectStore.projects[settings.value.frontendSettings.filterIdUsedOnOverview as IProject['id']] as IProject,
+       set(l: IProject | undefined) {
+               settings.value.frontendSettings.filterIdUsedOnOverview = l ? l.id : null
+       },
 })
-const hasFilters = computed(() => typeof projectStore.projectsArray.find(p => isSavedFilter(p)) !== 'undefined')
+const hasFilters = computed(() => typeof projectStore.projectsArray.find(p => isSavedFilter(p as IProject)) !== 'undefined')
 const loading = computed(() => authStore.isLoadingGeneralSettings)
 
 async function updateSettings() {
-	await authStore.saveUserSettings({
-		settings: {...settings.value},
-	})
+       await authStore.saveUserSettings({
+               settings: {...settings.value},
+               showMessage: true,
+       })
 }
 </script>
 
