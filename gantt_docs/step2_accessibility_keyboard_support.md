@@ -12,3 +12,7 @@ Based on the concept and `COMPOSABLE_GANTT.md`:
 ## Testing with VoiceOver or NVDA
 - On macOS, enable VoiceOver with `Cmd-F5` and use Control+Option+arrow keys to navigate the grid. Ensure row, column and selection information is announced.
 - On Windows, start NVDA with `Ctrl-Alt-N` and use the arrow keys to move through cells. Verify that each cell's text and `aria-selected` state are read aloud.
+
+----
+
+Back to [index](index.md)
