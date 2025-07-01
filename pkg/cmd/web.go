@@ -28,6 +28,7 @@ import (
 
 	"code.vikunja.io/api/pkg/config"
 	"code.vikunja.io/api/pkg/cron"
+	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/initialize"
 	"code.vikunja.io/api/pkg/log"
 	"code.vikunja.io/api/pkg/routes"
@@ -157,6 +158,9 @@ var webCmd = &cobra.Command{
 		defer cancel()
 		log.Infof("Shutting down...")
 		if err := e.Shutdown(ctx); err != nil {
+			e.Logger.Fatal(err)
+		}
+		if err := db.Close(); err != nil {
 			e.Logger.Fatal(err)
 		}
 		cron.Stop()
