@@ -121,6 +121,7 @@ func getProviderFromMap(pi map[string]interface{}, key string) (provider *Provid
 
 	allKeys := append(
 		[]string{
+			"issuerurl",
 			"logouturl",
 			"scope",
 			"emailfallback",
@@ -154,6 +155,14 @@ func getProviderFromMap(pi map[string]interface{}, key string) (provider *Provid
 		url, ok := logoutValue.(string)
 		if ok {
 			logoutURL = url
+		}
+	}
+
+	var issuerURL string
+	issuerValue, exists := pi["issuerurl"]
+	if exists {
+		if url, ok := issuerValue.(string); ok {
+			issuerURL = url
 		}
 	}
 
@@ -198,6 +207,7 @@ func getProviderFromMap(pi map[string]interface{}, key string) (provider *Provid
 		Key:              key,
 		AuthURL:          pi["authurl"].(string),
 		OriginalAuthURL:  pi["authurl"].(string),
+		IssuerURL:        issuerURL,
 		ClientSecret:     pi["clientsecret"].(string),
 		LogoutURL:        logoutURL,
 		Scope:            scope,

@@ -50,6 +50,7 @@ type Provider struct {
 	Name             string `json:"name"`
 	Key              string `json:"key"`
 	OriginalAuthURL  string `json:"-"`
+	IssuerURL        string `json:"issuer_url"`
 	AuthURL          string `json:"auth_url"`
 	LogoutURL        string `json:"logout_url"`
 	ClientID         string `json:"client_id"`
@@ -75,7 +76,11 @@ func init() {
 }
 
 func (p *Provider) setOicdProvider() (err error) {
-	p.openIDProvider, err = oidc.NewProvider(context.Background(), p.OriginalAuthURL)
+	url := p.OriginalAuthURL
+	if p.IssuerURL != "" {
+		url = p.IssuerURL
+	}
+	p.openIDProvider, err = oidc.NewProvider(context.Background(), url)
 	return err
 }
 

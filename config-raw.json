@@ -681,6 +681,11 @@
                                             "comment": "The auth url to send users to if they want to authenticate using OpenID Connect."
                                         },
                                         {
+                                            "key": "issuerurl",
+                                            "default_value": "",
+                                            "comment": "Optional URL used as the expected issuer when it differs from `authurl`. Set this when your provider advertises a different external issuer in its discovery document."
+                                        },
+                                        {
                                             "key": "logouturl",
                                             "default_value": "",
                                             "comment": "The oidc logouturl that users will be redirected to on logout.\nLeave empty or delete key, if you do not want to be redirected."
