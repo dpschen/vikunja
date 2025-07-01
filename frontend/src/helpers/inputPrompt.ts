@@ -7,14 +7,14 @@ export default function inputPrompt(pos: ClientRect, oldValue: string = ''): Pro
 	return new Promise((resolve) => {
 		const id = 'link-input-' + createRandomID()
 
-               const linkPopup = createFloatingPopup({
-                       getReferenceClientRect: () => pos,
-                       appendTo: () => document.body,
-                       content: `<div><input class="input" placeholder="URL" id="${id}" value="${oldValue}"/></div>`,
-                       placement: 'top-start',
-               })
+		const linkPopup = createFloatingPopup({
+		getReferenceClientRect: () => pos,
+		appendTo: () => document.body,
+		content: `<div><input class="input" placeholder="URL" id="${id}" value="${oldValue}"/></div>`,
+		placement: 'top-start',
+		})
 
-               linkPopup.show()
+		linkPopup.show()
 
 		nextTick(() => document.getElementById(id)?.focus())
 
@@ -28,7 +28,7 @@ export default function inputPrompt(pos: ClientRect, oldValue: string = ''): Pro
 
 			resolve(url)
 
-                       linkPopup.hide()
+		linkPopup.hide()
 		})
 
 	})
