@@ -465,15 +465,15 @@ func caldavTimeToTimestamp(ianaProperty ics.IANAProperty) time.Time {
 			if err != nil {
 				log.Warningf("Error while parsing caldav time %s to TimeStamp: %s at location %s", tstring, loc, err)
 			} else {
-				t = t.In(config.GetTimeZone())
-				return t
+				return t.In(config.GetTimeZone())
 			}
 		}
 	}
-	t, err = time.Parse(format, tstring)
+
+	t, err = time.ParseInLocation(format, tstring, config.GetTimeZone())
 	if err != nil {
 		log.Warningf("Error while parsing caldav time %s to TimeStamp: %s", tstring, err)
 		return time.Time{}
 	}
-	return t
+	return t.In(config.GetTimeZone())
 }

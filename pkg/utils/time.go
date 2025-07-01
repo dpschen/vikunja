@@ -22,6 +22,11 @@ import (
 	"code.vikunja.io/api/pkg/config"
 )
 
+// Now returns the current time in the configured timezone.
+func Now() time.Time {
+	return time.Now().In(config.GetTimeZone())
+}
+
 // GetTimeWithoutNanoSeconds returns a time.Time without the nanoseconds.
 func GetTimeWithoutNanoSeconds(t time.Time) time.Time {
 	tz := config.GetTimeZone()

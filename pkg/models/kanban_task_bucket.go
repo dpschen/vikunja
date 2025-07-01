@@ -21,6 +21,7 @@ import (
 
 	"code.vikunja.io/api/pkg/events"
 	"code.vikunja.io/api/pkg/user"
+	"code.vikunja.io/api/pkg/utils"
 	"code.vikunja.io/api/pkg/web"
 	"xorm.io/xorm"
 )
@@ -155,7 +156,7 @@ func (b *TaskBucket) Update(s *xorm.Session, a web.Auth) (err error) {
 
 	if doneChanged {
 		if task.Done {
-			task.DoneAt = time.Now()
+			task.DoneAt = utils.Now()
 		} else {
 			task.DoneAt = time.Time{}
 		}

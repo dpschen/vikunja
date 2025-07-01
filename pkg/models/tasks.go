@@ -1362,7 +1362,7 @@ func setTaskDatesDefault(oldTask, newTask *Task) {
 	}
 
 	// Current time in an extra variable to base all calculations on the same time
-	now := time.Now()
+	now := utils.Now()
 
 	repeatDuration := time.Duration(oldTask.RepeatAfter) * time.Second
 
@@ -1427,7 +1427,7 @@ func setTaskDatesFromCurrentDateRepeat(oldTask, newTask *Task) {
 	}
 
 	// Current time in an extra variable to base all calculations on the same time
-	now := time.Now()
+	now := utils.Now()
 
 	repeatDuration := time.Duration(oldTask.RepeatAfter) * time.Second
 
@@ -1505,7 +1505,7 @@ func updateDone(oldTask *Task, newTask *Task) {
 			setTaskDatesDefault(oldTask, newTask)
 		}
 
-		newTask.DoneAt = time.Now()
+		newTask.DoneAt = utils.Now()
 	}
 
 	// When unmarking a task as done, reset the timestamp

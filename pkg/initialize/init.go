@@ -17,8 +17,6 @@
 package initialize
 
 import (
-	"time"
-
 	"code.vikunja.io/api/pkg/config"
 	"code.vikunja.io/api/pkg/cron"
 	"code.vikunja.io/api/pkg/events"
@@ -34,6 +32,7 @@ import (
 	migrationHandler "code.vikunja.io/api/pkg/modules/migration/handler"
 	"code.vikunja.io/api/pkg/red"
 	"code.vikunja.io/api/pkg/user"
+	"code.vikunja.io/api/pkg/utils"
 )
 
 // LightInit will only init config, redis, logger but no db connection.
@@ -117,7 +116,7 @@ func FullInit() {
 		}
 
 		err = events.Dispatch(&BootedEvent{
-			BootedAt: time.Now(),
+			BootedAt: utils.Now(),
 		})
 		if err != nil {
 			log.Fatal(err)
