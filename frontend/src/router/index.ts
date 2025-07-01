@@ -8,6 +8,7 @@ import {getNextWeekDate} from '@/helpers/time/getNextWeekDate'
 import {LINK_SHARE_HASH_PREFIX} from '@/constants/linkShareHash'
 
 import {useAuthStore} from '@/stores/auth'
+import {useConfigStore} from '@/stores/config'
 
 import Login from '@/views/user/Login.vue'
 import Register from '@/views/user/Register.vue'
@@ -432,6 +433,7 @@ export async function getAuthForRoute(to: RouteLocation, authStore) {
 
 router.beforeEach(async (to, from) => {
 	const authStore = useAuthStore()
+	const configStore = useConfigStore()
 
 	if(from.hash && from.hash.startsWith(LINK_SHARE_HASH_PREFIX)) {
 		to.hash = from.hash
@@ -453,6 +455,14 @@ router.beforeEach(async (to, from) => {
 			...newRoute,
 			hash: to.hash,
 		}
+	}
+
+	if (to.name === 'user.settings.caldav' && !configStore.caldavEnabled) {
+		return {name: 'user.settings.general', hash: to.hash}
+	}
+
+	if (to.name === 'user.settings.totp' && (!configStore.totpEnabled || !authStore.info?.isLocalUser)) {
+		return {name: 'user.settings.general', hash: to.hash}
 	}
 	
 	if(!to.fullPath.endsWith(to.hash)) {
