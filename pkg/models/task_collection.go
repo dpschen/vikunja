@@ -92,6 +92,7 @@ func validateTaskField(fieldName string) error {
 	case
 		taskPropertyAssignees,
 		taskPropertyLabels,
+		"label",
 		taskPropertyReminders:
 		return nil
 	}
