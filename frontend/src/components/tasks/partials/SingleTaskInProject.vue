@@ -491,9 +491,15 @@ function openTaskDetail(event: MouseEvent | KeyboardEvent) {
 		}
 	}
 
-	.favorite:focus {
-		opacity: 1;
-	}
+       .favorite:focus-visible {
+               opacity: 1;
+       }
+
+       @supports not selector(:focus-visible) {
+               .favorite:focus {
+                       opacity: 1;
+               }
+       }
 
 	:deep(.fancy-checkbox) {
 		height: 18px;
