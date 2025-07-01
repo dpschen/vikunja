@@ -109,7 +109,7 @@ func init() {
 				return err
 			}
 
-			return dropTableColum(tx, "buckets", "is_done_bucket")
+			return dropTableColumn(tx, "buckets", "is_done_bucket")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil

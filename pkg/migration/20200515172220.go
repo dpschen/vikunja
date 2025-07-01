@@ -111,7 +111,7 @@ create unique index tasks_id_uindex
 				return err
 			}
 
-			return dropTableColum(tx, "tasks", "text")
+			return dropTableColumn(tx, "tasks", "text")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil

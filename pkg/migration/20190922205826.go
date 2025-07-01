@@ -86,7 +86,7 @@ func init() {
 				return err
 			}
 
-			return dropTableColum(tx, "tasks", "parent_task_id")
+			return dropTableColumn(tx, "tasks", "parent_task_id")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return tx.DropTables(taskRelation20190922205826{})

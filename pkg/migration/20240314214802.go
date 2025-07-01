@@ -187,11 +187,11 @@ create unique index UQE_tasks_id
 				return err
 			}
 
-			err = dropTableColum(tx, "tasks", "position")
+			err = dropTableColumn(tx, "tasks", "position")
 			if err != nil {
 				return err
 			}
-			return dropTableColum(tx, "tasks", "kanban_position")
+			return dropTableColumn(tx, "tasks", "kanban_position")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil

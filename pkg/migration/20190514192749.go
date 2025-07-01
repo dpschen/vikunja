@@ -37,7 +37,7 @@ func init() {
 			return tx.Sync2(listTask20190514192749{})
 		},
 		Rollback: func(tx *xorm.Engine) error {
-			return dropTableColum(tx, "tasks", "done_at_unix")
+			return dropTableColumn(tx, "tasks", "done_at_unix")
 		},
 	})
 }

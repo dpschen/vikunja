@@ -145,11 +145,11 @@ create unique index UQE_projects_id
 				return err
 			}
 
-			err = dropTableColum(tx, "projects", "done_bucket_id")
+			err = dropTableColumn(tx, "projects", "done_bucket_id")
 			if err != nil {
 				return
 			}
-			return dropTableColum(tx, "projects", "default_bucket_id")
+			return dropTableColumn(tx, "projects", "default_bucket_id")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return nil

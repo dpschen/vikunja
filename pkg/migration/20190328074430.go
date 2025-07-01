@@ -35,7 +35,7 @@ func init() {
 		ID:          "20190328074430",
 		Description: "Remove updated from team_members",
 		Migrate: func(tx *xorm.Engine) error {
-			return dropTableColum(tx, "team_members", "updated")
+			return dropTableColumn(tx, "team_members", "updated")
 		},
 		Rollback: func(tx *xorm.Engine) error {
 			return tx.Sync2(teamMembersMigration20190328074430{})
