@@ -21,6 +21,8 @@ import (
 	"strings"
 	"time"
 
+	"code.vikunja.io/api/pkg/utils"
+
 	"code.vikunja.io/api/pkg/log"
 	"code.vikunja.io/api/pkg/user"
 	"code.vikunja.io/api/pkg/web"
@@ -175,8 +177,8 @@ func GetTasksInBucketsForView(s *xorm.Session, view *ProjectView, projects []*Pr
 				ProjectViewID: view.ID,
 				Position:      float64(id),
 				CreatedByID:   auth.GetID(),
-				Created:       time.Now(),
-				Updated:       time.Now(),
+				Created:       utils.Now(),
+				Updated:       utils.Now(),
 			})
 		}
 	}

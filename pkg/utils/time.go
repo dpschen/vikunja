@@ -39,3 +39,8 @@ func GetTimeWithoutSeconds(t time.Time) time.Time {
 	// so we make sure the time we use to get the reminders don't contain nanoseconds.
 	return time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, t.Location()).In(tz)
 }
+
+// Now returns the current time in the configured timezone.
+func Now() time.Time {
+	return time.Now().In(config.GetTimeZone())
+}

@@ -131,7 +131,7 @@ func RegisterTokenCleanupCron() {
 		defer s.Close()
 
 		deleted, err := s.
-			Where("created > ? AND (kind = ? OR kind = ?)", time.Now().Add(time.Hour*24*-1), TokenPasswordReset, TokenAccountDeletion).
+			Where("created > ? AND (kind = ? OR kind = ?)", utils.Now().Add(time.Hour*24*-1), TokenPasswordReset, TokenAccountDeletion).
 			Delete(&Token{})
 		if err != nil {
 			log.Errorf(logPrefix+"Error removing old password reset tokens: %s", err)

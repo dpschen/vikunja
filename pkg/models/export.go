@@ -47,7 +47,7 @@ func ExportUserData(s *xorm.Session, u *user.User) (err error) {
 		return err
 	}
 
-	tmpFilename := exportDir + strconv.FormatInt(u.ID, 10) + "_" + time.Now().Format("2006-01-02_15-03-05") + ".zip"
+	tmpFilename := exportDir + strconv.FormatInt(u.ID, 10) + "_" + utils.Now().Format("2006-01-02_15-03-05") + ".zip"
 
 	// Open zip
 	dumpFile, err := os.Create(tmpFilename)
@@ -389,7 +389,7 @@ func RegisterOldExportCleanupCron() {
 		}
 
 		fs := []*files.File{}
-		err = s.Where("created < ?", time.Now().Add(-time.Hour*24*7)).In("id", fileIDs).Find(&fs)
+		err = s.Where("created < ?", utils.Now().Add(-time.Hour*24*7)).In("id", fileIDs).Find(&fs)
 		if err != nil {
 			log.Errorf(logPrefix+"Could not get users with export files: %s", err)
 			return
