@@ -42,6 +42,13 @@ try it on [try.vikunja.io](https://try.vikunja.io)!
 
 All docs can be found on [the Vikunja home page](https://vikunja.io/docs/).
 
+### Trello Migration Authentication
+
+When migrating from Trello make sure the generated token includes the
+`account` scope so Vikunja can access boards that belong to organizations.
+Unauthorized boards will be skipped with an error if the token does not have
+this scope.
+
 ### Roadmap
 
 See [the roadmap](https://my.vikunja.cloud/share/QFyzYEmEYfSyQfTOmIRSwLUpkFjboaBqQCnaPmWd/auth) (hosted on Vikunja!) for more!
