@@ -9,16 +9,18 @@ A service takes (in most cases) a model and returns one.
 
 ## Table of Contents
 
-* [Services](#services)
-  * [Requests](#requests)
-    * [Loading](#loading)
-  * [Factories](#factories)
-  * [Before Request](#before-request)
-  * [After Request?](#after-request-)
-* [Models](#models)
-  * [Default Values](#default-values)
-  * [Constructor](#constructor)
-  * [Access Model Data](#access-to-the-data)
+- [Models and services](#models-and-services)
+	- [Table of Contents](#table-of-contents)
+	- [Services](#services)
+			- [Requests](#requests)
+				- [Loading](#loading)
+			- [Factories](#factories)
+			- [Before Request](#before-request)
+			- [After Request ?](#after-request-)
+	- [Models](#models)
+			- [Default values](#default-values)
+			- [Constructor](#constructor)
+			- [Access to the data](#access-to-the-data)
 
 ## Services
 
@@ -53,7 +55,8 @@ The `constructor` calls its parent constructor and provides the paths to make th
 The parent constructor will take these and save them in the service.
 All paths are optional. Calling a method which doesn't have a path defined will fail. 
 
-The placeholder values in the urls are replaced with the contents of variables with the same name in the corresponding model (the one you pass to the functions).
+The placeholder values in the urls are replaced with the contents of variables with the same name in the
+corresponding model (the one you pass to the functions).
 
 #### Requests
 

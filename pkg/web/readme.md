@@ -21,21 +21,26 @@ other handler implementations, enabling a lot of flexibility while developing.
 
 ## Table of contents
 
-* [Installation](#installation)
-* [Todos](#todos)
-* [DB Sessions](#db-sessions)
-* [CRUDable](#crudable)
-* [Rights](#rights)
-* [Handler Config](#handler-config)
-  * [Auth](#auth)
-  * [Logging](#logging)
-  * [Full Example](#full-example)
-* [Preprocessing](#preprocessing)
-  * [Pagination](#pagination)
-  * [Search](#search)
-* [Standard web handler](#defining-routes-using-the-standard-web-handler)
-* [Errors](#errors)
-* [URL param binder](#how-the-url-param-binder-works)
+- [Vikunja Web Handler](#vikunja-web-handler)
+	- [Features](#features)
+	- [Table of contents](#table-of-contents)
+		- [TODOs](#todos)
+	- [Installation](#installation)
+	- [DB Sessions](#db-sessions)
+	- [CRUDable](#crudable)
+	- [Rights](#rights)
+	- [Handler Config](#handler-config)
+			- [Auth](#auth)
+			- [Logging](#logging)
+			- [MaxItemsPerPage](#maxitemsperpage)
+			- [SessionFactory](#sessionfactory)
+			- [Full Example](#full-example)
+	- [Preprocessing](#preprocessing)
+		- [Pagination](#pagination)
+		- [Search](#search)
+	- [Defining routes using the standard web handler](#defining-routes-using-the-standard-web-handler)
+	- [Errors](#errors)
+	- [How the url param binder works](#how-the-url-param-binder-works)
 
 ### TODOs
 
@@ -115,7 +120,7 @@ When using the standard web handler, all methods are called before their `CRUD` 
 Use pointers for methods like `CanRead()` to get the base data of the model first, then check the right and then add additional data.
 
 The `CanRead` method should also return the max right a user has on this entity.
-This number will be returned in the `x-max-right` header to enable user interfaces to show/hide UI elements based on the right the user has.
+This number will be returned in the `x-max-right` header to enable user interfaces to show or hide UI elements based on the right the user has.
 
 ## Handler Config
 
@@ -185,7 +190,7 @@ You need to return a number of things:
 
 * The result itself, usually a slice
 * The number of items you return in `result`. Most of the time, this is just `len(result)`. You need to return this value to make the clients aware if they requested a number of items > max items per page.
-* The total number of items available. We use the total number of items here and not the number of pages so implementations don't have to calculate the page count. The total number is returned to the client; it can be used to build client-side pagination or similar.
+* The total number of items available. We use the total number of items here and not the number of pages so implementations don't have to calculate the page count themselves. The total number of items is then returned to the client and can be used by clients to build client-side pagination or similar.
 * An error.
 
 The number of items and the total number of pages available will be returned in the `x-pagination-total-pages` and `x-pagination-result-count` response headers.
@@ -236,8 +241,8 @@ An `HTTPError` is defined as follows:
 
 ```go
 type HTTPError struct {
-    HTTPCode int    `json:"-"` // Can be any valid HTTP status code, I'd recommend to use the constants of the http package.
-    Code     int    `json:"code"` // Must be a unique int identifier for this specific error. I'd recommend defining a constant for this.
+  HTTPCode int    `json:"-"` // Can be any valid HTTP status code, I'd recommend using the constants of the http package.
+  Code     int    `json:"code"` // Must be a unique int identifier for this specific error. I'd recommend defining a constant for this.
 	Message  string `json:"message"` // A user-readable message what went wrong.
 }
 ```
