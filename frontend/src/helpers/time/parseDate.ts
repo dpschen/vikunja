@@ -20,7 +20,13 @@ function matchesDateExpr(text: string, dateExpr: string): boolean {
 
 export const parseDate = (text: string, now: Date = new Date()): dateParseResult => {
 	if (matchesDateExpr(text, 'today')) {
-		return addTimeToDate(text, getDateFromInterval(calculateDayInterval('today')), 'today')
+	// If no specific time was provided, default to midnight tomorrow
+	// because the API expects tasks to have a time component.
+		const timeMatcher = /(at|@) [0-9][0-9]?(:[0-9][0-9]?)?( ?(a|p)m)?/i
+		const date = timeMatcher.test(text)
+			? getDateFromInterval(calculateDayInterval('today'))
+			: getTomorrowMidnight(now)
+		return addTimeToDate(text, date, 'today')
 	}
 	if (matchesDateExpr(text, 'tonight')) {
 		const taskDate = getDateFromInterval(calculateDayInterval('today'))
@@ -368,3 +374,12 @@ const getDateFromInterval = (interval: number): Date => {
 
 	return newDate
 }
+
+// Returns the start of the next day
+const getTomorrowMidnight = (now: Date = new Date()): Date => {
+	const date = new Date(now)
+	date.setDate(date.getDate() + 1)
+	date.setHours(0, 0, 0, 0)
+	return date
+}
+
