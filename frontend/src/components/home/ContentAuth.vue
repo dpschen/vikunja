@@ -17,52 +17,56 @@
 				class="app-container-background background-fade-in d-print-none"
 				:style="{'background-image': background && `url(${background})`}"
 			/>
-			<Navigation class="d-print-none" />
-			<main
-				class="app-content"
-				:class="[
-					{ 'is-menu-enabled': menuActive },
-					$route.name,
-				]"
+			<div
+				class="sidebar-layout"
+				:class="{'is-menu-enabled': menuActive}"
 			>
-				<BaseButton
-					v-show="menuActive"
-					class="mobile-overlay d-print-none"
-					@click="baseStore.setMenuActive(false)"
-				/>
-
-				<QuickActions />
-
-				<RouterView
-					v-slot="{ Component }"
-					:route="routeWithModal"
+				<Navigation class="d-print-none" />
+				<main
+					class="app-content"
+					:class="[
+						$route.name,
+					]"
 				>
-					<keep-alive :include="['project.view']">
-						<component :is="Component" />
-					</keep-alive>
-				</RouterView>
-
-				<Modal
-					:enabled="typeof currentModal !== 'undefined'"
-					variant="scrolling"
-					class="task-detail-view-modal"
-					@close="closeModal()"
-				>
-					<component
-						:is="currentModal"
-						@close="closeModal()"
+					<BaseButton
+						v-show="menuActive"
+						class="mobile-overlay d-print-none"
+						@click="baseStore.setMenuActive(false)"
 					/>
-				</Modal>
 
-				<BaseButton
-					v-shortcut="'?'"
-					class="keyboard-shortcuts-button d-print-none"
-					@click="showKeyboardShortcuts()"
-				>
-					<span class="sr-only">{{ $t('keyboardShortcuts.title') }}</span>
-					<Icon icon="keyboard" />
-				</BaseButton>
-			</main>
+					<QuickActions />
+
+					<RouterView
+						v-slot="{ Component }"
+						:route="routeWithModal"
+					>
+						<keep-alive :include="['project.view']">
+							<component :is="Component" />
+						</keep-alive>
+					</RouterView>
+
+					<Modal
+						:enabled="typeof currentModal !== 'undefined'"
+						variant="scrolling"
+						class="task-detail-view-modal"
+						@close="closeModal()"
+					>
+						<component
+							:is="currentModal"
+							@close="closeModal()"
+						/>
+					</Modal>
+
+					<BaseButton
+						v-shortcut="'?'"
+						class="keyboard-shortcuts-button d-print-none"
+						@click="showKeyboardShortcuts()"
+					>
+						<span class="sr-only">{{ $t('keyboardShortcuts.title') }}</span>
+						<Icon icon="keyboard" />
+					</BaseButton>
+				</main>
+			</div>
 		</div>
 	</div>
 </template>
@@ -155,41 +159,41 @@ projectStore.loadAllProjects()
 	}
 }
 
-.app-container {
-	min-height: calc(100vh - 65px);
 
-	@media screen and (max-width: $tablet) {
-		padding-top: $navbar-height;
-	}
+.app-container {
+       min-height: 100vh;
+}
+
+.sidebar-layout {
+       display: grid;
+       grid-template-columns: 0 1fr;
+       min-height: 100%;
+       transition: grid-template-columns $transition-duration;
+
+       &.is-menu-enabled {
+               grid-template-columns: $navbar-width 1fr;
+       }
 }
 
 .app-content {
-	display: flow-root;
-	z-index: 10;
-	position: relative;
-	padding: 1.5rem 0.5rem 0;
-	// TODO refactor: DRY `transition-timing-function` with `./Navigation.vue`.
-	transition: margin-left $transition-duration;
+        display: flow-root;
+        z-index: 10;
+        position: relative;
+       padding: 1.5rem 0.5rem 0;
+        // TODO refactor: DRY `transition-timing-function` with `./Navigation.vue`.
 
-	@media screen and (max-width: $tablet) {
-		margin-left: 0;
-		min-height: calc(100vh - 4rem);
-	}
+       @media screen and (max-width: $tablet) {
+               min-height: 100vh;
+       }
 
-	@media screen and (min-width: $tablet) {
-		padding: $navbar-height + 1.5rem 1.5rem 0 1.5rem;
-	}
-
-	&.is-menu-enabled {
-		@media screen and (min-width: $tablet) {
-			margin-left: $navbar-width;
-		}
-	}
+       @media screen and (min-width: $tablet) {
+               padding: 1.5rem 1.5rem 0 1.5rem;
+       }
 
 	// Used to make sure the spinner is always in the middle while loading
-	> .loader-container {
-		min-height: calc(100vh - #{$navbar-height + 1.5rem + 1rem});
-	}
+       > .loader-container {
+               min-height: calc(100vh - 2.5rem);
+       }
 
 	// FIXME: This should be somehow defined inside Card.vue
 	.card {

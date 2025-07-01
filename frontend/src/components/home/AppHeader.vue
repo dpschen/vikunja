@@ -155,10 +155,9 @@ $user-dropdown-width-mobile: 5rem;
 	--navbar-gap-width: 1rem;
 	--navbar-icon-size: 1.25rem;
 
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
+       position: sticky;
+       top: 0;
+       z-index: 30;
 
 	display: flex;
 	justify-content: space-between;
