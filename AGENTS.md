@@ -39,6 +39,8 @@ These instructions summarize the development guidelines from the official Vikunj
 
 ## Pull Requests
 - PRs must be opened against the `main` branch.
+- When changing AGENTS instructions or any agent-related files (for example a setup script), place those changes in dedicated commit(s).
+- Open PRs for those agent-related commits against the `main_non_agents` branch without including commits from `main` created after that branch split off.
 - Keep PRs small and focused. Allow maintainers to edit your branch.
 - Describe the problem in the PR title and provide a summary in the first comment.
 - If the PR changes the UI, include after screenshots.
