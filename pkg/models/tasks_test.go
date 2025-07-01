@@ -174,6 +174,70 @@ func TestTask_Create(t *testing.T) {
 			"bucket_id": 22, // default bucket of project 6 but with a position of 2
 		}, false)
 	})
+
+	t.Run("with existing label", func(t *testing.T) {
+		db.LoadAndAssertFixtures(t)
+		s := db.NewSession()
+		defer s.Close()
+
+		task := &Task{
+			Title:     "label task",
+			ProjectID: 1,
+			Labels:    []*Label{{ID: 1}},
+		}
+		err := task.Create(s, usr)
+		require.NoError(t, err)
+		err = s.Commit()
+		require.NoError(t, err)
+
+		db.AssertExists(t, "label_tasks", map[string]interface{}{
+			"task_id":  task.ID,
+			"label_id": 1,
+		}, false)
+	})
+
+	t.Run("with new label", func(t *testing.T) {
+		db.LoadAndAssertFixtures(t)
+		s := db.NewSession()
+		defer s.Close()
+
+		task := &Task{
+			Title:     "new label task",
+			ProjectID: 1,
+			Labels:    []*Label{{Title: "created with task"}},
+		}
+		err := task.Create(s, usr)
+		require.NoError(t, err)
+		err = s.Commit()
+		require.NoError(t, err)
+		require.Len(t, task.Labels, 1)
+
+		newID := task.Labels[0].ID
+		db.AssertExists(t, "labels", map[string]interface{}{
+			"id":            newID,
+			"title":         "created with task",
+			"created_by_id": 1,
+		}, false)
+		db.AssertExists(t, "label_tasks", map[string]interface{}{
+			"task_id":  task.ID,
+			"label_id": newID,
+		}, false)
+	})
+
+	t.Run("with label no access", func(t *testing.T) {
+		db.LoadAndAssertFixtures(t)
+		s := db.NewSession()
+		defer s.Close()
+
+		task := &Task{
+			Title:     "forbidden label",
+			ProjectID: 1,
+			Labels:    []*Label{{ID: 3}},
+		}
+		err := task.Create(s, usr)
+		require.Error(t, err)
+		assert.True(t, IsErrUserHasNoAccessToLabel(err))
+	})
 }
 
 func TestTask_Update(t *testing.T) {

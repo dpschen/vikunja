@@ -79,7 +79,9 @@ type Task struct {
 	EndDate time.Time `xorm:"DATETIME INDEX null 'end_date'" json:"end_date" query:"-"`
 	// An array of users who are assigned to this task
 	Assignees []*user.User `xorm:"-" json:"assignees"`
-	// An array of labels which are associated with this task. This property is read-only, you must use the separate endpoint to add labels to a task.
+	// An array of labels which are associated with this task. When creating a task you can
+	// pass labels in this field. Provide an id to assign an existing label or omit the id to
+	// create a new one. Use the label endpoints to update labels on an existing task.
 	Labels []*Label `xorm:"-" json:"labels"`
 	// The task color in hex
 	HexColor string `xorm:"varchar(6) null" json:"hex_color" valid:"runelength(0|7)" maxLength:"7"`
@@ -812,7 +814,8 @@ func setNewTaskIndex(s *xorm.Session, t *Task) (err error) {
 
 // Create is the implementation to create a project task
 // @Summary Create a task
-// @Description Inserts a task into a project.
+// @Description Inserts a task into a project. Labels passed along will be added
+// to the task. When a label has no id it will be created automatically.
 // @tags task
 // @Accept json
 // @Produce json
@@ -909,6 +912,10 @@ func createTask(s *xorm.Session, t *Task, a web.Auth, updateAssignees bool, setB
 
 	// Update the reminders
 	if err := t.updateReminders(s, t); err != nil {
+		return err
+	}
+
+	if err := t.addLabelsOnCreate(s, a); err != nil {
 		return err
 	}
 
@@ -1597,6 +1604,52 @@ func (t *Task) updateReminders(s *xorm.Session, task *Task) (err error) {
 
 	err = updateProjectLastUpdated(s, &Project{ID: t.ProjectID})
 	return
+}
+
+// addLabelsOnCreate handles assigning or creating labels when a task is created.
+// Labels with an id will be added if the user has access to them. Labels without
+// an id will be created and then associated with the task.
+func (t *Task) addLabelsOnCreate(s *xorm.Session, a web.Auth) error {
+	if len(t.Labels) == 0 {
+		return nil
+	}
+
+	incoming := t.Labels
+	t.Labels = []*Label{}
+
+	prepared := make([]*Label, 0, len(incoming))
+	for _, l := range incoming {
+		if l == nil {
+			continue
+		}
+
+		if l.ID == 0 {
+			nl := &Label{Title: l.Title, Description: l.Description, HexColor: l.HexColor}
+			if err := nl.Create(s, a); err != nil {
+				return err
+			}
+			prepared = append(prepared, nl)
+			continue
+		}
+
+		label, err := getLabelByIDSimple(s, l.ID)
+		if err != nil {
+			return err
+		}
+
+		has, _, err := label.hasAccessToLabel(s, a)
+		if err != nil {
+			return err
+		}
+		if !has {
+			u, _ := a.(*user.User)
+			return ErrUserHasNoAccessToLabel{LabelID: l.ID, UserID: u.ID}
+		}
+
+		prepared = append(prepared, label)
+	}
+
+	return t.UpdateTaskLabels(s, a, prepared)
 }
 
 func updateTaskLastUpdated(s *xorm.Session, task *Task) error {

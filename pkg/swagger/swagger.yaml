@@ -216,9 +216,10 @@ definitions:
           call to the api.
         type: boolean
       labels:
-        description: An array of labels which are associated with this task. This
-          property is read-only, you must use the separate endpoint to add labels
-          to a task.
+        description: |-
+          An array of labels which are associated with this task. When creating a task you can
+          pass labels in this field. Provide an id to assign an existing label or omit the id to
+          create a new one. Use the label endpoints to update labels on an existing task.
         items:
           $ref: '#/definitions/models.Label'
         type: array
@@ -799,9 +800,10 @@ definitions:
           call to the api.
         type: boolean
       labels:
-        description: An array of labels which are associated with this task. This
-          property is read-only, you must use the separate endpoint to add labels
-          to a task.
+        description: |-
+          An array of labels which are associated with this task. When creating a task you can
+          pass labels in this field. Provide an id to assign an existing label or omit the id to
+          create a new one. Use the label endpoints to update labels on an existing task.
         items:
           $ref: '#/definitions/models.Label'
         type: array
@@ -3061,7 +3063,7 @@ paths:
     put:
       consumes:
       - application/json
-      description: Inserts a task into a project.
+      description: Inserts a task into a project. Labels passed along will be added
       parameters:
       - description: Project ID
         in: path

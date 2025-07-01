@@ -1968,7 +1968,7 @@ const docTemplate = `{
                         "JWTKeyAuth": []
                     }
                 ],
-                "description": "Inserts a task into a project.",
+                "description": "Inserts a task into a project. Labels passed along will be added",
                 "consumes": [
                     "application/json"
                 ],
@@ -7991,7 +7991,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "labels": {
-                    "description": "An array of labels which are associated with this task. This property is read-only, you must use the separate endpoint to add labels to a task.",
+                    "description": "An array of labels which are associated with this task. When creating a task you can\npass labels in this field. Provide an id to assign an existing label or omit the id to\ncreate a new one. Use the label endpoints to update labels on an existing task.",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Label"
@@ -8733,7 +8733,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "labels": {
-                    "description": "An array of labels which are associated with this task. This property is read-only, you must use the separate endpoint to add labels to a task.",
+                    "description": "An array of labels which are associated with this task. When creating a task you can\npass labels in this field. Provide an id to assign an existing label or omit the id to\ncreate a new one. Use the label endpoints to update labels on an existing task.",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Label"
