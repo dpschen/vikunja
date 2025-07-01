@@ -449,8 +449,8 @@
                 },
                 {
                     "key": "period",
-                    "default_value": "60",
-                    "comment": "The time period in seconds for the limit"
+                    "default_value": "1m",
+                    "comment": "The time period for the limit. Use any valid Go duration string"
                 },
                 {
                     "key": "limit",

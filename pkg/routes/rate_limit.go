@@ -17,6 +17,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -94,10 +95,29 @@ func createRateLimiter(rate limiter.Rate) *limiter.Limiter {
 	return limiter.New(store, rate)
 }
 
+func getRateLimitPeriod() time.Duration {
+	raw := config.RateLimitPeriod.Get()
+	switch v := raw.(type) {
+	case int, int64, float64:
+		secs, err := strconv.ParseFloat(fmt.Sprint(v), 64)
+		if err == nil {
+			return time.Duration(secs * float64(time.Second))
+		}
+	case string:
+		if d, err := time.ParseDuration(v); err == nil {
+			return d
+		}
+		if secs, err := strconv.ParseFloat(v, 64); err == nil {
+			return time.Duration(secs * float64(time.Second))
+		}
+	}
+	return config.RateLimitPeriod.GetDuration()
+}
+
 func setupRateLimit(a *echo.Group, rateLimitKind string) {
 	if config.RateLimitEnabled.GetBool() {
 		rate := limiter.Rate{
-			Period: config.RateLimitPeriod.GetDuration() * time.Second,
+			Period: getRateLimitPeriod(),
 			Limit:  config.RateLimitLimit.GetInt64(),
 		}
 		rateLimiter := createRateLimiter(rate)
