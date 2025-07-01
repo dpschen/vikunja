@@ -1,4 +1,5 @@
-import {computePosition, autoUpdate, flip, shift, offset, Placement, VirtualElement} from '@floating-ui/dom'
+import {computePosition, autoUpdate, flip, shift, offset} from '@floating-ui/dom'
+import type {Placement, VirtualElement} from '@floating-ui/dom'
 
 interface Options {
 	getReferenceClientRect: () => DOMRect
