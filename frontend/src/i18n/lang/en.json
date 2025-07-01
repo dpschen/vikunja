@@ -1117,6 +1117,7 @@
   "quickActions": {
     "commands": "Commands",
     "placeholder": "Type a command or search…",
+    "searchAriaLabel": "Quick actions search",
     "hint": "You can use {project} to limit the search to a project. Combine {project} or {label} (labels) with a search query to search for a task with these labels or on that project. Use {assignee} to only search for teams.",
     "tasks": "Tasks",
     "projects": "Projects",
