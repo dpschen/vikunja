@@ -45,7 +45,7 @@ func (taskBuckets20240315110428) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20240315110428",
-		Description: "",
+Description: "move task bucket relation to task_buckets table",
 		Migrate: func(tx *xorm.Engine) (err error) {
 			err = tx.Sync2(taskBuckets20240315110428{})
 			if err != nil {

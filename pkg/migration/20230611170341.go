@@ -32,7 +32,7 @@ func (users20230611170341) TableName() string {
 func init() {
 	migrations = append(migrations, &xormigrate.Migration{
 		ID:          "20230611170341",
-		Description: "",
+Description: "add frontend_settings field to users",
 		Migrate: func(tx *xorm.Engine) error {
 			return tx.Sync2(users20230611170341{})
 		},
