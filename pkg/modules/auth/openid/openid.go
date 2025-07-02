@@ -47,9 +47,11 @@ type Callback struct {
 
 // Provider is the structure of an OpenID Connect provider
 type Provider struct {
-	Name             string `json:"name"`
-	Key              string `json:"key"`
-	OriginalAuthURL  string `json:"-"`
+	Name            string `json:"name"`
+	Key             string `json:"key"`
+	OriginalAuthURL string `json:"-"`
+	// IssuerURL optionally overrides the issuer returned from the discovery document.
+	// Set this when the provider advertises a different external issuer than the authurl.
 	IssuerURL        string `json:"issuer_url"`
 	AuthURL          string `json:"auth_url"`
 	LogoutURL        string `json:"logout_url"`
