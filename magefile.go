@@ -406,31 +406,31 @@ func (Test) All() {
 
 type Check mg.Namespace
 
-// Checks if the swagger docs need to be re-generated from the code annotations
+// Checks if the OpenAPI docs need to be re-generated from the code annotations
 func (Check) GotSwag() {
 	mg.Deps(initVars)
-	// The check is pretty cheaply done: We take the hash of the swagger.json file, generate the docs,
+	// The check is pretty cheaply done: We take the hash of the openapi.json file, generate the docs,
 	// hash the file again and compare the two hashes to see if anything changed. If that's the case,
 	// regenerating the docs is necessary.
 	// swag is not capable of just outputting the generated docs to stdout, therefore we need to do it this way.
 	// Another drawback of this is obviously it will only work once - we're not resetting the newly generated
 	// docs after the check. This behaviour is good enough for ci though.
-	oldHash, err := calculateSha256FileHash(RootPath + "/pkg/swagger/swagger.json")
+	oldHash, err := calculateSha256FileHash(RootPath + "/pkg/openapi/openapi.json")
 	if err != nil {
-		fmt.Printf("Error getting old hash of the swagger docs: %s", err)
+		fmt.Printf("Error getting old hash of the OpenAPI docs: %s", err)
 		os.Exit(1)
 	}
 
 	(Generate{}).SwaggerDocs()
 
-	newHash, err := calculateSha256FileHash(RootPath + "/pkg/swagger/swagger.json")
+	newHash, err := calculateSha256FileHash(RootPath + "/pkg/openapi/openapi.json")
 	if err != nil {
-		fmt.Printf("Error getting new hash of the swagger docs: %s", err)
+		fmt.Printf("Error getting new hash of the OpenAPI docs: %s", err)
 		os.Exit(1)
 	}
 
 	if oldHash != newHash {
-		fmt.Println("Swagger docs are not up to date.")
+		fmt.Println("OpenAPI docs are not up to date.")
 		fmt.Println("Please run 'mage generate:swagger-docs' and commit the result.")
 		os.Exit(1)
 	}
@@ -1230,8 +1230,11 @@ const DefaultConfigYAMLSamplePath = "config.yml.sample"
 func (Generate) SwaggerDocs() {
 	mg.Deps(initVars)
 
-	checkAndInstallGoTool("swag", "github.com/swaggo/swag/cmd/swag")
-	runAndStreamOutput("swag", "init", "-g", "./pkg/routes/routes.go", "--parseDependency", "-d", RootPath, "-o", RootPath+"/pkg/swagger")
+	checkAndInstallGoTool("swag", "github.com/swaggo/swag/v2/cmd/swag")
+	runAndStreamOutput("swag", "init", "--v3.1", "-g", "./pkg/routes/routes.go", "--parseDependency", "-d", RootPath, "-o", RootPath+"/pkg/openapi")
+	// Rename generated files to use the openapi prefix
+	moveFile(RootPath+"/pkg/openapi/swagger.json", RootPath+"/pkg/openapi/openapi.json")
+	moveFile(RootPath+"/pkg/openapi/swagger.yaml", RootPath+"/pkg/openapi/openapi.yaml")
 }
 
 type ConfigNode struct {
