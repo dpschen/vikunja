@@ -574,6 +574,12 @@ func InitConfig() {
 		log.Warningf("Failed to set config from environment variables: %s", err.Error())
 	}
 
+	// Update the database path to match a changed rootpath when it was not explicitly set
+	defaultDBPath := filepath.Join(getBinaryDirLocation(), "vikunja.db")
+	if DatabasePath.GetString() == defaultDBPath {
+		DatabasePath.Set(filepath.Join(ServiceRootpath.GetString(), "vikunja.db"))
+	}
+
 	readConfigValuesFromFiles()
 
 	if RateLimitStore.GetString() == "keyvalue" {
