@@ -67,8 +67,18 @@ func TestUserEmailConfirm(t *testing.T) {
 			s := db.NewSession()
 			defer s.Close()
 
-			if err := ConfirmEmail(s, tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("ConfirmEmail() error = %v, wantErr %v", err, tt.wantErr)
+			err := ConfirmEmail(s, tt.args.c)
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("ConfirmEmail() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if err != nil {
+				if tt.errType != nil {
+					if !tt.errType(err) {
+						t.Fatalf("ConfirmEmail() unexpected error: %v", err)
+					}
+				} else {
+					t.Fatalf("ConfirmEmail() returned error: %v", err)
+				}
 			}
 		})
 	}
