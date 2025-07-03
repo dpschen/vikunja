@@ -19,7 +19,6 @@ package routes
 import (
 	"net/http"
 	"strconv"
-	"time"
 
 	"code.vikunja.io/api/pkg/config"
 	"code.vikunja.io/api/pkg/log"
@@ -97,7 +96,7 @@ func createRateLimiter(rate limiter.Rate) *limiter.Limiter {
 func setupRateLimit(a *echo.Group, rateLimitKind string) {
 	if config.RateLimitEnabled.GetBool() {
 		rate := limiter.Rate{
-			Period: config.RateLimitPeriod.GetDuration() * time.Second,
+			Period: config.RateLimitPeriod.GetDuration(),
 			Limit:  config.RateLimitLimit.GetInt64(),
 		}
 		rateLimiter := createRateLimiter(rate)
