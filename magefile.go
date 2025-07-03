@@ -77,6 +77,7 @@ var (
 		"lint:fix":                    Check.GolangciFix,
 		"generate:config-yaml":        Generate.ConfigYAML,
 		"generate:swagger-docs":       Generate.SwaggerDocs,
+		"test:bundle":                 EnsureFrontendBundle,
 	}
 )
 
@@ -187,6 +188,33 @@ func setRootPath() {
 	RootPath = pwd
 }
 
+func ensureFrontendDist() error {
+	dummy := filepath.Join("frontend", "dist", "index.html")
+	if _, err := os.Stat(dummy); err == nil {
+		return nil
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+
+	if err := os.MkdirAll(filepath.Dir(dummy), 0o755); err != nil {
+		return err
+	}
+
+	f, err := os.Create(dummy)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	_, err = f.WriteString("<!doctype html><title>dummy</title>")
+	return err
+}
+
+// EnsureFrontendBundle creates a dummy frontend bundle if none exists.
+func EnsureFrontendBundle() error {
+	return ensureFrontendDist()
+}
+
 func setGoFiles() {
 	// GOFILES := $(shell find . -name "*.go" -type f ! -path "*/bindata.go")
 	files, err := runCmdWithOutput("find", "./pkg", "-name", "*.go", "-type", "f", "!", "-path", "*/bindata.go")
@@ -205,6 +233,7 @@ func setGoFiles() {
 func init() {
 	setExecutable()
 	setRootPath()
+	_ = ensureFrontendDist()
 }
 
 // Some variables have external dependencies (like git) which may not always be available.
@@ -379,6 +408,7 @@ type Test mg.Namespace
 // Runs all tests except integration tests
 func (Test) Unit() {
 	mg.Deps(initVars)
+	_ = ensureFrontendDist()
 	setApiPackages()
 	// We run everything sequentially and not in parallel to prevent issues with real test databases
 	args := append([]string{"test", Goflags[0], "-p", "1", "-coverprofile", "cover.out", "-timeout", "45m"}, ApiPackages...)
@@ -395,12 +425,14 @@ func (Test) Coverage() {
 // Runs the integration tests
 func (Test) Integration() {
 	mg.Deps(initVars)
+	_ = ensureFrontendDist()
 	// We run everything sequentially and not in parallel to prevent issues with real test databases
 	runAndStreamOutput("go", "test", Goflags[0], "-p", "1", "-timeout", "45m", PACKAGE+"/pkg/integrations")
 }
 
 func (Test) All() {
 	mg.Deps(initVars)
+	_ = ensureFrontendDist()
 	mg.Deps(Test.Unit, Test.Integration)
 }
 

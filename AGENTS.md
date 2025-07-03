@@ -27,6 +27,7 @@ These instructions summarize the development guidelines from the official Vikunj
 - Set `VIKUNJA_SERVICE_ROOTPATH` to the repository root before running tests so fixtures load correctly.
 - Run API unit tests with `mage test:unit`.
 - Run API integration tests with `mage test:integration`.
+- If `frontend/dist/index.html` is missing, run `mage ensureFrontendBundle` to create a dummy bundle before `go vet` or `go test`.
 - Run frontend unit tests with `pnpm test:unit` (run `pnpm install --frozen-lockfile` in `frontend/` first).
 - Run `pnpm lint` and `pnpm typecheck` to match CI checks. `typecheck` might fail. Fix type errors only in the files you changed. If unrelated files fail, note it in the PR but do not attempt to fix those errors.
 - When running Cypress tests locally, use Chrome if available. `scripts/install-tools.sh` installs it automatically. If Chrome is missing, run the tests inside the `cypress/browsers` Docker image or fall back to Electron with `xvfb-run`.
