@@ -3,7 +3,11 @@
 		v-model="availableProjects"
 		animation="100"
 		ghost-class="ghost"
-		group="projects"
+		:group="{
+			name: 'projects',
+			pull: false,
+			put: ['tasks']
+		}"
 		handle=".handle"
 		tag="menu"
 		item-key="id"
@@ -19,6 +23,7 @@
 		}"
 		@start="() => drag = true"
 		@end="saveProjectPosition"
+		@add="moveTaskToProject"
 	>
 		<template #item="{element: project}">
 			<ProjectsNavigationItem
@@ -43,6 +48,8 @@ import {calculateItemPosition} from '@/helpers/calculateItemPosition'
 import type {IProject} from '@/modelTypes/IProject'
 
 import {useProjectStore} from '@/stores/projects'
+import {useTaskStore} from '@/stores/tasks'
+import TaskModel from '@/models/task'
 
 const props = defineProps<{
 	modelValue?: IProject[],
@@ -105,5 +112,32 @@ async function saveProjectPosition(e: SortableEvent) {
 	} finally {
 		projectUpdating.value[project.id] = false
 	}
+}
+
+async function moveTaskToProject(e: SortableEvent) {
+	const taskEl = e.item as HTMLElement
+	const taskId = Number(taskEl?.dataset?.taskId)
+	if (!taskId) return
+
+	const dragEvent = e.originalEvent as DragEvent | undefined
+	let projectEl: HTMLElement | null = null
+	if (dragEvent?.target instanceof HTMLElement) {
+		projectEl = dragEvent.target.closest('.project-item')
+	}
+	if (!projectEl && dragEvent) {
+		projectEl = document.elementFromPoint(dragEvent.clientX, dragEvent.clientY)?.closest('.project-item') as HTMLElement | null
+	}
+	if (!projectEl) {
+		projectEl = (taskEl.nextElementSibling || taskEl.previousElementSibling) as HTMLElement | null
+	}
+	const projectId = projectEl?.dataset?.projectId ? Number(projectEl.dataset.projectId) : 0
+	taskEl.remove()
+
+	if (!projectId) return
+
+	const taskStore = useTaskStore()
+	const currentTask = taskStore.tasks[taskId]
+	const task = currentTask ? { ...currentTask, projectId } : new TaskModel({ id: taskId, projectId })
+	await taskStore.update(task)
 }
 </script>
