@@ -35,6 +35,7 @@ import (
 	"strings"
 
 	"code.vikunja.io/api/pkg/db"
+	"code.vikunja.io/api/pkg/events"
 	"code.vikunja.io/api/pkg/files"
 	"code.vikunja.io/api/pkg/log"
 	"code.vikunja.io/api/pkg/models"
@@ -342,8 +343,9 @@ func GetProjectBackground(c echo.Context) error {
 
 	// Unsplash requires pingbacks as per their api usage guidelines.
 	// To do this in a privacy-preserving manner, we do the ping from inside of Vikunja to not expose any user details.
-	// FIXME: This should use an event once we have events
-	unsplash.Pingback(s, bgFile)
+	if err := events.Dispatch(&unsplash.PhotoPingbackEvent{FileID: bgFile.ID}); err != nil {
+		log.Errorf("Dispatch pingback event: %s", err)
+	}
 
 	if err := s.Commit(); err != nil {
 		_ = s.Rollback()
