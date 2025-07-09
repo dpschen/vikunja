@@ -37,12 +37,5 @@ func (lu *ProjectUser) CanUpdate(s *xorm.Session, a web.Auth) (bool, error) {
 }
 
 func (lu *ProjectUser) canDoProjectUser(s *xorm.Session, a web.Auth) (bool, error) {
-	// Link shares aren't allowed to do anything
-	if _, is := a.(*LinkSharing); is {
-		return false, nil
-	}
-
-	// Get the project and check if the user has write access on it
-	l := Project{ID: lu.ProjectID}
-	return l.IsAdmin(s, a)
+	return hasProjectAccess(s, a, lu.ProjectID, true)
 }

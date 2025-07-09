@@ -39,11 +39,5 @@ func (w *Webhook) CanCreate(s *xorm.Session, a web.Auth) (bool, error) {
 }
 
 func (w *Webhook) canDoWebhook(s *xorm.Session, a web.Auth) (bool, error) {
-	_, isShareAuth := a.(*LinkSharing)
-	if isShareAuth {
-		return false, nil
-	}
-
-	p := &Project{ID: w.ProjectID}
-	return p.CanUpdate(s, a)
+	return hasProjectAccess(s, a, w.ProjectID, false)
 }
