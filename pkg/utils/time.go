@@ -22,6 +22,10 @@ import (
 	"code.vikunja.io/api/pkg/config"
 )
 
+// DbTimeFormat describes the default datetime layout used for database queries.
+// It matches the standard MySQL DATETIME format without timezone information.
+const DbTimeFormat = "2006-01-02 15:04:05"
+
 // GetTimeWithoutNanoSeconds returns a time.Time without the nanoseconds.
 func GetTimeWithoutNanoSeconds(t time.Time) time.Time {
 	tz := config.GetTimeZone()

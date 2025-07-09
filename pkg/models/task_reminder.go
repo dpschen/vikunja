@@ -68,8 +68,6 @@ type taskUser struct {
 	User *user.User `xorm:"extends"`
 }
 
-const dbTimeFormat = `2006-01-02 15:04:05`
-
 func getTaskUsersForTasks(s *xorm.Session, taskIDs []int64, cond builder.Cond) (taskUsers []*taskUser, err error) {
 	if len(taskIDs) == 0 {
 		return
@@ -172,7 +170,7 @@ func getTasksWithRemindersDueAndTheirUsers(s *xorm.Session, now time.Time) (remi
 	err = s.
 		Join("INNER", "tasks", "tasks.id = task_reminders.task_id").
 		// All reminders from -12h to +14h to include all time zones
-		Where("reminder >= ? and reminder < ?", now.Add(time.Hour*-12).Format(dbTimeFormat), nextMinute.Add(time.Hour*14).Format(dbTimeFormat)).
+		Where("reminder >= ? and reminder < ?", now.Add(time.Hour*-12).Format(utils.DbTimeFormat), nextMinute.Add(time.Hour*14).Format(utils.DbTimeFormat)).
 		And("tasks.done = false").
 		Find(&reminders)
 	if err != nil {
