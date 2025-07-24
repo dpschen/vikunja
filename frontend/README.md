@@ -13,7 +13,10 @@ For general information about the project, refer to the top-level readme of this
 
 ## Project setup
 
+Make sure you're using the Node version defined in `.nvmrc`:
+
 ```shell
+nvm install
 pnpm install
 ```
 
