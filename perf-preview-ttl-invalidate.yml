@@ -1,0 +1,78 @@
+name: perf-preview-ttl-invalidate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create branch
+        run: git checkout -b "perf/preview-ttl-invalidate"
+
+      - name: Apply preview TTL + invalidation
+        shell: bash
+        run: |
+          set -euo pipefail
+          F="pkg/models/task_attachment.go"
+          test -f "$F"
+
+          python3 - <<'PY'
+          import re
+          f = "pkg/models/task_attachment.go"
+          with open(f, "r", encoding="utf-8") as fh:
+              s = fh.read()
+
+          # ensure import "time"
+          s = re.sub(r'(\bimport\s*\(\s*)([^)]*?)(\))',
+                     lambda m: m.group(1) + ('' if re.search(r'\n\s*"time"\s*\n', m.group(2)) else m.group(2) + '\n\t"time"\n') + m.group(3),
+                     s, count=1, flags=re.S)
+
+          # switch Remember(...) to RememberTTL(..., 30*24*time.Hour, ... ) in GetPreview
+          s = re.sub(r'keyvalue\.Remember\(\s*cacheKey\s*,\s*func\s*\(\)\s*\(any,\s*error\)',
+                     r'keyvalue.RememberTTL(cacheKey, 30*24*time.Hour, func() (any, error)',
+                     s, count=1)
+
+          # add invalidate helper if missing
+          if "func (ta *TaskAttachment) invalidatePreviewCache()" not in s:
+              s += "\n\nfunc (ta *TaskAttachment) invalidatePreviewCache() {\n"
+              s += "\t_ = keyvalue.Del(cacheKeyForTaskAttachmentPreview(ta.ID, PreviewSmall))\n"
+              s += "\t_ = keyvalue.Del(cacheKeyForTaskAttachmentPreview(ta.ID, PreviewMedium))\n"
+              s += "\t_ = keyvalue.Del(cacheKeyForTaskAttachmentPreview(ta.ID, PreviewLarge))\n"
+              s += "}\n"
+
+          # insert call before doer := user.GetFromAuth(a) in Delete(...)
+          s = re.sub(r'(doer,\s*_\s*:=\s*user\.GetFromAuth\(a\))',
+                     r'// Invalidate cached previews before events\n\tta.invalidatePreviewCache()\n\n\t\1',
+                     s, count=1)
+
+          with open(f, "w", encoding="utf-8") as fh:
+              fh.write(s)
+          PY
+
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "perf: preview TTL caching + cache invalidation on delete" || echo "No changes to commit"
+          git push -u origin "perf/preview-ttl-invalidate"
+
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: "perf/preview-ttl-invalidate"
+          title: "perf: preview TTL caching + cache invalidation on delete"
+          body: |
+            Switches attachment previews to RememberTTL(30d) and invalidates cached previews when an attachment is deleted.
+          labels: perf, automated
