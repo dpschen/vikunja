@@ -21,21 +21,17 @@ import (
 	"xorm.io/xorm"
 )
 
-// CanCreate checks if the user can create a team <-> project relation
-func (tl *TeamProject) CanCreate(s *xorm.Session, a web.Auth) (bool, error) {
-	return tl.canDoTeamProject(s, a)
-}
+// hasProjectAccess checks if auth is not a LinkSharing auth and evaluates
+// project rights. If admin is true, it verifies admin access, otherwise it
+// checks write access.
+func hasProjectAccess(s *xorm.Session, a web.Auth, projectID int64, admin bool) (bool, error) {
+	if _, is := a.(*LinkSharing); is {
+		return false, nil
+	}
 
-// CanDelete checks if the user can delete a team <-> project relation
-func (tl *TeamProject) CanDelete(s *xorm.Session, a web.Auth) (bool, error) {
-	return tl.canDoTeamProject(s, a)
-}
-
-// CanUpdate checks if the user can update a team <-> project relation
-func (tl *TeamProject) CanUpdate(s *xorm.Session, a web.Auth) (bool, error) {
-	return tl.canDoTeamProject(s, a)
-}
-
-func (tl *TeamProject) canDoTeamProject(s *xorm.Session, a web.Auth) (bool, error) {
-	return hasProjectAccess(s, a, tl.ProjectID, true)
+	p := &Project{ID: projectID}
+	if admin {
+		return p.IsAdmin(s, a)
+	}
+	return p.CanWrite(s, a)
 }
