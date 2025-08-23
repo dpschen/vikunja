@@ -1,0 +1,84 @@
+name: Build Visualizer
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout GitHub Pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: site
+          fetch-depth: 1
+
+      - name: Download stats artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: visualizer_stats
+
+      - name: Store current stats
+        env:
+          REF_NAME: ${{ github.ref_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          TARGET=site
+          if [ "$REF_NAME" = "main" ]; then
+            DIR="$TARGET/main"
+          else
+            DIR="$TARGET/pr-$PR_NUMBER"
+          fi
+          mkdir -p "$DIR"
+          mv stats.html "$DIR/index.html"
+
+      - name: Remove closed PR stats
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TARGET=site
+          open_prs=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls?state=open" | jq '.[].number')
+          for dir in $TARGET/pr-*; do
+            [ -d "$dir" ] || continue
+            pr=${dir##*/pr-}
+            if ! echo "$open_prs" | grep -w "$pr" >/dev/null; then
+              rm -rf "$dir"
+            fi
+          done
+
+      - name: Generate index
+        run: |
+          TARGET=site
+          {
+            echo '<html><body><h1>Visualizer Stats</h1><ul>'
+            echo '<li><a href="./main/">main</a></li>'
+            for dir in "$TARGET"/pr-*; do
+              [ -d "$dir" ] || continue
+              pr=${dir##*/pr-}
+              echo "<li><a href=\"./pr-$pr/\">PR #$pr</a></li>"
+            done
+            echo '</ul></body></html>'
+          } > "$TARGET/index.html"
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
