@@ -182,3 +182,13 @@ The parent will handle it all.
 
 After initializing a model, it is possible to access all properties via `model.property`.
 To make sure the property actually exists, provide it as a default.
+
+### Project View Store
+
+Tasks and projects are cached in the `projectView` store. When a project view is
+opened, the store fetches the project and task data and keeps it keyed by the
+`projectId` and `viewId`. Other components reuse the cached data which avoids
+additional API calls when switching between different views of the same project.
+
+Use `clearProjectViewCache(projectId)` to drop cached data when leaving a
+project or to force a reload.
