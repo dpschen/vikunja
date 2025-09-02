@@ -5,6 +5,7 @@ import {useRoute, useRouter} from 'vue-router'
 import {useBaseStore} from '@/stores/base'
 import {useProjectStore} from '@/stores/projects'
 import {useAuthStore} from '@/stores/auth'
+import {useProjectViewStore} from '@/stores/projectViews'
 
 import {saveProjectView} from '@/helpers/projectView'
 import ProjectService from '@/services/project'
@@ -26,9 +27,10 @@ const router = useRouter()
 const baseStore = useBaseStore()
 const projectStore = useProjectStore()
 const authStore = useAuthStore()
+const projectViewStore = useProjectViewStore()
 const route = useRoute()
 
-const currentProject = computed(() => projectStore.projects[props.projectId])
+const currentProject = computed(() => projectViewStore.projects[props.projectId] || projectStore.projects[props.projectId])
 
 const currentView = computed(() => {
 	return currentProject.value?.views.find(v => v.id === props.viewId)
@@ -39,9 +41,9 @@ const isLoadingProject = computed(() => projectService.loading)
 const loadedProjectId = ref(0)
 
 watch(
-	() => props.projectId,
-	// loadProject
-	async (projectIdToLoad, oldProjectIdToLoad) => {
+        () => props.projectId,
+        // loadProject
+        async (projectIdToLoad, oldProjectIdToLoad) => {
 
 		console.debug('Loading project, $route.params =', route.params, `, loadedProjectId = ${loadedProjectId.value}, currentProject = `, currentProject.value)
 
@@ -50,17 +52,23 @@ watch(
 			loadedProjectId.value = 0
 		}
 
-		try {
-			const loadedProject = await projectService.get({id: projectIdToLoad})
+               const cached = projectViewStore.projects[projectIdToLoad]
+               if (cached) {
+                       projectStore.setProject(cached)
+                       baseStore.handleSetCurrentProject({project: cached, currentProjectViewId: props.viewId})
+                       loadedProjectId.value = projectIdToLoad
+                       return
+               }
 
-			// Here, we only set the new project in the projectStore.
-			// Setting that projet as the current one in the baseStore is handled by the watcher below.
-			projectStore.setProject(loadedProject)
-		} finally {
-			loadedProjectId.value = projectIdToLoad
-		}
-	},
-	{immediate: true},
+               try {
+                       const loadedProject = await projectViewStore.loadProject(projectIdToLoad)
+                       projectStore.setProject(loadedProject)
+                       baseStore.handleSetCurrentProject({project: loadedProject, currentProjectViewId: props.viewId})
+               } finally {
+                       loadedProjectId.value = projectIdToLoad
+               }
+        },
+        {immediate: true},
 )
 
 watch(
