@@ -23,7 +23,7 @@
 							v-if="taskRelationService.loading"
 							class="is-inline-flex"
 						>
-							<span class="loader is-inline-block mr-2" />
+							<span class="loader is-inline-block mie-2" />
 							{{ $t('misc.saving') }}
 						</span>
 						<span
@@ -80,7 +80,7 @@
 				</div>
 				<div
 					key="field-kind"
-					class="field has-addons mb-4"
+					class="field has-addons mbe-4"
 				>
 					<div class="control is-expanded">
 						<div class="select is-fullwidth has-defaults">
@@ -388,7 +388,7 @@ async function toggleTaskDone(task: ITask) {
 
 <style lang="scss" scoped>
 .add-task-relation-button {
-	margin-top: -3rem;
+	margin-block-start: -3rem;
 
 	svg {
 		transition: transform $transition;
@@ -401,7 +401,7 @@ async function toggleTaskDone(task: ITask) {
 
 .different-project {
 	color: var(--grey-500);
-	width: auto;
+	inline-size: auto;
 }
 
 .title {
@@ -461,7 +461,7 @@ async function toggleTaskDone(task: ITask) {
 //  of the component.
 .task-done-checkbox {
 	padding: 0;
-	height: 18px; // The exact height of the checkbox in the container
-	margin-right: .75rem;
+	block-size: 18px; // The exact height of the checkbox in the container
+	margin-inline-end: .75rem;
 }
 </style>

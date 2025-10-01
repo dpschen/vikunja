@@ -1,18 +1,13 @@
-version: '3'
-
 services:
-  api:
-    image: vikunja/api:unstable@sha256:61b77af0f0ed5b0e4c3ee693a79926d8633712ddb245f8212ba5e5321485d330
-    environment:
-      VIKUNJA_LOG_LEVEL: DEBUG
-      VIKUNJA_SERVICE_TESTINGTOKEN: averyLongSecretToSe33dtheDB
+  dex:
+    image: ghcr.io/go-vikunja/dex-testing:main@sha256:76ba26073ef572da9ae19308940dbc3b99c508db4c90300d11b52be63e27b43a
     ports:
-      - 3456:3456
+      - 5556:5556
   cypress:
-    image: cypress/browsers:node18.12.0-chrome107@sha256:bfdbf9b64fdaad364f6e76e3c2a75fbce7c8018644d71e41ef43bba0ae8f4e38
+    image: cypress/browsers:latest@sha256:2c4e1047f7187ca028dcd968cbd3aafc9430bbd30a3ec4d6b41f9eabfdb39e59
     volumes:
-    - ..:/project
-    - $HOME/.cache:/home/node/.cache/
+      - ..:/project
+      - $HOME/.cache:/home/node/.cache/
     user: node
     working_dir: /project
     environment:

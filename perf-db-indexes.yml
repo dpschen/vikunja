@@ -1,0 +1,99 @@
+name: perf-db-indexes
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create branch
+        run: git checkout -b "perf/db-indexes"
+
+      - name: Add migration file
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p pkg/migration
+          cat > pkg/migration/20250808121500.go <<'GOFILE'
+
+// Vikunja is a to-do list application to facilitate your life.
+// Copyright ...
+package migration
+
+import (
+    "src.techknowlogick.com/xormigrate"
+    "xorm.io/xorm"
+    "xorm.io/xorm/schemas"
+)
+
+func init() {
+    migrations = append(migrations, &xormigrate.Migration{
+        ID:          "20250808121500",
+        Description: "add composite indexes for task search hot paths",
+        Migrate: func(tx *xorm.Engine) error {
+            var queries []string
+            switch tx.Dialect().URI().DBType {
+            case schemas.MYSQL:
+                queries = []string{
+                    "CREATE INDEX IDX_tasks_project_updated ON tasks (project_id, updated)",
+                    "CREATE INDEX IDX_tasks_project_created ON tasks (project_id, created)",
+                    "CREATE INDEX IDX_task_positions_task_view ON task_positions (task_id, project_view_id)",
+                    "CREATE INDEX IDX_label_tasks_task_label ON label_tasks (task_id, label_id)",
+                    "CREATE INDEX IDX_task_assignees_task_user ON task_assignees (task_id, user_id)",
+                    "CREATE INDEX IDX_task_relations_task_kind ON task_relations (task_id, relation_kind)",
+                    "CREATE INDEX IDX_task_relations_other_kind ON task_relations (other_task_id, relation_kind)",
+                }
+            default:
+                queries = []string{
+                    "CREATE INDEX IF NOT EXISTS IDX_tasks_project_updated ON tasks (project_id, updated DESC)",
+                    "CREATE INDEX IF NOT EXISTS IDX_tasks_project_created ON tasks (project_id, created DESC)",
+                    "CREATE INDEX IF NOT EXISTS IDX_task_positions_task_view ON task_positions (task_id, project_view_id)",
+                    "CREATE INDEX IF NOT EXISTS IDX_label_tasks_task_label ON label_tasks (task_id, label_id)",
+                    "CREATE INDEX IF NOT EXISTS IDX_task_assignees_task_user ON task_assignees (task_id, user_id)",
+                    "CREATE INDEX IF NOT EXISTS IDX_task_relations_task_kind ON task_relations (task_id, relation_kind)",
+                    "CREATE INDEX IF NOT EXISTS IDX_task_relations_other_kind ON task_relations (other_task_id, relation_kind)",
+                }
+            }
+            for _, q := range queries {
+                if _, err := tx.Exec(q); err != nil {
+                    return err
+                }
+            }
+            return nil
+        },
+        Rollback: func(tx *xorm.Engine) error {
+            // Keep the indexes
+            return nil
+        },
+    })
+}
+
+GOFILE
+
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "perf(db): add composite indexes for tasks hot paths" || echo "No changes to commit"
+          git push -u origin "perf/db-indexes"
+
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: "perf/db-indexes"
+          title: "perf(db): add composite indexes for tasks hot paths"
+          body: |
+            Adds a migration that creates composite indexes used by hot queries.
+          labels: perf, automated

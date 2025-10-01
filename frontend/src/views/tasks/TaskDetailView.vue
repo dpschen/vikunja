@@ -51,7 +51,7 @@
 			<ChecklistSummary :task="task" />
 
 			<!-- Content and buttons -->
-			<div class="columns mt-2">
+			<div class="columns mbs-2">
 				<!-- Content -->
 				<div
 					:class="{'is-two-thirds': canWrite}"
@@ -77,7 +77,7 @@
 							<AssigneeList
 								v-else
 								:assignees="task.assignees"
-								class="mt-2"
+								class="mbs-2"
 							/>
 						</div>
 						<CustomTransition
@@ -352,7 +352,7 @@
 					<!-- Related Tasks -->
 					<div
 						v-if="activeFields.relatedTasks"
-						class="content details mb-0"
+						class="content details mbe-0"
 					>
 						<h3>
 							<span class="icon is-grey">
@@ -576,7 +576,7 @@
 			</template>
 
 			<template #text>
-				<p class="tw-text-balance !tw-mb-0">
+				<p class="tw-text-balance !tw-mbe-0">
 					{{ $t('task.detail.delete.text1') }}
 				</p>
 				<p class="tw-text-balance">
@@ -961,15 +961,15 @@ function setRelatedTasksActive() {
 .task-view-container {
 	// simulate sass lighten($primary, 30) by increasing lightness 30% to 73%
 	--primary-light: hsla(var(--primary-h), var(--primary-s), 73%, var(--primary-a));
-	padding-bottom: 0;
+	padding-block-end: 0;
 
 	@media screen and (min-width: $desktop) {
-		padding-bottom: 1rem;
+		padding-block-end: 1rem;
 	}
 }
 
 .task-view {
-	padding-top: 1rem;
+	padding-block-start: 1rem;
 	padding-inline: .5rem;
 	background-color: var(--site-background);
 
@@ -984,7 +984,7 @@ function setRelatedTasksActive() {
 	color: var(--text);
 	background-color: var(--site-background) !important;
 
-	@media screen and (max-width: calc(#{$desktop} + 1px)) {
+	@media screen and (width <= calc(#{$desktop} + 1px)) {
 		border-radius: 0;
 	}
 }
@@ -1000,7 +1000,7 @@ function setRelatedTasksActive() {
 
 .subtitle {
 	color: var(--grey-500);
-	margin-bottom: 1rem;
+	margin-block-end: 1rem;
 
 	a {
 		color: var(--grey-800);
@@ -1023,12 +1023,12 @@ h3 .button {
 .remove {
 	color: var(--danger);
 	vertical-align: middle;
-	padding-left: .5rem;
+	padding-inline-start: .5rem;
 	line-height: 1;
 }
 
 :deep(.datepicker) {
-	width: 100%;
+	inline-size: 100%;
 
 	.show {
 		color: var(--text);
@@ -1037,8 +1037,8 @@ h3 .button {
 		border-radius: $radius;
 		display: block;
 		margin: .1rem 0;
-		width: 100%;
-		text-align: left;
+		inline-size: 100%;
+		text-align: start;
 
 		&:hover {
 			background: var(--white);
@@ -1051,9 +1051,9 @@ h3 .button {
 }
 
 .details {
-	padding-bottom: 0.75rem;
+	padding-block-end: 0.75rem;
 	flex-flow: row wrap;
-	margin-bottom: 0;
+	margin-block-end: 0;
 
 	.detail-title {
 		display: block;
@@ -1076,7 +1076,7 @@ h3 .button {
 .assignees {
 	:deep(.multiselect) {
 		.input-wrapper {
-			&:not(:focus-within):not(:hover) {
+			&:not(:focus-within, :hover) {
 				background: transparent;
 				border-color: transparent;
 			}
@@ -1125,23 +1125,23 @@ h3 .button {
 }
 
 .attachments {
-	margin-bottom: 0;
+	margin-block-end: 0;
 
 	table tr:last-child td {
-		border-bottom: none;
+		border-inline-end: none;
 	}
 }
 
 .action-buttons {
 	@media screen and (min-width: $tablet) {
 		position: sticky;
-		top: $navbar-height + 1.5rem;
+		inset-block-start: $navbar-height + 1.5rem;
 		align-self: flex-start;
 	}
 
 	.button {
-		width: 100%;
-		margin-bottom: .5rem;
+		inline-size: 100%;
+		margin-block-end: .5rem;
 		justify-content: left;
 
 		&.has-light-text {
@@ -1153,22 +1153,22 @@ h3 .button {
 .is-modal .action-buttons {
 	// we need same top margin for the modal close button 
 	@media screen and (min-width: $tablet) {
-		top: 6.5rem;
+		inset-block-start: 6.5rem;
 	}
 	// this is the moment when the fixed close button is outside the modal
 	// => we can fill up the space again
-	@media screen and (min-width: calc(#{$desktop} + 84px)) {
-		top: 0;
+	@media screen and (width >= calc(#{$desktop} + 84px)) {
+		inset-block-start: 0;
 	}
 }
 
 .checklist-summary {
-	padding-left: .25rem;
+	padding-inline-start: .25rem;
 }
 
 .detail-content {
 	@media print {
-		width: 100% !important;
+		inline-size: 100% !important;
 	}
 }
 

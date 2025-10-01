@@ -11,7 +11,7 @@ jobs:
         id: ghd
         uses: proudust/gh-describe@v2
       - name: Login to GHCR
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -24,7 +24,7 @@ jobs:
       - name: Docker meta version
         if: ${{ github.ref_type == 'tag' }}
         id: meta
-        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5
+        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5
         with:
           images: |
             vikunja/vikunja
@@ -64,11 +64,11 @@ jobs:
         with:
           go-version: stable
       - name: Download Mage Binary
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: mage_bin
       - name: get frontend
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: frontend_dist
           path: frontend/dist
@@ -86,7 +86,7 @@ jobs:
           gpg-passphrase: "${{ secrets.RELEASE_GPG_PASSPHRASE }}"
           gpg-sign-key: "${{ secrets.RELEASE_GPG_SIGN_KEY }}"
       - name: setup xgo cache
-        uses: useblacksmith/cache@c5fe29eb0efdf1cf4186b9f7fcbbcbc0cf025662 # v5
+        uses: useblacksmith/cache@71c7c918062ba3861252d84b07fe5ab2a6b467a6 # v5
         with:
           path: /home/runner/.xgo-cache
           key: ${{ hashFiles('**/go.sum') }}
@@ -137,7 +137,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Download Vikunja Binary
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: vikunja_bins
           pattern: vikunja-*-linux-amd64
@@ -145,7 +145,7 @@ jobs:
         id: ghd
         uses: proudust/gh-describe@v2
       - name: Download Mage Binary
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: mage_bin
       - name: Prepare
@@ -184,7 +184,7 @@ jobs:
         id: ghd
         uses: proudust/gh-describe@v2
       - name: Download Mage Binary
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: mage_bin
       - name: generate
@@ -232,7 +232,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y libopenjp2-tools rpm libarchive-tools
       - name: get frontend
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: frontend_dist
           path: frontend/dist
@@ -265,7 +265,7 @@ jobs:
           ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
           persist-credentials: true
       - name: Download Mage Binary
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: mage_bin
       - name: Set up Go

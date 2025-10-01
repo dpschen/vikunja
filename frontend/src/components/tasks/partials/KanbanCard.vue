@@ -34,7 +34,7 @@
 					</template>
 					<span
 						v-if="showTaskPosition"
-						class="tw-text-red-600 tw-pl-2"
+						class="tw-text-red-600 tw-ps-2"
 					>
 						{{ task.position }}
 					</span>
@@ -53,7 +53,7 @@
 					<Icon :icon="['far', 'calendar-alt']" />
 				</span>
 				<time :datetime="formatISO(task.dueDate)">
-					{{ formatDateSince(task.dueDate) }}
+					{{ formatDisplayDate(task.dueDate) }}
 				</time>
 			</span>
 			<h3>{{ task.title }}</h3>
@@ -74,7 +74,7 @@
 					v-if="task.assignees.length > 0"
 					:assignees="task.assignees"
 					:avatar-size="24"
-					class="mr-1"
+					class="mie-1"
 				/>
 				<ChecklistSummary
 					:task="task"
@@ -121,7 +121,7 @@ import type {IProject} from '@/modelTypes/IProject'
 import {SUPPORTED_IMAGE_SUFFIX} from '@/models/attachment'
 import AttachmentService, {PREVIEW_SIZE} from '@/services/attachment'
 
-import {formatDateLong, formatDateSince, formatISO} from '@/helpers/time/formatDate'
+import {formatDateLong, formatDisplayDate, formatISO} from '@/helpers/time/formatDate'
 import {colorIsDark} from '@/helpers/color/colorIsDark'
 import {useTaskStore} from '@/stores/tasks'
 import AssigneeList from '@/components/tasks/partials/AssigneeList.vue'
@@ -228,10 +228,10 @@ $task-background: var(--white);
 	overflow: hidden;
 
 	&.loader-container.is-loading::after {
-		width: 1.5rem;
-		height: 1.5rem;
-		top: calc(50% - .75rem);
-		left: calc(50% - .75rem);
+		inline-size: 1.5rem;
+		block-size: 1.5rem;
+		inset-block-start: calc(50% - .75rem);
+		inset-inline-start: calc(50% - .75rem);
 		border-width: 2px;
 	}
 
@@ -243,12 +243,13 @@ $task-background: var(--white);
 
 
 	.due-date {
-		float: right;
+		float: inline-end;
 		display: flex;
 		align-items: center;
+		padding: 0 .25rem;
 
 		.icon {
-			margin-right: .25rem;
+			margin-inline-end: .25rem;
 		}
 
 		&.overdue {
@@ -266,18 +267,18 @@ $task-background: var(--white);
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
-		margin-top: .25rem;
+		margin-block-start: .25rem;
 
 		:deep(.tag),
 		:deep(.checklist-summary),
 		.assignees,
 		.icon,
 		.priority-label {
-			margin-right: .25rem;
+			margin-inline-end: .25rem;
 		}
 
 		:deep(.checklist-summary) {
-			padding-left: 0;
+			padding-inline-start: 0;
 		}
 
 		.assignees {
@@ -295,7 +296,7 @@ $task-background: var(--white);
 
 		// FIXME: should be in Labels.vue
 		:deep(.tag) {
-			margin-left: 0;
+			margin-inline-start: 0;
 		}
 
 		.priority-label {
@@ -303,9 +304,9 @@ $task-background: var(--white);
 			padding: 0 .5rem 0 .25rem;
 
 			.icon {
-				height: 1rem;
+				block-size: 1rem;
 				padding: 0 .25rem;
-				margin-top: 0;
+				margin-block-start: 0;
 			}
 		}
 	}
@@ -318,14 +319,10 @@ $task-background: var(--white);
 		padding: 0 .5rem;
 	}
 
-	.due-date {
-		padding: 0 .25rem;
-	}
-
 	.task-id {
 		color: var(--grey-500);
 		font-size: .8rem;
-		margin-bottom: .25rem;
+		margin-block-end: .25rem;
 		display: flex;
 	}
 
@@ -334,7 +331,7 @@ $task-background: var(--white);
 	}
 
 	span {
-		width: auto;
+		inline-size: auto;
 	}
 
 	&.has-custom-background-color {
@@ -378,12 +375,12 @@ $task-background: var(--white);
 }
 
 .kanban-card__done {
-	margin-right: .25rem;
+	margin-inline-end: .25rem;
 }
 
 .task-progress {
-	margin: 8px 0 0 0;
-	width: 100%;
-	height: 0.5rem;
+	margin: 8px 0 0;
+	inline-size: 100%;
+	block-size: 0.5rem;
 }
 </style>

@@ -190,24 +190,22 @@ function onUpdateField(e) {
 		background: var(--white);
 		border-radius: 0 0 var(--input-radius) var(--input-radius);
 		border: 1px solid var(--primary);
-		border-top: none;
+		border-block-start: none;
 
-		max-height: 50vh;
+		max-block-size: 50vh;
 		overflow-x: auto;
 		z-index: 100;
-		max-width: 100%;
-		min-width: 100%;
-		margin-top: -2px;
+		max-inline-size: 100%;
+		min-inline-size: 100%;
+		margin-block-start: -2px;
 
 		button {
-			width: 100%;
 			background: transparent;
-			border: 0;
 
 			font-size: .9rem;
-			width: 100%;
+			inline-size: 100%;
 			color: var(--grey-800);
-			text-align: left;
+			text-align: start;
 			box-shadow: none;
 			text-transform: none;
 			font-family: $family-sans-serif;

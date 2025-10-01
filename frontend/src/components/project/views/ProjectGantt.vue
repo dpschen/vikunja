@@ -167,14 +167,14 @@ const flatPickerConfig = computed(() => ({
 
 <style lang="scss" scoped>
 .gantt-chart-container {
-	padding-bottom: 1rem;
+	padding-block-end: 1rem;
 }
 
 .gantt-options {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 1rem;
+	margin-block-end: 1rem;
 
 	@media screen and (max-width: $tablet) {
 		flex-direction: column;
@@ -191,18 +191,18 @@ const flatPickerConfig = computed(() => ({
 }
 
 .field {
-	margin-bottom: 0;
-	width: 33%;
+	margin-block-end: 0;
+	inline-size: 33%;
 
 	&:not(:last-child) {
-		padding-right: .5rem;
+		padding-inline-end: .5rem;
 	}
 
 	@media screen and (max-width: $tablet) {
-		width: 100%;
-		max-width: 100%;
-		margin-top: .5rem;
-		padding-right: 0 !important;
+		inline-size: 100%;
+		max-inline-size: 100%;
+		margin-block-start: .5rem;
+		padding-inline-end: 0 !important;
 	}
 
 	&, .input {
@@ -211,8 +211,8 @@ const flatPickerConfig = computed(() => ({
 
 	.select,
 	.select select {
-		height: auto;
-		width: 100%;
+		block-size: auto;
+		inline-size: 100%;
 		font-size: .8rem;
 	}
 

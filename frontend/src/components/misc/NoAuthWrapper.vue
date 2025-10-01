@@ -28,7 +28,7 @@
 					<ApiConfig v-if="showApiConfig" />
 					<Message
 						v-if="motd !== ''"
-						class="is-hidden-tablet mb-4"
+						class="is-hidden-tablet mbe-4"
 					>
 						{{ motd }}
 					</Message>
@@ -71,20 +71,20 @@ useTitle(() => title.value)
 <style lang="scss" scoped>
 .no-auth-wrapper {
 	background: var(--site-background) url('@/assets/llama.svg?url') no-repeat fixed bottom left;
-	min-height: 100vh;
+	min-block-size: 100vh;
 	display: flex;
 	flex-direction: column;
 	place-items: center;
 
 	@media screen and (max-width: $fullhd) {
-		padding-bottom: 15rem;
+		padding-block-end: 15rem;
 	}
 }
 
 .noauth-container {
-	max-width: $desktop;
-	width: 100%;
-	min-height: 60vh;
+	max-inline-size: $desktop;
+	inline-size: 100%;
+	min-block-size: 60vh;
 	display: flex;
 	background-color: var(--white);
 	box-shadow: var(--shadow-md);
@@ -96,7 +96,7 @@ useTitle(() => title.value)
 }
 
 .image {
-	width: 50%;
+	inline-size: 50%;
 	padding: 1rem;
 	display: flex;
 	flex-direction: column;
@@ -117,10 +117,10 @@ useTitle(() => title.value)
 		&::before {
 			content: '';
 			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
+			inset-block-start: 0;
+			inset-inline-start: 0;
+			inset-inline-end: 0;
+			inset-block-end: 0;
 			background-color: rgba(0, 0, 0, .2);
 		}
 
@@ -137,18 +137,18 @@ useTitle(() => title.value)
 	padding: 2rem 2rem 1.5rem;
 
 	@media screen and (max-width: $desktop) {
-		width: 100%;
-		max-width: 450px;
+		inline-size: 100%;
+		max-inline-size: 450px;
 		margin-inline: auto;
 	}
 
 	@media screen and (min-width: $desktop) {
-		width: 50%;
+		inline-size: 50%;
 	}
 }
 
 .logo {
-	max-width: 100%;
+	max-inline-size: 100%;
 	margin: 1rem 0;
 }
 

@@ -80,15 +80,15 @@ onClickOutside(popup, () => close())
 .popup {
 	transition: opacity $transition;
 	opacity: 0;
-	height: 0;
+	block-size: 0;
 	overflow: hidden;
 	position: absolute;
-	top: 1rem;
+	inset-block-start: 1rem;
 	z-index: 100;
 
 	&.is-open {
 		opacity: 1;
-		height: auto;
+		block-size: auto;
 	}
 }
 </style>

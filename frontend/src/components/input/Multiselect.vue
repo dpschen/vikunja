@@ -28,7 +28,7 @@
 						>
 							<span
 								:key="`item${key}`"
-								class="tag ml-2 mt-2"
+								class="tag mis-2 mbs-2"
 							>
 								{{ label !== '' ? item[label] : item }}
 								<BaseButton
@@ -435,11 +435,11 @@ function focus() {
 
 <style lang="scss" scoped>
 .multiselect {
-	width: 100%;
+	inline-size: 100%;
 	position: relative;
 
 	.control.is-loading::after {
-		top: .75rem;
+		inset-block-start: .75rem;
 	}
 
 	&.is-disabled {
@@ -460,7 +460,7 @@ function focus() {
 	background: var(--white);
 	border-color: var(--grey-200);
 	flex-wrap: wrap;
-	height: auto;
+	block-size: auto;
 
 	&:hover {
 		border-color: var(--grey-300) !important;
@@ -468,12 +468,12 @@ function focus() {
 
 	.input {
 		display: flex;
-		max-width: 100%;
-		width: 100%;
+		max-inline-size: 100%;
+		inline-size: 100%;
 		align-items: center;
 		border: none !important;
 		background: transparent;
-		height: auto;
+		block-size: auto;
 
 		&::placeholder {
 			font-style: normal !important;
@@ -481,10 +481,10 @@ function focus() {
 	}
 
 	&.has-multiple .input {
-		max-width: 250px;
+		max-inline-size: 250px;
 
 		input {
-			padding-left: 0;
+			padding-inline-start: 0;
 		}
 	}
 
@@ -505,7 +505,7 @@ function focus() {
 	background: var(--white) !important;
 
 	&, &:focus-within {
-		border-bottom-color: var(--grey-200) !important;
+		border-block-end-color: var(--grey-200) !important;
 	}
 }
 
@@ -513,14 +513,14 @@ function focus() {
 	background: var(--white);
 	border-radius: 0 0 $radius $radius;
 	border: 1px solid var(--primary);
-	border-top: none;
+	border-block-start: none;
 
-	max-height: 50vh;
+	max-block-size: 50vh;
 	overflow-x: auto;
 	position: absolute;
 	z-index: 100;
-	max-width: 100%;
-	min-width: 100%;
+	max-inline-size: 100%;
+	min-inline-size: 100%;
 }
 
 .search-results-inline {
@@ -529,7 +529,7 @@ function focus() {
 
 .search-result-button {
 	background: transparent;
-	text-align: left;
+	text-align: start;
 	box-shadow: none;
 	border-radius: 0;
 	text-transform: none;
@@ -572,7 +572,7 @@ function focus() {
 	font-size: .75rem;
 	color: transparent;
 	transition: color $transition;
-	padding-left: .5rem;
+	padding-inline-start: .5rem;
 }
 
 .has-removal-button {
@@ -581,7 +581,7 @@ function focus() {
 
 .removal-button {
 	position: absolute;
-	right: .5rem;
+	inset-inline-end: .5rem;
 	color: var(--danger);
 }
 </style>
