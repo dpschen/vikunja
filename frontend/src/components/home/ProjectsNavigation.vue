@@ -5,7 +5,7 @@
 		ghost-class="ghost"
 		:group="{
 			name: 'projects',
-			pull: false,
+			pull: true,
 			put: ['tasks']
 		}"
 		handle=".handle"
