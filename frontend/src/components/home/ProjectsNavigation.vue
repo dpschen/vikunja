@@ -3,11 +3,7 @@
 		v-model="availableProjects"
 		animation="100"
 		ghost-class="ghost"
-		:group="{
-			name: 'projects',
-			pull: true,
-			put: ['tasks']
-		}"
+		:group="projectDragGroup"
 		handle=".handle"
 		tag="menu"
 		item-key="id"
@@ -59,6 +55,12 @@ const props = defineProps<{
 const emit = defineEmits<{
 	(e: 'update:modelValue', projects: IProject[]): void
 }>()
+
+const projectDragGroup = {
+	name: 'projects',
+	pull: true,
+	put: ['tasks'],
+} as const
 
 const drag = ref(false)
 
