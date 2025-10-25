@@ -1,0 +1,407 @@
+diff --git a/frontend/package.json b/frontend/package.json
+index 044eac0..0000000 100644
+--- a/frontend/package.json
++++ b/frontend/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "vikunja-frontend",
+-  "version": "0.0.0",
++  "version": "0.0.0", 
+   "private": true,
+   "type": "module",
+   "scripts": {
+@@ -18,6 +18,16 @@
+     "format": "prettier --write .",
+     "preview": "vite preview"
+   },
++  "dependencies": {
++    "@sentry/vue": "^10.0.0",
++    "@sentry/replay": "^10.0.0"
++  },
++  "devDependencies": {
++    "@sentry/vite-plugin": "^4.0.0"
++  }
+ }
++
++// NOTE:
++// - Added @sentry/vue + @sentry/replay runtime packages
++// - Added @sentry/vite-plugin for build-time sourcemap upload & release injection
+diff --git a/frontend/vite.config.ts b/frontend/vite.config.ts
+index 5938976..0000000 100644
+--- a/frontend/vite.config.ts
++++ b/frontend/vite.config.ts
+@@ -1,3 +1,78 @@
+-// (previous Vite config using a third-party Sentry plugin)
++import { defineConfig, loadEnv } from 'vite'
++import vue from '@vitejs/plugin-vue'
++import { sentryVitePlugin } from '@sentry/vite-plugin'
++
++// Vite config
++export default defineConfig(({ mode }) => {
++  const env = loadEnv(mode, process.cwd(), '')
++  const isProd = mode === 'production'
++
++  /** Optional: Validate required CI env when building prod */
++  if (isProd) {
++    const required = ['SENTRY_ORG', 'SENTRY_PROJECT', 'SENTRY_AUTH_TOKEN']
++    const missing = required.filter((k) => !env[k])
++    if (missing.length) {
++      // eslint-disable-next-line no-console
++      console.warn(
++        `[sentry] Missing required env for sourcemap upload: ${missing.join(', ')}`
++      )
++    }
++  }
++
++  return {
++    plugins: [
++      vue(),
++      // Use official Sentry plugin in production builds only
++      isProd &&
++        sentryVitePlugin({
++          org: env.SENTRY_ORG,
++          project: env.SENTRY_PROJECT,
++          authToken: env.SENTRY_AUTH_TOKEN,
++          url: env.SENTRY_URL || undefined, // optional (for self-hosted)
++          // Inject release into the bundle so the runtime SDK can use it
++          release: {
++            name: env.SENTRY_RELEASE || undefined, // optional explicit override
++            inject: true
++          },
++          // Upload sourcemaps from the built assets
++          sourcemaps: {
++            assets: './dist/assets/**',
++            // Remove .map files after upload to avoid exposing source
++            filesToDeleteAfterUpload: ['dist/**/*.map']
++          },
++          // Turn off Sentry plugin analytics
++          telemetry: false
++        })
++    ].filter(Boolean),
++    build: {
++      // Generate sourcemaps for Sentry to de-minify stacktraces
++      sourcemap: true
++    },
++    // Expose both VITE_* (default) and SENTRY_* to the client
++    envPrefix: ['VITE_', 'SENTRY_'],
++    // Keep the rest of your original config below (aliases, server, etc.) if present
++  }
++})
+diff --git a/frontend/env.d.ts b/frontend/env.d.ts
+index 10c2836..0000000 100644
+--- a/frontend/env.d.ts
++++ b/frontend/env.d.ts
+@@ -1,3 +1,38 @@
+ /// <reference types="vite/client" />
+ 
+-declare module '*.vue'
++declare module '*.vue'
++
++interface ImportMetaEnv {
++  /**
++   * Runtime DSN for the browser SDK
++   */
++  readonly SENTRY_DSN?: string
++  /**
++   * Environment tag for Sentry events (e.g., production|staging)
++   */
++  readonly SENTRY_ENVIRONMENT?: string
++  /**
++   * Optional - provide a custom tunnel endpoint hosted on your origin,
++   * e.g. `/monitoring` that forwards Sentry envelopes.
++   */
++  readonly SENTRY_TUNNEL?: string
++  /**
++   * Optional - override release string (plugin injects one automatically)
++   */
++  readonly SENTRY_RELEASE?: string
++  /**
++   * Observability sampling knobs
++   */
++  readonly SENTRY_TRACES_SAMPLE_RATE?: string
++  readonly SENTRY_REPLAY_ENABLED?: 'true' | 'false'
++  readonly SENTRY_REPLAYS_SESSION_SAMPLE_RATE?: string
++  readonly SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE?: string
++
++  // Build-time (CI) – used by @sentry/vite-plugin
++  readonly SENTRY_ORG?: string
++  readonly SENTRY_PROJECT?: string
++  readonly SENTRY_AUTH_TOKEN?: string
++  readonly SENTRY_URL?: string
++}
++
++declare const __SENTRY_RELEASE__: string | undefined
+diff --git a/frontend/.env.local.example b/frontend/.env.local.example
+index 5e9e27d..0000000 100644
+--- a/frontend/.env.local.example
++++ b/frontend/.env.local.example
+@@ -1,3 +1,31 @@
+-# existing example values…
++# ------------------------------------------------------------------------------
++# Vikunja Frontend – Sentry configuration (runtime)
++# ------------------------------------------------------------------------------
++# Browser SDK DSN (from Sentry project settings)
++SENTRY_DSN=
++# Environment tag for Sentry (appears on issues & performance)
++SENTRY_ENVIRONMENT=development
++# Optional: forward Sentry envelopes through your origin to reduce adblock drops.
++# This requires a tiny backend proxy that forwards the request body to Sentry.
++# Example: /monitoring
++# SENTRY_TUNNEL=/monitoring
++
++# Observability sampling (choose conservative defaults for local/dev)
++# Overall tracing percentage. Production should be a small % based on volume.
++SENTRY_TRACES_SAMPLE_RATE=0.2
++# Enable Session Replay? Defaults off.
++SENTRY_REPLAY_ENABLED=false
++# If enabled, sample % of all sessions to record.
++SENTRY_REPLAYS_SESSION_SAMPLE_RATE=0.05
++# Always record replays when an error occurs.
++SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE=1.0
++
++# ------------------------------------------------------------------------------
++# Build-time (CI) – @sentry/vite-plugin
++# ------------------------------------------------------------------------------
++# Required for sourcemap upload + release
++SENTRY_ORG=
++SENTRY_PROJECT=
++SENTRY_AUTH_TOKEN=
++# Optional if self-hosting Sentry
++# SENTRY_URL=https://sentry.yourdomain.tld
+diff --git a/frontend/src/sentry.ts b/frontend/src/sentry.ts
+index 32362f8..0000000 100644
+--- a/frontend/src/sentry.ts
++++ b/frontend/src/sentry.ts
+@@ -1,3 +1,128 @@
+-// Previous Sentry init (third-party plugin + older SDK wiring)
++import type { App as VueApp } from 'vue'
++import * as Sentry from '@sentry/vue'
++import { replayIntegration } from '@sentry/replay'
++import router from './router'
++
++/**
++ * Sentry setup for Vue 3 (Oct 2025 best practice)
++ * - Official @sentry/vite-plugin uploads sourcemaps & injects the release.
++ * - We read DSN/environment from import.meta.env (exposed via envPrefix).
++ * - Optional tunneling, Replay, and adjustable sampling via env.
++ */
++export function setupSentry(app: VueApp) {
++  const {
++    SENTRY_DSN,
++    SENTRY_ENVIRONMENT,
++    SENTRY_TUNNEL,
++    SENTRY_RELEASE,
++    SENTRY_TRACES_SAMPLE_RATE,
++    SENTRY_REPLAY_ENABLED,
++    SENTRY_REPLAYS_SESSION_SAMPLE_RATE,
++    SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE
++  } = import.meta.env
++
++  // Prefer plugin-injected release, fall back to env override
++  // eslint-disable-next-line @typescript-eslint/no-explicit-any
++  const injectedRelease = (globalThis as any).__SENTRY_RELEASE__ as string | undefined
++  const release = injectedRelease ?? SENTRY_RELEASE
++
++  const tracesSampleRate = Number(SENTRY_TRACES_SAMPLE_RATE ?? '0.2')
++  const replaysEnabled = (SENTRY_REPLAY_ENABLED ?? 'false') === 'true'
++  const replaysSessionSampleRate = Number(SENTRY_REPLAYS_SESSION_SAMPLE_RATE ?? '0')
++  const replaysOnErrorSampleRate = Number(SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE ?? '1')
++
++  const integrations = [
++    // Modern router-aware tracing integration
++    Sentry.browserTracingIntegration({
++      router
++    })
++  ] as Sentry.Integration[]
++
++  // Optional: session replay (off by default)
++  if (replaysEnabled) {
++    integrations.push(replayIntegration())
++  }
++
++  Sentry.init({
++    app,
++    dsn: SENTRY_DSN || undefined,
++    environment: SENTRY_ENVIRONMENT || (import.meta as any).env.MODE || 'production',
++    release,
++    tunnel: SENTRY_TUNNEL || undefined,
++    integrations,
++
++    // Performance
++    tracesSampleRate,
++    // Send trace headers to same-origin + API paths
++    tracePropagationTargets: [
++      // same-origin relative paths
++      /^\/(?!\/)/,
++      // local dev hosts
++      /^https?:\/\/localhost(?::\d+)?\//,
++      // API paths
++      /\/api\//
++    ],
++
++    // Replay (no-op if not enabled above)
++    replaysSessionSampleRate,
++    replaysOnErrorSampleRate,
++
++    // Example scrubber hook – extend as needed
++    beforeSend(event) {
++      // Strip URL query strings (PII)
++      if (event.request?.url) {
++        try {
++          const u = new URL(event.request.url)
++          u.search = ''
++          event.request.url = u.toString()
++        } catch {
++          /* noop */
++        }
++      }
++      return event
++    }
++  })
++}
+diff --git a/frontend/src/main.ts b/frontend/src/main.ts
+index 24da87d..0000000 100644
+--- a/frontend/src/main.ts
++++ b/frontend/src/main.ts
+@@ -1,9 +1,18 @@
+-import { createApp } from 'vue'
+-import App from './App.vue'
+-import router from './router'
+-// Old Sentry bootstrap (side-effect import)
+-import './sentry'
+-
+-createApp(App)
+-  .use(router)
+-  .mount('#app')
++import { createApp } from 'vue'
++import App from './App.vue'
++import router from './router'
++import { setupSentry } from './sentry'
++
++// Create app first so Sentry can attach to the instance
++const app = createApp(App)
++
++// Initialize Sentry (reads env + uses the router integration)
++// Note: If SENTRY_DSN is not set, Sentry is effectively disabled at runtime.
++setupSentry(app)
++
++app
++  .use(router)
++  .mount('#app')
+diff --git a/.github/PULL_REQUEST_TEMPLATE/000-sentry-frontend-upgrade.md b/.github/PULL_REQUEST_TEMPLATE/000-sentry-frontend-upgrade.md
+new file mode 100644
+index 0000000..1111111
+--- /dev/null
++++ b/.github/PULL_REQUEST_TEMPLATE/000-sentry-frontend-upgrade.md
+@@ -0,0 +1,46 @@
++## Summary
++
++Upgrade **Vikunja frontend** Sentry integration to **best practice (Oct 2025)**:
++- Replace third-party Sentry Vite plugin with **official `@sentry/vite-plugin`**
++- Keep `@sentry/vue` runtime init, add modern router tracing, optional Replay
++- Explicit `build.sourcemap`, delete uploaded maps for security
++- Expose `SENTRY_*` to client via `envPrefix`
++- Document env/CI variables in `.env.local.example`
++
++## Technical details
++
++**Build-time**
++- Uses `@sentry/vite-plugin` in production builds to:
++  - auto-inject release into the bundle
++  - upload sourcemaps from `dist/assets/**`
++  - delete `.map` files after upload
++- Reads `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` (and optional `SENTRY_URL`) from env
++
++**Runtime**
++- `src/sentry.ts` exports `setupSentry(app)` used by `src/main.ts`
++- Integrations:
++  - `browserTracingIntegration({ router })`
++  - optional `replayIntegration()` (behind `SENTRY_REPLAY_ENABLED`)
++- Sampling:
++  - `SENTRY_TRACES_SAMPLE_RATE` (default `0.2`)
++  - `SENTRY_REPLAYS_SESSION_SAMPLE_RATE` (default `0`)
++  - `SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE` (default `1`)
++- Release resolution:
++  - prefer plugin-injected `__SENTRY_RELEASE__`
++  - fallback to `SENTRY_RELEASE`
++
++## Env & CI
++
++**Runtime**:
++```
++SENTRY_DSN=
++SENTRY_ENVIRONMENT=production
++SENTRY_TUNNEL=/monitoring               # optional
++SENTRY_TRACES_SAMPLE_RATE=0.2
++SENTRY_REPLAY_ENABLED=false
++SENTRY_REPLAYS_SESSION_SAMPLE_RATE=0.05
++SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE=1.0
++```
++
++**CI (build)**:
++`SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` (and optional `SENTRY_URL`)
++
++> Rollout tip: start with conservative sampling in production.
+diff --git a/.changeset/sentry-frontend-upgrade.md b/.changeset/sentry-frontend-upgrade.md
+new file mode 100644
+index 0000000..2222222
+--- /dev/null
++++ b/.changeset/sentry-frontend-upgrade.md
+@@ -0,0 +1,13 @@
++---
++"vikunja-frontend": minor
++---
++
++Use official Sentry Vite plugin and modern Vue SDK integration.
++
++- Swap third-party plugin for `@sentry/vite-plugin`
++- Add explicit sourcemaps + delete after upload
++- Update `src/sentry.ts` to 2025 best practice (router tracing, optional Replay)
++- Expose `SENTRY_*` to client via `envPrefix`
++- Document runtime and CI env vars
++- Keep runtime disabled when no DSN is provided
++
+diff --git a/PR_DESCRIPTION.md b/PR_DESCRIPTION.md
+new file mode 100644
+index 0000000..3333333
+--- /dev/null
++++ b/PR_DESCRIPTION.md
+@@ -0,0 +1,77 @@
++# Use official Sentry Vite plugin + modern Vue SDK (frontend)
++
++## What & Why
++- Replace third-party Sentry plugin with **official `@sentry/vite-plugin`** for release injection and sourcemap upload.
++- Keep `@sentry/vue` at runtime with **Vue Router tracing**, optional **Session Replay**, and safe defaults.
++- Protect source by **deleting sourcemaps** after upload.
++- Keep existing `SENTRY_*` env names by adding `envPrefix` in Vite.
++
++## Changes
++### Build-time
++- `vite.config.ts`: add `@sentry/vite-plugin`, set `build.sourcemap: true`, `envPrefix: ['VITE_', 'SENTRY_']`.
++- Upload `dist/assets/**` sourcemaps; delete `dist/**/*.map` post-upload.
++- Release injected into bundle; fallback `SENTRY_RELEASE` supported.
++
++### Runtime
++- `src/sentry.ts`: export `setupSentry(app)`; tracing via `browserTracingIntegration({ router })`.
++- Optional Replay behind `SENTRY_REPLAY_ENABLED`; sample config via env.
++- `tracePropagationTargets` tuned for same-origin + `/api/`.
++- `beforeSend` example scrubbing of URL query strings.
++
++### Env / Types
++- `env.d.ts`: type `SENTRY_*` vars + `__SENTRY_RELEASE__`.
++- `.env.local.example`: documents runtime & CI vars.
++
++## How to test
++1. Set `SENTRY_DSN` locally and run `pnpm build` then `pnpm preview`.
++2. Verify events appear with `environment` and correct `release`.
++3. Check your Sentry project’s Releases page for uploaded sourcemaps.
++4. Ensure no `.map` files are served in `dist/` after the build.
++
++## Rollout notes
++- Start with low `SENTRY_TRACES_SAMPLE_RATE` (e.g., `0.1–0.2`).
++- Consider enabling `SENTRY_REPLAY_ENABLED` only after reviewing cost/benefit.
++
++## CI variables needed
++- `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN` (and optional `SENTRY_URL` for self-hosted).
++
++Closes: Replace third-party Sentry Vite integration with official one for frontend.
