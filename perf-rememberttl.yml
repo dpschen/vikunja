@@ -1,0 +1,84 @@
+name: perf-rememberttl
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create branch
+        run: git checkout -b "perf/rememberttl"
+
+      - name: Apply RememberTTL changes
+        shell: bash
+        run: |
+          set -euo pipefail
+          F="pkg/modules/keyvalue/keyvalue.go"
+          test -f "$F"
+
+          python3 - <<'PY'
+          import re
+          f = "pkg/modules/keyvalue/keyvalue.go"
+          with open(f, "r", encoding="utf-8") as fh:
+              s = fh.read()
+
+          # Ensure import "time"
+          s = re.sub(r'(\bimport\s*\(\s*)([^)]*?)(\))',
+                     lambda m: m.group(1) + ('' if re.search(r'\n\s*"time"\s*\n', m.group(2)) else m.group(2) + '\n\t"time"\n') + m.group(3),
+                     s, count=1, flags=re.S)
+
+          add = ""
+          if "type ttlValue struct" not in s:
+              add += "\n\n// TTL value wrapper for RememberTTL\n"
+              add += "type ttlValue struct {\n\tValue     any\n\tExpiresAt int64 // unix seconds\n}\n"
+
+          if "func RememberTTL(" not in s:
+              add += "\n\n// RememberTTL returns the cached value if present and not expired, otherwise computes it with fn and stores it with a TTL.\n"
+              add += "func RememberTTL(key string, ttl time.Duration, fn func() (any, error)) (any, error) {\n"
+              add += "\tif ttl <= 0 {\n\t\treturn Remember(key, fn)\n\t}\n"
+              add += "\tvar tv ttlValue\n"
+              add += "\texists, err := GetWithValue(key, &tv)\n"
+              add += "\tif err == nil && exists {\n"
+              add += "\t\tif time.Now().Unix() < tv.ExpiresAt {\n\t\t\treturn tv.Value, nil\n\t\t}\n"
+              add += "\t}\n"
+              add += "\tval, err := fn()\n"
+              add += "\tif err != nil {\n\t\treturn nil, err\n\t}\n"
+              add += "\ttv = ttlValue{Value: val, ExpiresAt: time.Now().Add(ttl).Unix()}\n"
+              add += "\tif err := Put(key, tv); err != nil {\n\t\treturn nil, err\n\t}\n"
+              add += "\treturn val, nil\n}\n"
+
+          if add:
+              s = s + add
+
+          with open(f, "w", encoding="utf-8") as fh:
+              fh.write(s)
+          PY
+
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "perf: add RememberTTL helper for key-value caching" || echo "No changes to commit"
+          git push -u origin "perf/rememberttl"
+
+      - name: Open PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: "perf/rememberttl"
+          title: "perf: add RememberTTL helper for key-value caching"
+          body: |
+            Adds RememberTTL(...) to cache values with a TTL across memory/redis backends.
+            Safe & additive; existing Remember(...) callers unaffected.
+          labels: perf, automated

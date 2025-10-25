@@ -1,5 +1,7 @@
 <template>
-	<div>
+	<div
+		:data-task-id="task.id"
+	>
 		<div
 			ref="taskRoot"
 			:class="{'is-loading': taskService.loading}"
