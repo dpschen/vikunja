@@ -420,7 +420,7 @@ func InitDefaultConfig() {
 	RateLimitEnabled.setDefault(false)
 	RateLimitKind.setDefault("user")
 	RateLimitLimit.setDefault(100)
-	RateLimitPeriod.setDefault(60)
+	RateLimitPeriod.setDefault("1m")
 	RateLimitStore.setDefault("memory")
 	RateLimitNoAuthRoutesLimit.setDefault(10)
 	// Files
