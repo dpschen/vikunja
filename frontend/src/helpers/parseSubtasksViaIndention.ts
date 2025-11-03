@@ -7,73 +7,130 @@ export interface TaskWithParent {
 }
 
 function cleanupTitle(title: string) {
+	// Preserve the original helper semantics of stripping list markers and empty checkboxes
 	return title.replace(/^((\* |\+ |- )(\[ \] )?)/g, '')
 }
 
-const spaceRegex = /^ */
+// Reuse a single segmenter instance so every function shares consistent grapheme boundaries
+const graphemeSegmenter = new Intl.Segmenter(undefined, {granularity: 'grapheme'})
+
+function getLeadingWhitespaceMetrics(title: string) {
+	// Count each leading whitespace grapheme and remember the slice index where the content begins
+	let segments = 0
+	let sliceIndex = 0
+
+	for (const {segment, index} of graphemeSegmenter.segment(title)) {
+		if (segment === ' ' || segment === '\t') {
+			segments += 1
+			sliceIndex = index + segment.length
+			continue
+		}
+
+		break
+	}
+
+	return {segments, sliceIndex}
+}
+
+function stripLeadingWhitespaceSegments(title: string, segmentsToRemove: number) {
+	if (segmentsToRemove === 0) {
+		return title
+	}
+
+	let removedSegments = 0
+	let sliceIndex = 0
+
+	for (const {segment, index} of graphemeSegmenter.segment(title)) {
+		if (segment === ' ' || segment === '\t') {
+			removedSegments += 1
+			sliceIndex = index + segment.length
+
+			if (removedSegments === segmentsToRemove) {
+				break
+			}
+
+			continue
+		}
+
+		break
+	}
+
+	return title.slice(sliceIndex)
+}
 
 /**
- * @param taskTitles should be multiple lines of task tiles with indention to declare their parent/subtask
- * relation between each other.
+ * Parse tasks separated by newlines into a parent/subtask hierarchy derived from indentation.
+ *
+ * @param taskTitles Raw quick-add text containing one task title per line.
+ * @param prefixMode Project prefix parsing mode used to resolve explicit project assignments.
  */
 export function parseSubtasksViaIndention(taskTitles: string, prefixMode: PrefixMode): TaskWithParent[] {
 	let titles = taskTitles
 		.split(/[\r\n]+/)
-		.filter(t => t.replace(/\s/g, '').length > 0) // Remove titles which are empty or only contain spaces / tabs
-	
-	if (titles.length == 0) {
+		// Remove titles that are empty or only contain whitespace to avoid creating blank tasks
+		.filter(t => t.replace(/\s/g, '').length > 0)
+
+	if (titles.length === 0) {
 		return []
 	}
-	
-	const spaceOnFirstLine = /^(\t| )+/
-	const spaces = spaceOnFirstLine.exec(titles[0])
-	if (spaces !== null) {
-		let spacesToCut = spaces[0].length
-		titles = titles.map(title => {
-			const spacesOnThisLine = spaceOnFirstLine.exec(title)
-			if (spacesOnThisLine === null) {
-				// This means the current task title does not start with indention, but the very first one did
-				// To prevent cutting actual task data we now need to update the number of spaces to cut
-				spacesToCut = 0
-			}
-			if (spacesOnThisLine !== null && spacesOnThisLine[0].length < spacesToCut) {
-				spacesToCut = spacesOnThisLine[0].length
-			}
-			return title.substring(spacesToCut)
-		})
-	}
 
-	return titles.map((title, index) => {
-		const task: TaskWithParent = {
-			title: cleanupTitle(title),
-			parent: null,
-			project: null,
+	const {segments: initialLeadingSegments} = getLeadingWhitespaceMetrics(titles[0])
+	if (initialLeadingSegments > 0) {
+		let sharedLeadingSegments = initialLeadingSegments
+
+		for (const title of titles) {
+			const {segments} = getLeadingWhitespaceMetrics(title)
+			if (segments === 0) {
+				sharedLeadingSegments = 0
+				break
+			}
+
+			if (segments < sharedLeadingSegments) {
+				sharedLeadingSegments = segments
+			}
 		}
 
-		task.project = getProjectFromPrefix(task.title, prefixMode)
+		if (sharedLeadingSegments > 0) {
+			// Normalize every line by removing the shared indentation baseline before parsing
+			titles = titles.map(title => stripLeadingWhitespaceSegments(title, sharedLeadingSegments))
+		}
+	}
 
-		if (index === 0) {
+	const parsedTitles = titles.map(title => {
+		const {segments: indentSegments, sliceIndex} = getLeadingWhitespaceMetrics(title)
+		const indent = indentSegments
+		const withoutIndent = sliceIndex > 0 ? title.slice(sliceIndex) : title
+		const cleaned = cleanupTitle(withoutIndent)
+
+		return {
+			indent,
+			cleaned,
+			project: getProjectFromPrefix(cleaned, prefixMode),
+		}
+	})
+
+	return parsedTitles.map((taskData, index) => {
+		const task: TaskWithParent = {
+			title: taskData.cleaned,
+			parent: null,
+			project: taskData.project,
+		}
+
+		if (index === 0 || taskData.indent === 0) {
 			return task
 		}
 
-		const matched = spaceRegex.exec(task.title)
-		const matchedSpaces = matched ? matched[0].length : 0
+		// Walk up the parsed stack to find the nearest parent with a lower indentation level
+		for (let parentIndex = index - 1; parentIndex >= 0; parentIndex--) {
+			const potentialParent = parsedTitles[parentIndex]
 
-		if (matchedSpaces > 0) {
-			// Go up the tree to find the first task with less indention than the current one
-			let pi = 1
-			let parentSpaces = 0
-			do {
-				task.parent = cleanupTitle(titles[index - pi])
-				pi++
-				const parentMatched = spaceRegex.exec(task.parent)
-				parentSpaces = parentMatched ? parentMatched[0].length : 0
-			} while (parentSpaces >= matchedSpaces)
-			task.title = cleanupTitle(task.title.replace(spaceRegex, ''))
-			task.parent = task.parent.replace(spaceRegex, '')
-			if (task.project === null) {
-				// This allows to specify a project once for the parent task and inherit it to all subtasks
-				task.project = getProjectFromPrefix(task.parent, prefixMode)
+			if (potentialParent.indent < taskData.indent) {
+				task.parent = potentialParent.cleaned
+				if (task.project === null) {
+					// Allow specifying a project once on the parent and inheriting it for all nested subtasks
+					task.project = potentialParent.project
+				}
+				break
 			}
 		}
 
