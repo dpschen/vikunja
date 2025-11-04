@@ -14,48 +14,56 @@ function cleanupTitle(title: string) {
 // Reuse a single segmenter instance so every function shares consistent grapheme boundaries
 const graphemeSegmenter = new Intl.Segmenter(undefined, {granularity: 'grapheme'})
 
-function getLeadingWhitespaceMetrics(title: string) {
-	// Count each leading whitespace grapheme and remember the slice index where the content begins
-	let segments = 0
-	let sliceIndex = 0
-
-	for (const {segment, index} of graphemeSegmenter.segment(title)) {
-		if (segment === ' ' || segment === '\t') {
-			segments += 1
-			sliceIndex = index + segment.length
-			continue
-		}
-
-		break
-	}
-
-	return {segments, sliceIndex}
+interface StrippedWhitespaceResult {
+	trimmed: string
+	totalSegments: number
+	segmentOffsets: number[]
+	remainderSegments: Intl.SegmentData[]
 }
 
-function stripLeadingWhitespaceSegments(title: string, segmentsToRemove: number) {
-	if (segmentsToRemove === 0) {
-		return title
-	}
+function stripLeadingWhitespaceSegments(title: string, segmentsToRemove = 0): StrippedWhitespaceResult {
+	// Record every offset produced while walking the iterator once so later consumers can reuse it
+	const segmentOffsets: number[] = []
+	const remainderSegments: Intl.SegmentData[] = []
+	let trimmedSliceIndex = 0
+	let hasContent = false
 
-	let removedSegments = 0
-	let sliceIndex = 0
+	for (const segmentData of graphemeSegmenter.segment(title)) {
+		const {segment, index} = segmentData
+		if (!hasContent && (segment === ' ' || segment === '\t')) {
+			const nextIndex = index + segment.length
+			segmentOffsets.push(nextIndex)
 
-	for (const {segment, index} of graphemeSegmenter.segment(title)) {
-		if (segment === ' ' || segment === '\t') {
-			removedSegments += 1
-			sliceIndex = index + segment.length
-
-			if (removedSegments === segmentsToRemove) {
-				break
+			if (segmentOffsets.length === segmentsToRemove) {
+				trimmedSliceIndex = nextIndex
 			}
-
 			continue
 		}
 
-		break
+		if (!hasContent) {
+			hasContent = true
+			// When no baseline stripping is requested we can jump straight to the first non-whitespace index
+			if (segmentsToRemove === 0) {
+				trimmedSliceIndex = index
+			} else if (trimmedSliceIndex === 0) {
+				trimmedSliceIndex = segmentOffsets[Math.min(segmentsToRemove, segmentOffsets.length) - 1] ?? index
+			}
+		}
+
+		remainderSegments.push(segmentData)
 	}
 
-	return title.slice(sliceIndex)
+	const totalSegments = segmentOffsets.length
+	if (segmentsToRemove >= totalSegments && totalSegments > 0) {
+		trimmedSliceIndex = segmentOffsets[totalSegments - 1]
+	}
+
+	return {
+		trimmed: title.slice(trimmedSliceIndex),
+		totalSegments,
+		segmentOffsets,
+		remainderSegments,
+	}
 }
 
 /**
@@ -74,33 +82,33 @@ export function parseSubtasksViaIndention(taskTitles: string, prefixMode: Prefix
 		return []
 	}
 
-	const {segments: initialLeadingSegments} = getLeadingWhitespaceMetrics(titles[0])
-	if (initialLeadingSegments > 0) {
-		let sharedLeadingSegments = initialLeadingSegments
+	// Capture segmentation metadata for every line once so we can reuse it throughout the algorithm
+	const baselineData = titles.map(title => ({
+		title,
+		analysis: stripLeadingWhitespaceSegments(title),
+	}))
 
-		for (const title of titles) {
-			const {segments} = getLeadingWhitespaceMetrics(title)
-			if (segments === 0) {
-				sharedLeadingSegments = 0
-				break
-			}
-
-			if (segments < sharedLeadingSegments) {
-				sharedLeadingSegments = segments
-			}
+	// Identify the shared indentation baseline by finding the minimum leading whitespace depth
+	let sharedLeadingSegments = baselineData[0].analysis.totalSegments
+	for (const {analysis} of baselineData) {
+		if (analysis.totalSegments === 0) {
+			sharedLeadingSegments = 0
+			break
 		}
 
-		if (sharedLeadingSegments > 0) {
-			// Normalize every line by removing the shared indentation baseline before parsing
-			titles = titles.map(title => stripLeadingWhitespaceSegments(title, sharedLeadingSegments))
+		if (analysis.totalSegments < sharedLeadingSegments) {
+			sharedLeadingSegments = analysis.totalSegments
 		}
 	}
 
-	const parsedTitles = titles.map(title => {
-		const {segments: indentSegments, sliceIndex} = getLeadingWhitespaceMetrics(title)
-		const indent = indentSegments
-		const withoutIndent = sliceIndex > 0 ? title.slice(sliceIndex) : title
-		const cleaned = cleanupTitle(withoutIndent)
+	const parsedTitles = baselineData.map(({title, analysis}) => {
+		const totalIndentSegments = analysis.totalSegments
+		const indent = Math.max(totalIndentSegments - sharedLeadingSegments, 0)
+		const fullTrimIndex = totalIndentSegments > 0
+			? analysis.segmentOffsets[totalIndentSegments - 1]
+			: 0
+		const trimmedTitle = fullTrimIndex > 0 ? title.slice(fullTrimIndex) : title
+		const cleaned = cleanupTitle(trimmedTitle)
 
 		return {
 			indent,
@@ -109,31 +117,29 @@ export function parseSubtasksViaIndention(taskTitles: string, prefixMode: Prefix
 		}
 	})
 
-	return parsedTitles.map((taskData, index) => {
+	// Maintain a stack of the latest task for each indentation depth to resolve parents in O(1)
+	const stack: {indent: number; task: TaskWithParent}[] = []
+
+	return parsedTitles.map(taskData => {
 		const task: TaskWithParent = {
 			title: taskData.cleaned,
 			parent: null,
 			project: taskData.project,
 		}
 
-		if (index === 0 || taskData.indent === 0) {
-			return task
+		while (stack.length > 0 && stack[stack.length - 1].indent >= taskData.indent) {
+			stack.pop()
 		}
 
-		// Walk up the parsed stack to find the nearest parent with a lower indentation level
-		for (let parentIndex = index - 1; parentIndex >= 0; parentIndex--) {
-			const potentialParent = parsedTitles[parentIndex]
-
-			if (potentialParent.indent < taskData.indent) {
-				task.parent = potentialParent.cleaned
-				if (task.project === null) {
-					// Allow specifying a project once on the parent and inheriting it for all nested subtasks
-					task.project = potentialParent.project
-				}
-				break
+		const parentEntry = stack[stack.length - 1]
+		if (parentEntry && taskData.indent > 0) {
+			task.parent = parentEntry.task.title
+			if (task.project === null) {
+				task.project = parentEntry.task.project
 			}
 		}
 
+		stack.push({indent: taskData.indent, task})
 		return task
 	})
 }
