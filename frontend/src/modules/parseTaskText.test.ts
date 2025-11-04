@@ -7,6 +7,8 @@ import {PRIORITIES} from '@/constants/priorities'
 import {MILLISECONDS_A_DAY} from '@/constants/date'
 import type {IRepeatAfter} from '@/types/IRepeatAfter'
 
+const NBSP = '\u00A0'
+
 describe('Parse Task Text', () => {
 	beforeEach(() => {
 		vi.useFakeTimers()
@@ -210,18 +212,30 @@ describe('Parse Task Text', () => {
 			expect(result?.date?.getMonth()).toBe(laterNextWeek.getMonth())
 			expect(result?.date?.getDate()).toBe(laterNextWeek.getDate())
 		})
-		it('should recognize next week', () => {
-			const result = parseTaskText('Lorem Ipsum next week')
+                it('should recognize next week', () => {
+                        const result = parseTaskText('Lorem Ipsum next week')
 
-			const untilNextWeek = calculateDayInterval('nextWeek')
+                        const untilNextWeek = calculateDayInterval('nextWeek')
 
-			expect(result.text).toBe('Lorem Ipsum')
-			const nextWeek = new Date()
-			nextWeek.setDate(nextWeek.getDate() + untilNextWeek)
-			expect(result?.date?.getFullYear()).toBe(nextWeek.getFullYear())
-			expect(result?.date?.getMonth()).toBe(nextWeek.getMonth())
-			expect(result?.date?.getDate()).toBe(nextWeek.getDate())
-		})
+                        expect(result.text).toBe('Lorem Ipsum')
+                        const nextWeek = new Date()
+                        nextWeek.setDate(nextWeek.getDate() + untilNextWeek)
+                        expect(result?.date?.getFullYear()).toBe(nextWeek.getFullYear())
+                        expect(result?.date?.getMonth()).toBe(nextWeek.getMonth())
+                        expect(result?.date?.getDate()).toBe(nextWeek.getDate())
+                })
+                it('should recognize next week separated by non-breaking spaces', () => {
+                        const result = parseTaskText(`Call client next${NBSP}week`)
+
+                        const untilNextWeek = calculateDayInterval('nextWeek')
+
+                        expect(result.text).toBe('Call client')
+                        const nextWeek = new Date()
+                        nextWeek.setDate(nextWeek.getDate() + untilNextWeek)
+                        expect(result?.date?.getFullYear()).toBe(nextWeek.getFullYear())
+                        expect(result?.date?.getMonth()).toBe(nextWeek.getMonth())
+                        expect(result?.date?.getDate()).toBe(nextWeek.getDate())
+                })
 		it('should recognize next month', () => {
 			const result = parseTaskText('Lorem Ipsum next month')
 
@@ -601,29 +615,46 @@ describe('Parse Task Text', () => {
 				expect(newText).toBe('Some task')
 			})
 
-			it('should replace the text in lowercase', () => {
-				const {date, newText} = parseDate('Some task mar 8th', now)
+                        it('should replace the text in lowercase', () => {
+                                const {date, newText} = parseDate('Some task mar 8th', now)
 
-				expect(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`).toBe('2021-3-8 12:0')
-				expect(newText).toBe('Some task')
-			})
-		})
-	})
+                                expect(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`).toBe('2021-3-8 12:0')
+                                expect(newText).toBe('Some task')
+                        })
+                        it('should parse next week expressions separated by non-breaking spaces with time information', () => {
+                                const {date, newText} = parseDate(`Meetup next${NBSP}week at${NBSP}10:30`, now)
+                                const expected = new Date(now)
+                                expected.setDate(expected.getDate() + calculateDayInterval('nextWeek'))
+                                expected.setHours(10)
+                                expected.setMinutes(30)
+                                expected.setSeconds(0)
+
+                                expect(`${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`).toBe(`${expected.getFullYear()}-${expected.getMonth() + 1}-${expected.getDate()} ${expected.getHours()}:${expected.getMinutes()}`)
+                                expect(newText).toBe('Meetup')
+                        })
+                })
+        })
 
 	describe('Labels', () => {
-		it('should parse labels', () => {
-			const result = parseTaskText('Lorem Ipsum *label1 *label2')
+                it('should parse labels', () => {
+                        const result = parseTaskText('Lorem Ipsum *label1 *label2')
 
-			expect(result.text).toBe('Lorem Ipsum')
-			expect(result.labels).toHaveLength(2)
-			expect(result.labels[0]).toBe('label1')
-			expect(result.labels[1]).toBe('label2')
-		})
-		it('should parse labels from the start', () => {
-			const result = parseTaskText('*label1 Lorem Ipsum *label2')
+                        expect(result.text).toBe('Lorem Ipsum')
+                        expect(result.labels).toHaveLength(2)
+                        expect(result.labels[0]).toBe('label1')
+                        expect(result.labels[1]).toBe('label2')
+                })
+                it('should parse labels separated by non-breaking spaces', () => {
+                        const result = parseTaskText(`Plan${NBSP}*über`)
 
-			expect(result.text).toBe('Lorem Ipsum')
-			expect(result.labels).toHaveLength(2)
+                        expect(result.text).toBe('Plan')
+                        expect(result.labels).toEqual(['über'])
+                })
+                it('should parse labels from the start', () => {
+                        const result = parseTaskText('*label1 Lorem Ipsum *label2')
+
+                        expect(result.text).toBe('Lorem Ipsum')
+                        expect(result.labels).toHaveLength(2)
 			expect(result.labels[0]).toBe('label1')
 			expect(result.labels[1]).toBe('label2')
 		})
