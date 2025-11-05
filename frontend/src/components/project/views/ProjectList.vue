@@ -48,7 +48,11 @@
 					<draggable
 						v-if="tasks && tasks.length > 0"
 						v-model="tasks"
-						group="tasks"
+						:group="{
+							name: 'tasks',
+							pull: true,
+							put: false
+						}"
 						handle=".handle"
 						:disabled="!canDragTasks"
 						item-key="id"
