@@ -31,6 +31,7 @@ import (
 	"code.vikunja.io/api/pkg/models"
 	"code.vikunja.io/api/pkg/modules/auth/ldap"
 	"code.vikunja.io/api/pkg/modules/auth/openid"
+	"code.vikunja.io/api/pkg/modules/background/unsplash"
 	"code.vikunja.io/api/pkg/modules/keyvalue"
 	migrationHandler "code.vikunja.io/api/pkg/modules/migration/handler"
 	"code.vikunja.io/api/pkg/plugins"
@@ -135,6 +136,7 @@ func FullInit() {
 		models.RegisterListeners()
 		user.RegisterListeners()
 		migrationHandler.RegisterListeners()
+		unsplash.RegisterListeners()
 		err := events.InitEvents()
 		if err != nil {
 			log.Fatal(err.Error())
