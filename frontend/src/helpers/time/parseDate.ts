@@ -1,6 +1,7 @@
 import {calculateDayInterval} from './calculateDayInterval'
 import {calculateNearestHours} from './calculateNearestHours'
 import {replaceAll} from '../replaceAll'
+import {isWhitespaceSegment, segmentText, type TextSegment} from '../segmentText'
 
 export interface dateParseResult {
 	newText: string,
@@ -14,56 +15,213 @@ interface dateFoundResult {
 
 const monthsRegexGroup = '(january|february|march|april|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)'
 
-function matchesDateExpr(text: string, dateExpr: string): boolean {
-	return text.match(new RegExp('(^| )' + dateExpr, 'gi')) !== null
+const hourPattern = /^[0-9]{1,2}$/u
+const inlineMeridiemPattern = /^([0-9]{1,2})([ap]m)$/iu
+const minutePattern = /^[0-9]{2}$/u
+const meridiemPattern = /^[ap]m$/iu
+
+interface TimeMatch {
+	matchText: string,
+	time: string,
+}
+
+const findTimeMatch = (text: string): TimeMatch | null => {
+	const segments = segmentText(text)
+
+	for (let i = 0; i < segments.length; i++) {
+		const current = segments[i]
+		const lower = current.segment.toLocaleLowerCase()
+		const isAtWord = current.isWordLike && lower === 'at'
+		const isAtSymbol = current.segment === '@'
+
+		if (!isAtWord && !isAtSymbol) {
+			continue
+		}
+
+		if (i > 0 && !isWhitespaceSegment(segments[i - 1])) {
+			continue
+		}
+
+		const match = extractTimeFromSegments(text, segments, i)
+		if (match !== null) {
+			return match
+		}
+	}
+
+	return null
+}
+
+const extractTimeFromSegments = (text: string, segments: TextSegment[], index: number): TimeMatch | null => {
+        let cursor = index + 1
+
+        while (cursor < segments.length && isWhitespaceSegment(segments[cursor])) {
+                cursor++
+        }
+
+        if (cursor >= segments.length) {
+                return null
+        }
+
+        const hourSegment = segments[cursor]
+        let endIndex = hourSegment.index + hourSegment.segment.length
+        let timeString = ''
+        let inlineMeridiem: string | null = null
+
+        if (hourPattern.test(hourSegment.segment)) {
+                timeString = hourSegment.segment
+                cursor++
+        } else {
+                const inlineMeridiemMatch = inlineMeridiemPattern.exec(hourSegment.segment)
+                if (inlineMeridiemMatch === null) {
+                        return null
+                }
+
+                timeString = inlineMeridiemMatch[1]
+                inlineMeridiem = inlineMeridiemMatch[2]
+                cursor++
+        }
+
+        if (cursor < segments.length && segments[cursor].segment === ':') {
+                if (cursor + 1 >= segments.length) {
+                        return null
+                }
+
+                const minuteSegment = segments[cursor + 1]
+                if (!minutePattern.test(minuteSegment.segment)) {
+                        return null
+                }
+
+                timeString += `:${minuteSegment.segment}`
+                endIndex = minuteSegment.index + minuteSegment.segment.length
+                cursor += 2
+        }
+
+        let whitespaceAfterHour = ''
+        if (cursor < segments.length && isWhitespaceSegment(segments[cursor])) {
+                whitespaceAfterHour = segments[cursor].segment
+                endIndex = segments[cursor].index + segments[cursor].segment.length
+                cursor++
+        }
+
+        if (inlineMeridiem !== null) {
+                timeString += inlineMeridiem
+        } else if (cursor < segments.length && meridiemPattern.test(segments[cursor].segment)) {
+                if (whitespaceAfterHour !== '') {
+                        timeString += ' '
+                }
+
+                timeString += segments[cursor].segment
+                endIndex = segments[cursor].index + segments[cursor].segment.length
+                cursor++
+        }
+
+        const leadingIndex = index > 0 && isWhitespaceSegment(segments[index - 1]) ? segments[index - 1].index : segments[index].index
+        const matchText = text.slice(leadingIndex, endIndex)
+
+        return {
+                matchText,
+                time: timeString,
+        }
+}
+
+const normalizeTokens = (tokens: string[]): string[] => tokens.map(token => token.toLocaleLowerCase())
+
+const findDateExprMatch = (text: string, dateExpr: string): string | null => {
+        const segments = segmentText(text)
+        const wordSegments = segments
+                .map((segment, segmentIndex) => ({segment, segmentIndex}))
+                .filter(({segment}) => segment.isWordLike)
+        const exprTokens = normalizeTokens(dateExpr.split(' ').map(part => part.trim()).filter(part => part !== ''))
+
+        if (exprTokens.length === 0 || wordSegments.length < exprTokens.length) {
+                return null
+        }
+
+        for (let i = 0; i <= wordSegments.length - exprTokens.length; i++) {
+                let matches = true
+                for (let j = 0; j < exprTokens.length; j++) {
+                        if (wordSegments[i + j].segment.segment.toLocaleLowerCase() !== exprTokens[j]) {
+                                matches = false
+                                break
+                        }
+                }
+
+                if (matches) {
+                        const startSegment = wordSegments[i].segment
+                        const startIndex = startSegment.index
+                        if (startIndex > 0) {
+                                const precedingChar = text[startIndex - 1]
+                                if (precedingChar === '@') {
+                                        continue
+                                }
+                        }
+
+                        const lastSegment = wordSegments[i + exprTokens.length - 1].segment
+                        const endIndex = lastSegment.index + lastSegment.segment.length
+
+                        return text.slice(startIndex, endIndex)
+                }
+        }
+
+        return null
 }
 
 export const parseDate = (text: string, now: Date = new Date()): dateParseResult => {
-	if (matchesDateExpr(text, 'today')) {
-		return addTimeToDate(text, getDateFromInterval(calculateDayInterval('today')), 'today')
-	}
-	if (matchesDateExpr(text, 'tonight')) {
-		const taskDate = getDateFromInterval(calculateDayInterval('today'))
-		taskDate.setHours(21)
-		return addTimeToDate(text, taskDate, 'tonight')
-	}
-	if (matchesDateExpr(text, 'tomorrow')) {
-		return addTimeToDate(text, getDateFromInterval(calculateDayInterval('tomorrow')), 'tomorrow')
-	}
-	if (matchesDateExpr(text, 'next monday')) {
-		return addTimeToDate(text, getDateFromInterval(calculateDayInterval('nextMonday')), 'next monday')
-	}
-	if (matchesDateExpr(text, 'this weekend')) {
-		return addTimeToDate(text, getDateFromInterval(calculateDayInterval('thisWeekend')), 'this weekend')
-	}
-	if (matchesDateExpr(text, 'later this week')) {
-		return addTimeToDate(text, getDateFromInterval(calculateDayInterval('laterThisWeek')), 'later this week')
-	}
-	if (matchesDateExpr(text, 'later next week')) {
-		return addTimeToDate(text, getDateFromInterval(calculateDayInterval('laterNextWeek')), 'later next week')
-	}
-	if (matchesDateExpr(text, 'next week')) {
-		return addTimeToDate(text, getDateFromInterval(calculateDayInterval('nextWeek')), 'next week')
-	}
-	if (matchesDateExpr(text, 'next month')) {
-		const date: Date = new Date()
-		date.setDate(1)
-		date.setMonth(date.getMonth() + 1)
-		date.setHours(calculateNearestHours(date))
-		date.setMinutes(0)
-		date.setSeconds(0)
+        const todayMatch = findDateExprMatch(text, 'today')
+        if (todayMatch !== null) {
+                return addTimeToDate(text, getDateFromInterval(calculateDayInterval('today')), todayMatch)
+        }
+        const tonightMatch = findDateExprMatch(text, 'tonight')
+        if (tonightMatch !== null) {
+                const taskDate = getDateFromInterval(calculateDayInterval('today'))
+                taskDate.setHours(21)
+                return addTimeToDate(text, taskDate, tonightMatch)
+        }
+        const tomorrowMatch = findDateExprMatch(text, 'tomorrow')
+        if (tomorrowMatch !== null) {
+                return addTimeToDate(text, getDateFromInterval(calculateDayInterval('tomorrow')), tomorrowMatch)
+        }
+        const nextMondayMatch = findDateExprMatch(text, 'next monday')
+        if (nextMondayMatch !== null) {
+                return addTimeToDate(text, getDateFromInterval(calculateDayInterval('nextMonday')), nextMondayMatch)
+        }
+        const thisWeekendMatch = findDateExprMatch(text, 'this weekend')
+        if (thisWeekendMatch !== null) {
+                return addTimeToDate(text, getDateFromInterval(calculateDayInterval('thisWeekend')), thisWeekendMatch)
+        }
+        const laterThisWeekMatch = findDateExprMatch(text, 'later this week')
+        if (laterThisWeekMatch !== null) {
+                return addTimeToDate(text, getDateFromInterval(calculateDayInterval('laterThisWeek')), laterThisWeekMatch)
+        }
+        const laterNextWeekMatch = findDateExprMatch(text, 'later next week')
+        if (laterNextWeekMatch !== null) {
+                return addTimeToDate(text, getDateFromInterval(calculateDayInterval('laterNextWeek')), laterNextWeekMatch)
+        }
+        const nextWeekMatch = findDateExprMatch(text, 'next week')
+        if (nextWeekMatch !== null) {
+                return addTimeToDate(text, getDateFromInterval(calculateDayInterval('nextWeek')), nextWeekMatch)
+        }
+        const nextMonthMatch = findDateExprMatch(text, 'next month')
+        if (nextMonthMatch !== null) {
+                const date: Date = new Date()
+                date.setDate(1)
+                date.setMonth(date.getMonth() + 1)
+                date.setHours(calculateNearestHours(date))
+                date.setMinutes(0)
+                date.setSeconds(0)
 
-		return addTimeToDate(text, date, 'next month')
-	}
-	if (matchesDateExpr(text, 'end of month')) {
-		const curDate: Date = new Date()
-		const date: Date = new Date(curDate.getFullYear(), curDate.getMonth() + 1, 0)
-		date.setHours(calculateNearestHours(date))
-		date.setMinutes(0)
-		date.setSeconds(0)
+                return addTimeToDate(text, date, nextMonthMatch)
+        }
+        const endOfMonthMatch = findDateExprMatch(text, 'end of month')
+        if (endOfMonthMatch !== null) {
+                const curDate: Date = new Date()
+                const date: Date = new Date(curDate.getFullYear(), curDate.getMonth() + 1, 0)
+                date.setHours(calculateNearestHours(date))
+                date.setMinutes(0)
+                date.setSeconds(0)
 
-		return addTimeToDate(text, date, 'end of month')
-	}
+                return addTimeToDate(text, date, endOfMonthMatch)
+        }
 
 	let parsed = getDateFromWeekday(text, now)
 	if (parsed.date !== null) {
@@ -109,33 +267,31 @@ const addTimeToDate = (text: string, date: Date, previousMatch: string | null): 
 		}
 	}
 
-	const timeRegex = ' (at|@) ([0-9][0-9]?(:[0-9][0-9])?( ?(a|p)m)?)'
-	const matcher = new RegExp(timeRegex, 'ig')
-	const results = matcher.exec(text)
+	const timeMatch = findTimeMatch(text)
 
-	if (results !== null) {
-		const time = results[2]
-		const parts = time.split(':')
-		let hours = parseInt(parts[0])
-		let minutes = 0
-		if (time.toLowerCase().endsWith('pm')) {
-			if (hours !== 12) {
+	if (timeMatch !== null) {
+		const normalizedTime = timeMatch.time.replace(/\s+/gu, '').toLocaleLowerCase()
+		const timeParts = /^([0-9]{1,2})(?::([0-9]{2}))?([ap]m)?$/.exec(normalizedTime)
+
+		if (timeParts !== null) {
+			let hours = parseInt(timeParts[1])
+			const minutes = timeParts[2] ? parseInt(timeParts[2]) : 0
+			const meridiem = timeParts[3]
+
+			if (meridiem === 'pm' && hours !== 12) {
 				hours += 12
+			} else if (meridiem === 'am' && hours === 12) {
+				hours = 0
 			}
-		} else if (time.toLowerCase().endsWith('am') && hours === 12) {
-			hours = 0
-		}
-		if (parts.length > 1) {
-			minutes = parseInt(parts[1])
-		}
 
-		date.setHours(hours)
-		date.setMinutes(minutes)
-		date.setSeconds(0)
-		date.setMilliseconds(0)
+			date.setHours(hours)
+			date.setMinutes(minutes)
+			date.setSeconds(0)
+			date.setMilliseconds(0)
+		}
 	}
 
-	const replace = results !== null ? results[0] : previousMatch
+	const replace = timeMatch !== null ? timeMatch.matchText : previousMatch
 	return {
 		newText: replaceAll(text, replace, '').trim(),
 		date,

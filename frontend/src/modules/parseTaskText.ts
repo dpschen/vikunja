@@ -1,4 +1,5 @@
 import {parseDate} from '../helpers/time/parseDate'
+import {isWhitespaceSegment, segmentText} from '@/helpers/segmentText'
 import {PRIORITIES} from '@/constants/priorities'
 import {REPEAT_TYPES, type IRepeatAfter, type IRepeatType} from '@/types/IRepeatAfter'
 
@@ -94,41 +95,111 @@ export const parseTaskText = (text: string, prefixesMode: PrefixMode = PrefixMod
 }
 
 const getItemsFromPrefix = (text: string, prefix: string): string[] => {
-	const items: string[] = []
+        const segments = segmentText(text)
+        const items = new Set<string>()
 
-	const itemParts = text.split(' ' + prefix)
-	if (text.startsWith(prefix)) {
-		const firstItem = text.split(prefix)[1]
-		itemParts.unshift(firstItem)
+	for (let i = 0; i < segments.length; i++) {
+		const current = segments[i]
+		if (!current.segment.startsWith(prefix)) {
+			continue
+		}
+
+		if (current.segment !== prefix && current.segment.charAt(0) === prefix) {
+			const remainder = current.segment.slice(prefix.length)
+			if (remainder !== '') {
+				if (i === 0 || isWhitespaceSegment(segments[i - 1])) {
+					items.add(remainder)
+				}
+				continue
+			}
+		}
+
+		if (current.segment !== prefix) {
+			continue
+		}
+
+		if (i > 0 && !isWhitespaceSegment(segments[i - 1])) {
+			continue
+		}
+
+		let nextIndex = i + 1
+		while (nextIndex < segments.length && isWhitespaceSegment(segments[nextIndex])) {
+			nextIndex++
+		}
+
+		if (nextIndex >= segments.length) {
+			continue
+		}
+
+		const nextSegment = segments[nextIndex]
+		if (nextSegment.segment === '\'' || nextSegment.segment === '"') {
+			const quote = nextSegment.segment
+			let value = ''
+			let closingIndex = nextIndex + 1
+			let hasClosingQuote = false
+
+			while (closingIndex < segments.length) {
+				const segment = segments[closingIndex]
+				if (segment.segment === quote) {
+					hasClosingQuote = true
+					break
+				}
+				value += segment.segment
+				closingIndex++
+			}
+
+			if (value.trim() !== '') {
+				items.add(value.trim())
+			}
+
+			i = hasClosingQuote ? closingIndex : closingIndex - 1
+			continue
+		}
+
+		if (nextSegment.segment.startsWith(prefix)) {
+			const remainder = nextSegment.segment.slice(prefix.length)
+			if (remainder !== '') {
+				if (nextIndex - 1 === i || isWhitespaceSegment(segments[nextIndex - 1])) {
+					items.add(remainder)
+				}
+				i = nextIndex - 1
+				continue
+			}
+		}
+
+                if (nextSegment.segment !== '') {
+                        let value = nextSegment.segment
+                        let consumedIndex = nextIndex + 1
+
+                        while (consumedIndex < segments.length) {
+                                const part = segments[consumedIndex]
+
+                                if (isWhitespaceSegment(part)) {
+                                        break
+                                }
+
+                                if (part.segment === prefix) {
+                                        value += part.segment
+                                        consumedIndex++
+                                        continue
+                                }
+
+                                if (part.segment.startsWith(prefix)) {
+                                        break
+                                }
+
+                                value += part.segment
+                                consumedIndex++
+                        }
+
+                        items.add(value)
+                        i = consumedIndex - 1
+                }
 	}
 
-	itemParts.forEach((p, index) => {
-		// First part contains the rest
-		if (index < 1) {
-			return
-		}
-
-		if (p.startsWith(prefix)) {
-			p = p.substring(1)
-		}
-
-		let itemText
-		if (p.charAt(0) === '\'') {
-			itemText = p.split('\'')[1]
-		} else if (p.charAt(0) === '"') {
-			itemText = p.split('"')[1]
-		} else {
-			// Only until the next space
-			itemText = p.split(' ')[0]
-		}
-
-		if (itemText !== '') {
-			items.push(itemText)
-		}
-	})
-
-	return Array.from(new Set(items))
+	return Array.from(items)
 }
+
 
 export const getProjectFromPrefix = (text: string, prefixMode: PrefixMode): string | null => {
 	const projectPrefix = PREFIXES[prefixMode]?.project
