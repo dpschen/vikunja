@@ -1,0 +1,9 @@
+Common ancestor commit used for patch generation:
+07272f6cdc886671064c1779f69c5550eec7623c
+
+Branches:
+- go-vikunja/vikunja origin/main @ 48d202f3ced4645fe49f20278afe3a48fa4a259e
+- dpschen/vikunja main @ 8d26392a5904d6268aedaa30b722ce3cc5dbb304
+- dpschen/vikunja main_non_agents @ 7671d2ea3efd59067d6d474a8a41bed6626affa9
+
+Patches are generated to transform the ancestor into each listed branch.
