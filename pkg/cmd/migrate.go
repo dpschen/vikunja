@@ -18,15 +18,20 @@ package cmd
 
 import (
 	"code.vikunja.io/api/pkg/initialize"
+	"code.vikunja.io/api/pkg/log"
 	"code.vikunja.io/api/pkg/migration"
 	"github.com/spf13/cobra"
 )
 
 func init() {
 	migrateCmd.AddCommand(migrateListCmd)
-	migrationRollbackCmd.Flags().StringVarP(&rollbackUntilFlag, "name", "n", "", "The id of the migration you want to roll back until.")
-	_ = migrationRollbackCmd.MarkFlagRequired("name")
-	migrateCmd.AddCommand(migrationRollbackCmd)
+
+	migrateUpCmd.Flags().StringVarP(&migrateUpNameFlag, "name", "n", "", "The id of the migration you want to run up to.")
+	migrateCmd.AddCommand(migrateUpCmd)
+
+	migrateDownCmd.Flags().StringVarP(&migrateDownNameFlag, "name", "n", "", "The id of the migration you want to roll back until.")
+	migrateCmd.AddCommand(migrateDownCmd)
+
 	rootCmd.AddCommand(migrateCmd)
 }
 
@@ -35,12 +40,12 @@ func init() {
 // list -> Essentially just show the table, maybe with an extra column if the migration did run or not
 var migrateCmd = &cobra.Command{
 	Use:   "migrate",
-	Short: "Run all database migrations which didn't already run.",
+	Short: "Run database migrations.",
 	PersistentPreRun: func(_ *cobra.Command, _ []string) {
 		initialize.LightInit()
 	},
-	Run: func(_ *cobra.Command, _ []string) {
-		migration.Migrate(nil)
+	Run: func(cmd *cobra.Command, args []string) {
+		migrateUpCmd.Run(cmd, args)
 	},
 }
 
@@ -52,12 +57,30 @@ var migrateListCmd = &cobra.Command{
 	},
 }
 
-var rollbackUntilFlag string
+var (
+	migrateUpNameFlag   string
+	migrateDownNameFlag string
+)
 
-var migrationRollbackCmd = &cobra.Command{
-	Use:   "rollback",
-	Short: "Roll migrations back until a certain point.",
+var migrateUpCmd = &cobra.Command{
+	Use:   "up",
+	Short: "Run database migrations. Use --name to migrate to a specific migration.",
 	Run: func(_ *cobra.Command, _ []string) {
-		migration.Rollback(rollbackUntilFlag)
+		if migrateUpNameFlag == "" {
+			migration.Migrate(nil)
+			return
+		}
+
+		if err := migration.MigrateTo(migrateUpNameFlag, nil); err != nil {
+			log.Critical(err.Error())
+		}
+	},
+}
+
+var migrateDownCmd = &cobra.Command{
+	Use:   "down",
+	Short: "Roll migrations back. Use --name to specify the migration to roll back until.",
+	Run: func(_ *cobra.Command, _ []string) {
+		migration.Rollback(migrateDownNameFlag)
 	},
 }
